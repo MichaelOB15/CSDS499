@@ -16,8 +16,12 @@ class Main:
         self.config = config
         self.filter_type = filter_type
 
-    # First we must load all of the current positions of the robot
     def run(self):
+        pass
+
+        # Gabe put new setup code here
+
+        '''
         positions = [config.x_0]
         robot_pos = config.x_0
         print("Starting Robot Position:",robot_pos)
@@ -176,7 +180,7 @@ class Main:
 
         cdir = os.getcwd() 
         plt.savefig(os.path.join(os.path.abspath(os.path.join(cdir, os.pardir)))+ "/Images/EKF.png", dpi = 72)
-        plt.show()
+        plt.show()'''
 
 def load_config():
     config_filepath = Path.cwd() / "config.yaml"
