@@ -5,7 +5,10 @@ import numpy
 
 
 class Visualization:
+    """Visualization used for visaulizing known map and unknown map"""
+
     def __init__(self, m: List[List[int]], pos: List[int]):
+        """Constructor for the Visualization Object and Draws Initial State"""
         self.m = m
         self.pos = pos
         self.path: List[List[int]] = [pos]
@@ -14,6 +17,7 @@ class Visualization:
         self.visualize()
 
     def update(self, m: List[List[int]], new_pos: List[int]):
+        """Takes an updated position and generates a plot with the updated path built upon previous positions"""
         fig, self.ax = plt.subplots(1)
         self.m = m
         self.path.append(new_pos)
@@ -22,6 +26,7 @@ class Visualization:
         self.visualize()
 
     def visualize(self):
+        """Helper method to plot Maze and Robot within Maze"""
         self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=255)
         circle1 = patches.Circle((self.pos[0], self.pos[1]), radius=10, color='blue')
         self.ax.add_patch(circle1)
@@ -30,6 +35,7 @@ class Visualization:
         plt.close()
 
     def draw_movement(self):
+        """Helper method to plot path between starting pos and current pos"""
         x = []
         y = []
         for pos in self.path:
