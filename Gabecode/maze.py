@@ -34,15 +34,17 @@ class Cell:
 class Maze:
     """A Maze, represented as a grid of cells."""
 
-    def __init__(self, nx, ny, ix=0, iy=0):
+    def __init__(self, nx, ny, scaling, ix=0, iy=0):
         """Initialize the maze grid.
         The maze consists of nx x ny cells and will be constructed starting
         at the cell indexed at (ix, iy).
 
         """
-
         self.nx, self.ny = nx, ny
         self.ix, self.iy = ix, iy
+
+        self.scaling=scaling
+
         self.maze_map = [[Cell(x, y) for y in range(ny)] for x in range(nx)]
 
     def cell_at(self, x, y):
@@ -50,10 +52,12 @@ class Maze:
 
         return self.maze_map[x][y]
 
-    def out(self,scaling):
+    def out(self):
         """Return a matrix representation of the maze."""
 
         xdim,ydim = self.nx*2+1, self.ny*2+1
+
+        scaling=self.scaling
 
         m=np.zeros((xdim,ydim))
 

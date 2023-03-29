@@ -15,9 +15,6 @@ scaling = 30
 
 # m is 2D matrix
 m = maze.out(scaling)
-# for n in m:
-#     for k in n:
-#         print(k)
 
 # I want my walls black and my passageway white
 m = np.absolute(m-1)
