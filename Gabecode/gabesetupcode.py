@@ -1,17 +1,25 @@
 from maze import Maze
+import numpy as np
+from PIL import Image
 
 # Number of cells in each dimension (ncols, nrows)
-# each cell is a 3x3 matrix with a N,S,E,W edge
-nx, ny = 5, 5
-# Maze entry position (ignore this part boys)
+#50 works really well
+#if number is odd then center of maze will always be 0 and for other locations some scaling math has to happen
+nx, ny = 50, 50
+# Maze entry position
 ix, iy = 0, 0
 
 maze = Maze(nx, ny, ix, iy)
 maze.make_maze()
+scaling=30
 
-print(maze)
+#m is 2D matrix
+m=maze.out(scaling)
+#print(m)
 
-maze.write_svg('maze.svg')
+#I want my walls black and my passageway white
+m = np.absolute(m-1)
+img = Image.fromarray(m.astype('uint8')*255)
+img.show()
 
-
-
+img.save("Maze.png")

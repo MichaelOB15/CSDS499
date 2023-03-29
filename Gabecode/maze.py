@@ -50,7 +50,7 @@ class Maze:
 
         return self.maze_map[x][y]
 
-    def __str__(self):
+    def out(self,scaling):
         """Return a matrix representation of the maze."""
 
         xdim,ydim = self.nx*2+1, self.ny*2+1
@@ -61,8 +61,7 @@ class Maze:
             for y in range(self.ny):
 
             # Draw the "South" and "East" walls of each cell, if present (these
-            # are the "North" and "West" walls of a neighbouring cell in
-            # general, of course).
+            # are the "North" and "West" walls of a neighbouring cell)
 
                 xindex=x*2+1
                 yindex=y*2+1
@@ -86,59 +85,22 @@ class Maze:
                     m[xindex-1,yindex+1]=1
                     m[xindex,yindex+1]=1
                     m[xindex+1,yindex+1]=1
-                
-        # Transpose taken to make the matrix match the .svg file
-        return str(np.transpose(m))
 
-    def write_svg(self, filename):
-        """Write an SVG image of the maze to filename."""
+        xdim=xdim*scaling
+        ydim=np.shape(m)[1]*scaling
 
-        aspect_ratio = self.nx / self.ny
-        # Pad the maze all around by this amount.
-        padding = 10
-        # Height and width of the maze image (excluding padding), in pixels
-        height = 500
-        width = int(height * aspect_ratio)
-        # Scaling factors mapping maze coordinates to image coordinates
-        scy, scx = height / self.ny, width / self.nx
+        out=np.zeros((xdim,ydim))
 
-        def write_wall(ww_f, ww_x1, ww_y1, ww_x2, ww_y2):
-            """Write a single wall to the SVG image file handle f."""
+        for x in range(np.shape(m)[0]):
+            for y in range(np.shape(m)[1]):
 
-            print('<line x1="{}" y1="{}" x2="{}" y2="{}"/>'
-                  .format(ww_x1, ww_y1, ww_x2, ww_y2), file=ww_f)
+                val=m[x,y]
 
-        # Write the SVG image file for maze
-        with open(filename, 'w') as f:
-            # SVG preamble and styles.
-            print('<?xml version="1.0" encoding="utf-8"?>', file=f)
-            print('<svg xmlns="http://www.w3.org/2000/svg"', file=f)
-            print('    xmlns:xlink="http://www.w3.org/1999/xlink"', file=f)
-            print('    width="{:d}" height="{:d}" viewBox="{} {} {} {}">'
-                  .format(width + 2 * padding, height + 2 * padding,
-                          -padding, -padding, width + 2 * padding, height + 2 * padding),
-                  file=f)
-            print('<defs>\n<style type="text/css"><![CDATA[', file=f)
-            print('line {', file=f)
-            print('    stroke: #000000;\n    stroke-linecap: square;', file=f)
-            print('    stroke-width: 5;\n}', file=f)
-            print(']]></style>\n</defs>', file=f)
-            # Draw the "South" and "East" walls of each cell, if present (these
-            # are the "North" and "West" walls of a neighbouring cell in
-            # general, of course).
-            for x in range(self.nx):
-                for y in range(self.ny):
-                    if self.cell_at(x, y).walls['S']:
-                        x1, y1, x2, y2 = x * scx, (y + 1) * scy, (x + 1) * scx, (y + 1) * scy
-                        write_wall(f, x1, y1, x2, y2)
-                    if self.cell_at(x, y).walls['E']:
-                        x1, y1, x2, y2 = (x + 1) * scx, y * scy, (x + 1) * scx, (y + 1) * scy
-                        write_wall(f, x1, y1, x2, y2)
-            # Draw the North and West maze border, which won't have been drawn
-            # by the procedure above.
-            print('<line x1="0" y1="0" x2="{}" y2="0"/>'.format(width), file=f)
-            print('<line x1="0" y1="0" x2="0" y2="{}"/>'.format(height), file=f)
-            print('</svg>', file=f)
+                for a in range(scaling):
+                    for b in range(scaling):
+                        out[x*scaling+a,y*scaling+b]=val
+
+        return np.transpose(out)
 
     def find_valid_neighbours(self, cell):
         """Return a list of unvisited neighbours to cell."""
