@@ -3,21 +3,23 @@ import numpy as np
 from PIL import Image
 
 # Number of cells in each dimension (ncols, nrows)
-#50 works really well
-#if number is odd then center of maze will always be 0 and for other locations some scaling math has to happen
+# 50 works really well
+# if number is odd then center of maze will always be 0 and for other locations some scaling math has to happen
 nx, ny = 50, 50
 # Maze entry position
 ix, iy = 0, 0
 
 maze = Maze(nx, ny, ix, iy)
 maze.make_maze()
-scaling=30
+scaling = 30
 
-#m is 2D matrix
-m=maze.out(scaling)
-#print(m)
+# m is 2D matrix
+m = maze.out(scaling)
+# for n in m:
+#     for k in n:
+#         print(k)
 
-#I want my walls black and my passageway white
+# I want my walls black and my passageway white
 m = np.absolute(m-1)
 img = Image.fromarray(m.astype('uint8')*255)
 img.show()
