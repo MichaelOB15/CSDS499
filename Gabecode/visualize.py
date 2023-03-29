@@ -7,12 +7,12 @@ import numpy
 class Visualization:
     """Visualization used for visaulizing known map and unknown map"""
 
-    def __init__(self, m: List[List[int]], pos: List[int]):
+    def __init__(self, m: List[List[int]], starting_pos: List[int]):
         """Constructor for the Visualization Object and Draws Initial State"""
         self.m = m
-        self.pos = pos
-        self.path: List[List[int]] = [pos]
-        assert len(pos) >= 2
+        self.pos = starting_pos
+        self.path: List[List[int]] = [starting_pos]
+        assert len(starting_pos) >= 2
         fig, self.ax = plt.subplots(1)
         self.visualize()
 
