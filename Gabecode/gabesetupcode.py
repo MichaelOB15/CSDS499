@@ -9,12 +9,13 @@ nx, ny = 50, 50
 # Maze entry position
 ix, iy = 0, 0
 
-maze = Maze(nx, ny, ix, iy)
-maze.make_maze()
 scaling = 30
+maze = Maze(nx, ny, scaling, ix, iy)
+maze.make_maze()
+
 
 # m is 2D matrix
-m = maze.out(scaling)
+m = maze.out()
 
 # I want my walls black and my passageway white
 m = np.absolute(m-1)
