@@ -26,7 +26,7 @@ img = Image.fromarray(img.astype('uint8')*255)
 img.show()
 img.save("Maze.png")
 
-m = m*255
+m = m
 # I cant figure out the segmentation fault here for the life of
 viz = Visualization(m, [883, 1224])
 viz.update(m, [883, 1224])
