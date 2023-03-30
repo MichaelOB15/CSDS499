@@ -11,3 +11,7 @@ measurements: [[2.276,5.249,2],[4.321,5.834,3],[3.418,5.869,3],[3.774,5.911,4],[
 initial_sigma_t_1: [[0,0,0],[0,0,0],[0,0,0]]
 
 num_particles: 1000
+
+maze_size: [50, 50]
+entry_position: [0,0]
+maze_scaling: 30
