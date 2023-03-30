@@ -27,7 +27,7 @@ img.show()
 img.save("Maze.png")
 
 m = m*255
-#I cant figure out the segmentation fault here for the life of
+# I cant figure out the segmentation fault here for the life of
 viz = Visualization(m, [883, 1224])
 viz.update(m, [883, 1224])
 viz.update(m, [883, 1224])

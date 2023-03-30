@@ -1,7 +1,5 @@
 from typing import List
 from matplotlib import pyplot as plt, patches
-from PIL import Image
-import numpy
 
 
 class Visualization:
@@ -42,13 +40,3 @@ class Visualization:
             x.append(pos[0])
             y.append(pos[1])
         self.ax.plot(x, y)
-'''
-
-pic = Image.open("Maze.png").convert("L")
-M = numpy.array(pic)
-test_m = [[0, 0, 0], [255, 255, 255], [0, 0, 0]]
-
-viz = Visualization(M, [883, 1224])
-viz.update(M, [883, 1224])
-viz.update(M, [883, 1224])
-'''
