@@ -3,7 +3,7 @@
 # "draw i with probability"
 import numpy as np
 from robot_motion import Robot_motion
-from known_correspondance import LMKC
+from known_correspondence import LMKC
 import random
 
 
@@ -29,7 +29,7 @@ class PF():
             x_t = samp.sample_motion_model_velocity()
 
             measurement = LMKC(self.z_t, x_t, self.m, self.sigma_r, self.sigma_theta)
-            w_t = measurement.landmark_model_known_correspondance()
+            w_t = measurement.landmark_model_known_correspondence()
 
             if w_t >max_w:
                 max_w = w_t

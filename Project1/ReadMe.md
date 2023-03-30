@@ -1,6 +1,6 @@
 # HW 3
 
-This is michael O'Brien's Submission for HW3. The final images are saved in the Images folder and all the code is held in the Code Folder.
+Update this later
 
 ## Usage
 

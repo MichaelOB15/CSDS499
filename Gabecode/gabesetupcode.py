@@ -1,4 +1,5 @@
 from maze import Maze
+from visualize import Visualization
 import numpy as np
 from PIL import Image
 
@@ -18,8 +19,14 @@ maze.make_maze()
 m = maze.out()
 
 # I want my walls black and my passageway white
-m = np.absolute(m-1)
-img = Image.fromarray(m.astype('uint8')*255)
+img = m
+img = np.absolute(img-1)
+img = Image.fromarray(img.astype('uint8')*255)
 img.show()
-
 img.save("Maze.png")
+
+
+#I cant figure out the segmentation fault here for the life of
+viz = Visualization(m, [883, 1224])
+viz.update(m, [883, 1224])
+viz.update(m, [883, 1224])

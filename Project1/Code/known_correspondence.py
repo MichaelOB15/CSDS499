@@ -9,7 +9,7 @@ class LMKC():
         self.sigma_r = sigma_r
         self.sigma_theta = sigma_theta
 
-    def landmark_model_known_correspondance(self):
+    def landmark_model_known_correspondence(self):
         r_hat = math.sqrt((self.m[0]-self.x_t[0])**2+(self.m[1]-self.x_t[1])**2)
         theta_hat = math.atan2(self.m[1]-self.x_t[1], self.m[0]-self.x_t[0]) - self.x_t[2]
         prob1 = self.prob_normal_distribution(self.z_t[0]-r_hat,self.sigma_r)
