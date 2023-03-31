@@ -97,7 +97,7 @@ def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
 
     return motions
 
-
+# TODO maybe nice splines?
 def inverse_kinematics(p1, p2, delta_t) -> List[List[float]]:
     x_hat = p2[1] - p1[1]
     y_hat = p2[0] - p1[0]
