@@ -35,6 +35,9 @@ dtheta
 #This wont work and needs testing!! I have no idea what to use for input values so tune this up
 def ideal_measure(map,pose,rmax,dr,dtheta):
 
+    #Import all thetas that have sensors
+    #do the math to calculate the phi values associated with the r
+
     r_steps=int(rmax/dr)
     theta_steps=int(pose[2]/dtheta)
 
@@ -55,4 +58,4 @@ def ideal_measure(map,pose,rmax,dr,dtheta):
                     rout=r
                 break
 
-    return rout
+    return rout #This needs to be assembled into a z vector!
