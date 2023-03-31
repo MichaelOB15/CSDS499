@@ -1,45 +1,7 @@
 import numpy as np
 from maze import Maze
+from particle import Particle
 from PIL import Image
-
-def resize(map):
-    '''Determines whether the robot's internal map is  at risk of being too small and resizes it accordingly'''
-    
-    n_row=np.shape(map)[0]
-    n_col=np.shape(map)[1]
-
-    #I need to go around every edge (with a cushion) and see if I have room to work
-    cushion=40
-    resize_magnitude=200
-
-    #unmapped regions will hold a value of -1
-    for a in range(n_row):
-        #row overflow (x axis)
-        if (not map[a,n_col-cushion]==-1):
-            newmap=np.zeros((n_row,resize_magnitude))-1
-            map=np.concatenate([map,newmap],axis=1)
-            n_col=np.shape(map)[1]
-            
-        #row underflow
-        if (not map[a,cushion]==-1):
-            newmap=np.zeros((n_row,resize_magnitude))-1
-            map=np.concatenate([newmap,map],axis=1)
-            n_col=np.shape(map)[1]
-            
-    for a in range(n_col):
-        #column overflow (y axis)
-        if (not map[n_row-cushion,a]==-1):
-            newmap=np.zeros((resize_magnitude,n_col))-1
-            map=np.concatenate([map,newmap],axis=0)
-            n_row=np.shape(map)[0]
-            
-        #column underflow
-        if (not map[cushion,a]==-1):
-            newmap=np.zeros((resize_magnitude,n_col))-1
-            map=np.concatenate([newmap,map],axis=0)
-            n_row=np.shape(map)[0]
-    
-    return map
 
 ############################ MAZE CODE #############################################
 # Number of cells in each dimension (ncols, nrows)
@@ -67,14 +29,6 @@ m=maze.out()
 
 #img.save("Maze.png")
 
-############################# RESIZING ARRAY CODE ##############################################
-
-#generate a resizable matrix of the map that the robot believes is the local space
-#initial map size without any resizes
-xdim,ydim=300,300
-
-#initial condition
-belief_map=np.zeros((xdim,ydim))-1
 
 
 '''
@@ -123,12 +77,11 @@ img.show()
 #based on pg 303 it's not unusual to have a robot with evenly spaced sensors on all sides
 #I really want the output of this whole project to look like pg 303 so thats maybe the way to do it?
 #nah lets do this the budget way with one (maybe two) really dumb sensors on the front
-
-#initial pose of the robot(x,y,theta)
-pose=np.zeros(3)
-
-#x and y need to be in the center of the matrix
-pose[0:1]=[xdim/2,ydim/2]
+u=np.array([0,0])
+a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
+stepsize=0.01
+p=Particle()
+p.sample_motion_model_velocity(u,a,stepsize)
 
 
 
@@ -165,7 +118,8 @@ pose[0:1]=[xdim/2,ydim/2]
 
 
 
-#a normal way to test this would be to just slowly spin in a circle and keep the range of the sensor high enough to see all the walls...
+#a normal way to test this without trajectory code would be to just slowly spin in a circle and 
+#keep the range of the sensor high enough to see all the walls...
 
 
 

@@ -1,6 +1,137 @@
+import numpy as np
+from math import sin, cos, sqrt
+
 #I'm going to write a particle class -> each particle is a representation of the robot
+class Particle:
+    def __init__(self):
+        """Initialize the particle at the center of its internal map."""
+
+        #initial map size without any resizes
+        row,col=300,300
+
+        #initial condition
+        self.map=np.zeros((row,col))-1
+        self.pose=np.array([row/2,col/2,0]) #y,x,phi
+
+
+    #there should be a particle.update(u) that runs the three update commands in order... implement this last
+
+
+
+
+    '''
+    things to put in config.yaml:
+    initial map sizes for the particle
+    a
+    stepsize
+    offset
+    
+    '''
+
+    def sample_motion_model_velocity(self,u0,a,stepsize):
+        '''Move the location of the robot with trajectory error'''
+
+        v=u0[0]
+        w=u0[1]
+
+        variance = np.zeros(3)
+        variance[0]=a[0]*abs(v)+a[1]*abs(w)
+        variance[1]=a[2]*abs(v)+a[3]*abs(w)
+        variance[2]=a[4]*abs(v)+a[5]*abs(w)
+
+        offset=1e-18
+
+        #avoids any divide by zero errors
+        variance = variance + offset
+
+        #sample normal distribution:
+        mu=0
+        sigma=np.zeros(3)
+        for i in range(len(variance)):
+            sigma[i]=sqrt(variance[i])
+        epsilon=np.random.normal(mu,sigma)
+
+        #add error to motion command
+        u=u0+epsilon[0:1]
+        v=u[0]
+        w=u[1]
+
+        #apply motion
+        x_update=-v/w*sin(u[2])+v/w*sin(u[2]+w*stepsize)
+        y_update=v/w*cos(u[2])-v/w*cos(u[2]+w*stepsize)
+        theta_update=(u[2]+epsilon[2])*stepsize
+
+        self.pose=np.array([x_update,y_update,theta_update])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def resize(self,map):
+        '''Determines whether the robot's internal map is  at risk of being too small and resizes it accordingly'''
+        
+        n_row=np.shape(map)[0]
+        n_col=np.shape(map)[1]
+
+        #I need to go around every edge (with a cushion) and see if I have room to work
+        cushion=40
+        resize_magnitude=200
+
+        #unmapped regions will hold a value of -1
+        for a in range(n_row):
+            #row overflow (x axis)
+            if (not map[a,n_col-cushion]==-1):
+                newmap=np.zeros((n_row,resize_magnitude))-1
+                map=np.concatenate([map,newmap],axis=1)
+                n_col=np.shape(map)[1]
+                
+            #row underflow
+            if (not map[a,cushion]==-1):
+                newmap=np.zeros((n_row,resize_magnitude))-1
+                map=np.concatenate([newmap,map],axis=1)
+                n_col=np.shape(map)[1]
+
+                #underflows need to update pose
+                self.pose[1]=self.pose[1]+resize_magnitude
+                
+        for a in range(n_col):
+            #column overflow (y axis)
+            if (not map[n_row-cushion,a]==-1):
+                newmap=np.zeros((resize_magnitude,n_col))-1
+                map=np.concatenate([map,newmap],axis=0)
+                n_row=np.shape(map)[0]
+                
+            #column underflow
+            if (not map[cushion,a]==-1):
+                newmap=np.zeros((resize_magnitude,n_col))-1
+                map=np.concatenate([newmap,map],axis=0)
+                n_row=np.shape(map)[0]
+
+                #underflows need to update pose
+                self.pose[0]=self.pose[0]+resize_magnitude
+        
+        return map
+
+        
+
+
+
+        
+
 
 #### class particle #####
+#every particle keeps track of its own position
+
 #particle has local map initialized -> robot placed perfectly in the center of local matrix but no data
 #look at resize method in gabecode.py and run this resize method in the particle. tbh this method should just be moved to this class...
 
@@ -31,3 +162,41 @@
 
 
 #Third, I force robot to go through certain poses and make sure that the robot local map updates properly
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
