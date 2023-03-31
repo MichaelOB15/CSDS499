@@ -2,6 +2,7 @@ import numpy as np
 from maze import Maze
 from particle import Particle
 from PIL import Image
+from math import pi
 
 ############################ MAZE CODE #############################################
 # Number of cells in each dimension (ncols, nrows)
@@ -77,12 +78,18 @@ img.show()
 #based on pg 303 it's not unusual to have a robot with evenly spaced sensors on all sides
 #I really want the output of this whole project to look like pg 303 so thats maybe the way to do it?
 #nah lets do this the budget way with one (maybe two) really dumb sensors on the front
-u=np.array([0,0])
-a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
-stepsize=0.01
-p=Particle()
-p.sample_motion_model_velocity(u,a,stepsize)
+#u=np.array([0,0])
 
+'''
+a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
+stepsize=1
+p=Particle()
+p.setpose(np.array([2,0,pi/2]))
+u=np.array([pi/2,pi/2])
+p.sample_motion_model_velocity(u,a,stepsize)
+u=np.array([pi/2,-pi/2])
+p.sample_motion_model_velocity(u,a,stepsize)
+'''
 
 
 

@@ -16,8 +16,9 @@ class Particle:
 
     #there should be a particle.update(u) that runs the three update commands in order... implement this last
 
-
-
+    #delete this at the very end I just need it for testing
+    def setpose(self,pose):
+        self.pose=pose
 
     '''
     things to put in config.yaml:
@@ -53,15 +54,19 @@ class Particle:
 
         #add error to motion command
         u=u0+epsilon[0:1]
+
+        #reset motion, this time with error
         v=u[0]
         w=u[1]
+        theta=self.pose[2]
 
         #apply motion
-        x_update=-v/w*sin(u[2])+v/w*sin(u[2]+w*stepsize)
-        y_update=v/w*cos(u[2])-v/w*cos(u[2]+w*stepsize)
-        theta_update=(u[2]+epsilon[2])*stepsize
+        x_update=-v/w*sin(theta)+v/w*sin(theta+w*stepsize)
+        y_update=v/w*cos(theta)-v/w*cos(theta+w*stepsize)
+        theta_update=(w+epsilon[2])*stepsize
 
-        self.pose=np.array([x_update,y_update,theta_update])
+        self.pose=self.pose+np.array([x_update,y_update,theta_update])
+        print(self.pose)
 
 
 
