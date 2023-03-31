@@ -82,9 +82,10 @@ img.show()
 #nah lets do this the budget way with one (maybe two) really dumb sensors on the front
 #u=np.array([0,0])
 
-'''
+
 a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 stepsize=1
+'''
 p=Particle()
 p.setpose(np.array([2,0,pi/2]))
 u=np.array([pi/2,pi/2])
@@ -96,12 +97,12 @@ p.sample_motion_model_velocity(u,a,stepsize)
 #inside my script here I will take measurements:
 real_pose=np.array([m.shape[0]/2,m.shape[1]/2,0]) #the initial position of the robot is set here
 vis = Visualization(m, real_pose)
-#print(m[m.shape[0]/2,m.shape[1]/2].astype(int))
-mrow = (m.shape[0]/2)
-mcol = (m.shape[1]/2)
-print(mrow)
-print(mcol)
-print(m[int(mrow),int(mcol)])
+
+#I track real motion of the robot through the maze 
+ideal=Particle()
+ideal.setpose(real_pose)
+
+
 
 
 #I'm going to write a particle class -> each particle is a representation of the robot

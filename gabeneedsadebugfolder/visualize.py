@@ -28,7 +28,7 @@ class Visualization:
         """Helper method to plot Maze and Robot within Maze"""
         print("starting viz")
         self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=1)
-        circle1 = patches.Circle((self.pos[0], self.pos[1]), radius=10, color='blue')
+        circle1 = patches.Circle((self.pos[0], self.pos[1]), radius=5, color='blue')
         self.ax.add_patch(circle1)
         plt.show(block=False)
         plt.pause(10)

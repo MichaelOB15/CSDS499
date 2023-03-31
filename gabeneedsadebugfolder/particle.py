@@ -60,17 +60,19 @@ class Particle:
     #I need to pull this section from the range finder section of the book
     def measurement_model_map(self,map,z):
         '''Set the weight of the particle'''
+
+        #algorithm on pg 288
+
+        #I think the algo for the next method is on pg 286
         
-    
+    def setpose(self,pose):
+        self.pose=pose
 
 
     
 
     #there should be a particle.update(u) that runs the three update commands in order... implement this last
-
-    #delete this at the very end I just need it for testing
-    def setpose(self,pose):
-        self.pose=pose
+    
 
     '''
     things to put in config.yaml:
