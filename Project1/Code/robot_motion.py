@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+
 class Robot_motion:
 
     def __init__(self, u_t, x_t_1, alpha, delta_t):
@@ -20,7 +21,7 @@ class Robot_motion:
             new_y = self.x_t_1[1] + (v_hat/w_hat)*math.cos(self.x_t_1[2]) - (v_hat/w_hat)*math.cos(self.x_t_1[2]+w_hat*self.delta_t)
             new_theta = self.x_t_1[2] + w_hat*self.delta_t + gamma_hat*self.delta_t
 
-            return [round(new_x,3), round(new_y,3), round(new_theta,3)]
+            return [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
         except:
             print(self.u_t)
             print(self.x_t_1)
@@ -30,10 +31,7 @@ class Robot_motion:
         new_y = self.x_t_1[1] + (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]) - (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]+self.u_t[1]*self.delta_t)
         new_theta = self.x_t_1[2] + self.u_t[1]*self.delta_t
 
-        return [round(new_x,3), round(new_y,3), round(new_theta,3)]
-    
+        return [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
+
     def sample(self, b):
-        return np.random.normal(0,b)
-
-
-
+        return np.random.normal(0, b)

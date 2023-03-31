@@ -1,5 +1,9 @@
 from typing import List
 from matplotlib import pyplot as plt, patches
+from math import sin, cos
+
+
+RADIUS = 0.75/2
 
 
 class Visualization:
@@ -25,16 +29,20 @@ class Visualization:
 
     def visualize(self):
         """Helper method to plot Maze and Robot within Maze"""
-        
-        # for i in range(m)
-        #     for j in range(m)
-        
         self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=1)
-        circle1 = patches.Circle((self.pos[0], self.pos[1]), radius=0.75/2, color='blue')
+        circle1 = patches.Circle((self.pos[0], self.pos[1]), RADIUS, color='blue')
         self.ax.add_patch(circle1)
+        self.draw_direction()
         plt.show(block=False)
         plt.pause(10)
         plt.close()
+
+    def draw_direction(self):
+        x_0 = self.pos[0]
+        y_0 = self.pos[1]
+        x_1 = x_0 + cos(self.pos[2])*RADIUS
+        y_1 = y_0 + sin(self.pos[2])*RADIUS
+        self.ax.plot([x_0, x_1], [y_0, y_1], color="red")
 
     def draw_movement(self):
         """Helper method to plot path between starting pos and current pos"""
