@@ -33,8 +33,7 @@ class Main:
         viz.update(m, [883, 1224])
         viz.update(m, [883, 1224])
 
-def save_maze_image(m):
-    img = m
+def save_maze_image(img):
     img = np.absolute(img-1)
     img = Image.fromarray(img.astype('uint8')*255)
     img.show()
