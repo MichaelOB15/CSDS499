@@ -3,12 +3,14 @@ from maze import Maze
 from particle import Particle
 from PIL import Image
 from math import pi
+from visualize import Visualization
+
 
 ############################ MAZE CODE #############################################
 # Number of cells in each dimension (ncols, nrows)
 #50 works really well
 #if number is odd then center of maze will always be 0 and for other locations some scaling math has to happen
-nx, ny = 50, 50
+nx, ny = 5, 5
 # Maze entry position
 ix, iy = 0, 0
 
@@ -91,6 +93,15 @@ u=np.array([pi/2,-pi/2])
 p.sample_motion_model_velocity(u,a,stepsize)
 '''
 
+#inside my script here I will take measurements:
+real_pose=np.array([m.shape[0]/2,m.shape[1]/2,0]) #the initial position of the robot is set here
+vis = Visualization(m, real_pose)
+#print(m[m.shape[0]/2,m.shape[1]/2].astype(int))
+mrow = (m.shape[0]/2)
+mcol = (m.shape[1]/2)
+print(mrow)
+print(mcol)
+print(m[int(mrow),int(mcol)])
 
 
 #I'm going to write a particle class -> each particle is a representation of the robot

@@ -11,23 +11,9 @@ class Particle:
 
         #initial condition
         self.map=np.zeros((row,col))-1
-        self.pose=np.array([row/2,col/2,0]) #y,x,phi
-
-
-    #there should be a particle.update(u) that runs the three update commands in order... implement this last
-
-    #delete this at the very end I just need it for testing
-    def setpose(self,pose):
-        self.pose=pose
-
-    '''
-    things to put in config.yaml:
-    initial map sizes for the particle
-    a
-    stepsize
-    offset
-    
-    '''
+        self.pose=np.array([row/2,col/2,0]) #y,x,theta
+        self.weight=None
+        self.measurements=None
 
     def sample_motion_model_velocity(self,u0,a,stepsize):
         '''Move the location of the robot with trajectory error'''
@@ -68,17 +54,68 @@ class Particle:
         self.pose=self.pose+np.array([x_update,y_update,theta_update])
         print(self.pose)
 
+    # generating a z is going to be inventive
+    #normal structure of z is r,phi,landmark ID
+    #corresponds to angle between robot, distance, and known obstacle
+    #I need to pull this section from the range finder section of the book
+    def measurement_model_map(self,map,z):
+        '''Set the weight of the particle'''
+        
+    
+
+
+    
+
+    #there should be a particle.update(u) that runs the three update commands in order... implement this last
+
+    #delete this at the very end I just need it for testing
+    def setpose(self,pose):
+        self.pose=pose
+
+    '''
+    things to put in config.yaml:
+    initial map sizes for the particle
+    a
+    stepsize
+    offset
+    
+    '''
+
+    #### class particle #####
+    #every particle keeps track of its own position
+
+    #particle has local map initialized -> robot placed perfectly in the center of local matrix but no data
+    #look at resize method in gabecode.py and run this resize method in the particle. tbh this method should just be moved to this class...
+
+
+    #methods:
+    #####particle moves with velocity model plus some error (sample velocity model)
+
+    #####################################I have completed everything in this list up to here ##########################################################
+
+
+    #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
+    #here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
+    # the correct algorithm for range finder sensor modelling is on book pg 172 (this is too simple)
+    # localization using an ultrasound sensor is on pg 288 -> inverse problem (I think this is the right one)
+    # I think we want a combo of pg 301 algorithm plus the dummy pg 172 one for just the mapping... (this is wrong but I dont want to lose page)
+    #book has their robot cone opening 15 degrees
+    #based on pg 303 it's not unusual to have a robot with evenly spaced sensors on all sides
+
+
+    #####based on measurements particle updates its own local map accordingly
+
+
+    #ORDER MATTERS so each method should probably proc the next method
+    #use pg 478 as a reference for an overview of the full algorithm
+
+    #### end class particle ####
 
 
 
 
 
-
-
-
-
-
-
+    #Third, I force robot to go through certain poses and make sure that the robot local map updates properly
 
 
 
@@ -129,44 +166,6 @@ class Particle:
 
         
 
-
-
-        
-
-
-#### class particle #####
-#every particle keeps track of its own position
-
-#particle has local map initialized -> robot placed perfectly in the center of local matrix but no data
-#look at resize method in gabecode.py and run this resize method in the particle. tbh this method should just be moved to this class...
-
-
-#methods:
-#####particle moves with velocity model plus some error (sample velocity model)
-
-
-#####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
-#here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
-# the correct algorithm for range finder sensor modelling is on book pg 172 (this is too simple)
-# localization using an ultrasound sensor is on pg 288 -> inverse problem (I think this is the right one)
-# I think we want a combo of pg 301 algorithm plus the dummy pg 172 one for just the mapping... (this is wrong but I dont want to lose page)
-#book has their robot cone opening 15 degrees
-#based on pg 303 it's not unusual to have a robot with evenly spaced sensors on all sides
-
-
-#####based on measurements particle updates its own local map accordingly
-
-
-#ORDER MATTERS so each method should probably proc the next method
-#use pg 478 as a reference for an overview of the full algorithm
-
-#### end class particle ####
-
-
-
-
-
-#Third, I force robot to go through certain poses and make sure that the robot local map updates properly
 
 
 
