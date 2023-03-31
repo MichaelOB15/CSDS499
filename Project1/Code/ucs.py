@@ -1,46 +1,67 @@
-# from collections import deque
-from typing import List, Tuple
+from collections import deque
+from typing import List, Tuple, Any, Union
 from math import floor
-# class node:
-#     def __init__(self, parent, pos, cost):
-#         self.parent = parent
-#         self.pos = pos
-#         self.cost = cost
+from visualize import Visualization
 
 # TODO from params?
-UNEXPLORED = -1
+UNEXPLORED = 0.5
 STEP = 1
+WALL = 0
+OPEN = 1
 
 
-def get_closet_unexplored(m: List[List[int]], pos: List[int]):
-    pass
+class Node:
+    def __init__(self, parent, pos, cost):
+        self.parent: Union[Node, None] = parent
+        self.pos: Tuple[int, int] = pos
+        self.cost: int = cost
+
+    def get_children(self, m) -> List[Any]:
+        children: List[Node] = []
+        y = self.pos[0]
+        x = self.pos[1]
+
+        if y - 1 >= 0:
+            if m[y - 1][x] == OPEN:
+                children.append(Node(self, (y - 1, x), self.cost + 1))
+
+        if y + 1 < len(m):
+            if m[y + 1][x] == OPEN:
+                children.append(Node(self, (y + 1, x), self.cost + 1))
+
+        if x - 1 >= 0:
+            if m[y][x - 1] == OPEN:
+                children.append(Node(self, (y, x - 1), self.cost + 1))
+
+        if x + 1 < len(m[x]):
+            if m[y][x + 1] == OPEN:
+                children.append(Node(self, (y, x + 1), self.cost + 1))
+
+        print(children)
+        return children
+
+    def __str__(self) -> str:
+        return f'x = {self.pos[1]}, y = {self.pos[0]}, cost = {self.cost}'
 
 
 # Returns index of nearest UNEXPLORED
-def nearest_unexplored(m: List[List[int]], pos: List[int]) -> Tuple[int, int]:
-    robot_x_in_m = floor(pos[0]) 
+def nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
+    robot_x_in_m = floor(pos[0])
     robot_y_in_m = floor(pos[1])
+    pos = (robot_y_in_m, robot_x_in_m)
 
-    count = 0
-    while count < len(m):
-        for i in range(robot_y_in_m - count, robot_y_in_m + count):
-            if i < 0:
-                i = 0
-            elif i >= len(m):
-                i = len(m) - STEP
-
-            for j in range(robot_x_in_m - count, robot_x_in_m + count):
-
-                if j < 0:
-                    j = 0
-                elif j >= len(m[0]):
-                    j = len(m[0]) - STEP
-
-                print(f'{i} , {j} = {m[i][j]}')
-                if m[i][j] == UNEXPLORED:
-                    return i, j
-        # Expand search
-        count = count + 1
+    queue: deque[Node] = deque()
+    queue.append(Node(None, pos, 0))
+    while len(queue) >= 1:
+        print(len(queue))
+        print(queue)
+        node = queue.pop()
+        if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
+            return node
+        else:
+            children: List[Node] = node.get_children(m)
+            for child in children:
+                queue.append(child)
 
     # TODO add check -1 remains
     raise ValueError("No unexplored space found")
@@ -50,9 +71,12 @@ def straight_line(m: List[List[int]], pos: List[int]) -> bool:
     pass
 
 
-m = [[0, 0, 0], [-1, 0, -1], [2, 3, 4]]
-print(m)
-print(nearest_unexplored(m, [2, 1]))
+m = [[0.5, 1, 1], [0, 0, 1], [1, 1, 1]]
+start_pos = [0, 2]
+# print(m)
+viz = Visualization(m, start_pos)
+print(nearest_unexplored(m, start_pos))
+
 # def ucs(start_c, m):
 #     map = m
 #     end_c = nearest_unexplored(start_c, m)
