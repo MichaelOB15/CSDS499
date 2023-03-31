@@ -1,6 +1,10 @@
-import numpy as np
 from typing import List
 from matplotlib import pyplot as plt, patches
+from math import sin, cos
+import numpy as np
+
+
+RADIUS = 0.75/2
 
 
 class Visualization:
@@ -18,7 +22,7 @@ class Visualization:
     def update(self, m: List[List[int]], new_pos: List[int]):
         """Takes an updated position and generates a plot with the updated path built upon previous positions"""
         fig, self.ax = plt.subplots(1)
-        self.m = m
+        self.m = np.abs(m-1)
         self.path.append(new_pos)
         self.pos = new_pos
         self.draw_movement()
@@ -26,14 +30,20 @@ class Visualization:
 
     def visualize(self):
         """Helper method to plot Maze and Robot within Maze"""
-        print("starting viz")
         self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=1)
-        circle1 = patches.Circle((self.pos[0], self.pos[1]), radius=5, color='blue')
+        circle1 = patches.Circle((self.pos[0], self.pos[1]), RADIUS, color='blue')
         self.ax.add_patch(circle1)
+        self.draw_direction()
         plt.show(block=False)
         plt.pause(10)
         plt.close()
-        print("closed?")
+
+    def draw_direction(self):
+        x_0 = self.pos[0]
+        y_0 = self.pos[1]
+        x_1 = x_0 + cos(self.pos[2])*RADIUS
+        y_1 = y_0 + sin(self.pos[2])*RADIUS
+        self.ax.plot([x_0, x_1], [y_0, y_1], color="red")
 
     def draw_movement(self):
         """Helper method to plot path between starting pos and current pos"""
