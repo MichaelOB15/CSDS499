@@ -5,6 +5,11 @@ from PIL import Image
 from math import pi
 from visualize import Visualization
 
+from measurement_wizard import MeasurementWizard
+
+
+#imports need to be fixed at the end once these files are finished
+
 
 ############################ MAZE CODE #############################################
 
@@ -14,7 +19,7 @@ scaling=30
 
 maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
-m=maze.out()
+maze=maze.out()
 
 ############################# MAP CODE ##############################################
 #book has their robot cone opening 15 degrees
@@ -22,12 +27,24 @@ m=maze.out()
 a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 stepsize=1
 
-real_pose=np.array([m.shape[0]/2,m.shape[1]/2,0]) #the initial position of the robot is set here
-vis = Visualization(m, real_pose)
+real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
+vis = Visualization(maze, real_pose)
+
+measure=measurement_wizard()
+
+
+
 
 #track real motion of the robot through the maze 
 ideal=Particle()
 ideal.setpose(real_pose)
+
+u=np.array([pi/2,pi/2]) #trajectory planning will evenutally be handled by ucs.py
+
+ideal.sample_motion_model_velocity(u,a,stepsize) #some of these parameters need to be moved to a config.yaml
+
+#this should probably be handled inside a measure object
+z=ideal_measure(ideal.getpose) #measurements are handled outside of the particle, and none of them can see the maze
 
 
 

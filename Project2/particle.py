@@ -31,6 +31,26 @@ class Particle:
 
 
     def setpose(self,pose):
+        #method has the potential to leave the map
+        map=self.map
+
+        #map will be expanded by the difference between the default pose plus a cushion (repeatedly setting pose will increase map size)
+        row_error=self.pose[0]-pose[0]+self.row #instead of having the cushion be the size of the map use values from .yaml file
+        col_error=self.pose[1]-pose[1]+self.col #im talking about these self.col/row values
+
+        n_row=np.shape(map)[0]
+        
+        #row overflow
+        newmap=np.zeros((n_row,row_error))-1
+        map=np.concatenate([map,newmap],axis=1)
+
+        n_col=np.shape(map)[1]
+
+        #column overflow
+        newmap=np.zeros((col_error,n_col))-1
+        map=np.concatenate([map,newmap],axis=0)
+
+        self.map=map
         self.pose=pose
 
     def getpose(self):
@@ -103,11 +123,11 @@ class Particle:
     def resize(self,map):
         '''Determines whether the robot's internal map is  at risk of being too small and resizes it accordingly'''
         
-        n_row=np.shape(map)[0]
-        n_col=np.shape(map)[1]
+        n_row=np.shape(self.map)[0]
+        n_col=np.shape(self.map)[1]
 
         #I need to go around every edge (with a cushion) and see if I have room to work
-        cushion=40
+        cushion=40 ########################################if these two are added to .yaml file then setpose method also could use these 
         resize_magnitude=200
 
         #unmapped regions will hold a value of -1
