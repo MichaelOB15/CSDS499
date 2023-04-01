@@ -50,8 +50,33 @@ class Node:
         return remove_explored
 
     def get_motion(self, delta_t) -> List[int]:
-        # print(f' curr = {self} next = {self.parent}')
-        return inverse_kinematics(self.pos, self.parent.pos, delta_t)
+        p1 = self.pos
+        p2 = self.parent.pos
+
+        x_hat = p2[1] - p1[1]
+        y_hat = p2[0] - p1[0]
+        theta_hat = p2[2] - p1[2]
+
+        w = theta_hat/delta_t
+
+        if w == 0:
+            v = sqrt(x_hat**2 + y_hat**2)
+        else:
+            # bottom_v1 = -sin(p1[1])+sin(p1[1]+w*delta_t)
+            # bottom_v2 = cos(p1[1])-cos(p1[1]+w*delta_t)
+            # v1 = x_hat*w/(bottom_v1)
+            # v2 = y_hat*w/(bottom_v2)
+            # # print("Turning :(")
+
+            # if x_hat == 0:
+            #     v = v1
+            # elif y_hat == 0:
+            #     v = v2
+
+            v = sqrt(x_hat**2 + y_hat**2)
+            return [[v, 0], [0, w]]
+
+        return [v, w]
 
     def __str__(self) -> str:
         return f'y = {self.pos[0]}, x = {self.pos[1]}, theta = {self.pos[2]},  cost = {self.cost}'
@@ -96,36 +121,6 @@ def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
         node = node.parent
 
     return motions
-
-# TODO maybe nice splines?
-def inverse_kinematics(p1, p2, delta_t) -> List[List[float]]:
-    x_hat = p2[1] - p1[1]
-    y_hat = p2[0] - p1[0]
-    theta_hat = p2[2] - p1[2]
-
-    print(x_hat)
-    print(y_hat)
-
-    w = theta_hat/delta_t
-
-    if w == 0:
-        v = sqrt(x_hat**2 + y_hat**2)
-    else:
-        # bottom_v1 = -sin(p1[1])+sin(p1[1]+w*delta_t)
-        # bottom_v2 = cos(p1[1])-cos(p1[1]+w*delta_t)
-        # v1 = x_hat*w/(bottom_v1)
-        # v2 = y_hat*w/(bottom_v2)
-        # # print("Turning :(")
-
-        # if x_hat == 0:
-        #     v = v1
-        # elif y_hat == 0:
-        #     v = v2
-
-        v = sqrt(x_hat**2 + y_hat**2)
-        return [[v, 0], [0, w]]
-
-    return [v, w]
 
 
 m = [[OPEN, OPEN, OPEN, OPEN, OPEN], [OPEN, WALL, WALL, WALL, OPEN],  [OPEN, WALL, OPEN, OPEN, OPEN], [OPEN, WALL, WALL, WALL, WALL], [OPEN, OPEN, OPEN, OPEN, UNEXPLORED]]
