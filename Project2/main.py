@@ -21,38 +21,44 @@ maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
 maze=maze.out()
 
-############################# MAP CODE ##############################################
-#book has their robot cone opening 15 degrees
-
-a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
-stepsize=5
-
-real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
-
+############################# MEASUREMENT CODE ##############################################
 
 #vis = Visualization(maze, real_pose)
 #this is extra and shouldnt be done until the very end but there's 
 #maybe a way to visualize where we just track the measure particle
 #I cant use the visualize class as I go cuz it's really slow :(
 
+
+a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
+stepsize=5
+real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
 u=np.array([1,0]) #trajectory planning will evenutally be handled by ucs.py
+
+
+
 measure = MeasurementWizard(maze, real_pose)
+z=measure.navigate_maze(u,a,stepsize)
+#z=measure.getZ() #also works
+
+print(z)
 
 
+#this is a mess... I know the ideal_measure code works so i'll rework how these fit together
 
-#these values will eventually be handled inside the object but I want to test them here 
-pose=real_pose
-rmax=30
-dr=0.3
-dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
-
-
-
+'''
+leave this here in case i need to make more sensor measurement photos?
 print(measure.ideal_measure(rmax,dr,dtheta))
 img = maze.copy()
 img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
 measure.navigate_maze(u,a,stepsize)
 
+
+print(measure.ideal_measure(rmax,dr,dtheta))
+img=img+maze.copy()
+img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
+measure.navigate_maze(u,a,stepsize)
+'''
+
 '''
 print(measure.ideal_measure(rmax,dr,dtheta))
 img=img+maze.copy()
@@ -62,17 +68,9 @@ measure.navigate_maze(u,a,stepsize)
 print(measure.ideal_measure(rmax,dr,dtheta))
 img=img+maze.copy()
 img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
-measure.navigate_maze(u,a,stepsize)
-
-print(measure.ideal_measure(rmax,dr,dtheta))
-img=img+maze.copy()
-img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
 '''
 
-
-
-
-
+'''
 #images have high intensity as white so walls need to change to zeros
 for a in range(np.shape(img)[0]):
     for b in range(np.shape(img)[1]):
@@ -89,7 +87,7 @@ img.save("MazeTestingRangefinderFunction.png")
 
 #z=measure.navigate_maze(u) #spits out the measurements
 
-
+'''
 
 #### fastSLAM occupancy grid algorithm ####
 

@@ -100,7 +100,7 @@ class Particle:
         y_update=v/w*cos(theta)-v/w*cos(theta+w*stepsize)
         theta_update=(w+epsilon[2])*stepsize
 
-        self.pose=self.pose+np.array([x_update,y_update,theta_update])
+        self.pose=self.pose+np.array([y_update,x_update,theta_update])
         print(self.pose)
 
    

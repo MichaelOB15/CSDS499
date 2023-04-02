@@ -11,8 +11,6 @@ dtheta
 all of the z probability values that have to add up to 1 in the method above
 '''
 
-#should this be an object?? make it measurementWizard or something and then it can hold the ideal particle and the maze
-
 #we should probably go through this at the end and fix up my weird naming convention etc idk what the standard is
 
 class MeasurementWizard:
@@ -27,25 +25,15 @@ class MeasurementWizard:
         self.ideal.setpose(real_pose)
 
         self.maze=maze
+        self.z=None
 
     def getpose(self):
         return self.ideal.getpose()
-
-    def navigate_maze(self,u,a,stepsize): #work on this last and get these inputs in the config
-        """When passed a trajectory u vector this method will return a set of measurements z"""
-
-        #move particle along trajectory
-        self.ideal.sample_motion_model_velocity(u,a,stepsize) #get a and stepsize out of the method call and into config :(
-
-        #find ideal case for measurement
-
-        #find the real measurements that should be returned according to PDF
-
-        #export measurement vector
-        z=0
-        return z
+    
+    def getZ(self):
+        return self.z.copy()
         
-    def add_error_to_measurement(map,pose): #fix ideal case first
+    def add_error_to_measurement(self): #fix ideal case first
         '''measurement system for a series of range finders, see likelihood_field_range_finder_model on pg 172'''
         # fix up the ideal measurement method and put those values in here. 
         # first line of this should call ideal_measure() and the rest just samples probability
@@ -94,7 +82,25 @@ class MeasurementWizard:
                         break
 
                     #Im using this for testing-- delete later!! this will seriously mess things up but it makes the map boxes grey
-                    map[y,x]=-1
+                    #map[y,x]=-1
 
-        return np.concatenate([rout,theta+pose[2]],axis=0) #z vector
+        self.z = np.concatenate([rout,theta+pose[2]],axis=0) #z vector
 
+    def navigate_maze(self,u,a,stepsize): #work on this last and get these inputs in the config
+            """When passed a trajectory u vector this method will return a set of measurements z"""
+
+            #move particle along trajectory
+            self.ideal.sample_motion_model_velocity(u,a,stepsize) #get a and stepsize out of the method call and into config :(
+            
+            #these values should go in config but I want to test them here
+            rmax=30
+            dr=0.3
+            dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+
+            #ideal real-world positional values
+            self.ideal_measure(rmax,dr,dtheta)
+
+            #find the real measurements that should be returned according to PDF
+            #self.add_error_to_measurement()
+
+            return self.getZ()
