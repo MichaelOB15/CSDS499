@@ -20,7 +20,7 @@ class MeasurementWizard:
     a single particle that knows its position in the map, and the motion of this separate particle is considered to be
     the "real" position of the robot. """
 
-    def __init__(self, real_pose, maze):
+    def __init__(self, maze, real_pose):
         """Initialize variables"""
 
         self.ideal=Particle()
@@ -28,11 +28,11 @@ class MeasurementWizard:
 
         self.maze=maze
 
-    def navigate_maze(self,u):
+    def navigate_maze(self,u): #work on this last
         """When passed a trajectory u vector this method will return a set of measurements z"""
 
         #move particle along trajectory
-        self.ideal.sample_motion_model_velocity() #this not working either
+        self.ideal.sample_motion_model_velocity(u)
 
         #find ideal case for measurement
 
@@ -42,7 +42,7 @@ class MeasurementWizard:
         z=0
         return z
         
-    def add_error_to_measurement(map,pose):
+    def add_error_to_measurement(map,pose): #fix ideal case first
         '''measurement system for a series of range finders, see likelihood_field_range_finder_model on pg 172'''
         # fix up the ideal measurement method and put those values in here. 
         # first line of this should call ideal_measure() and the rest just samples probability
@@ -52,44 +52,44 @@ class MeasurementWizard:
         #generate the pdf for that probability and then do a probabilistic sampling of the function to get an output sensor measurement with noise
 
 
-    def ideal_measure(map,pose,rmax,dr,dtheta): #This wont work and needs testing!! input values are gonna need some help so tune this up
+    def ideal_measure(self,rmax,dr,dtheta): #This wont work and needs testing!! input values are gonna need some help so tune this up
 
         #Import all thetas that have sensors
         #do the math to calculate the phi values associated with the r
+        map=self.maze
+        pose=self.ideal.getpose()
 
-        '''
         # 6 sensors on the robot
-        k=6
+        num_sensors=6
 
-        #initial probability is 1
-        q=1
-
-        for i in range(k):
-            pass
-
-        #sensors are at multiples of 2pi/6
-        pass
-        '''
-
+        # each sensor is pointing in equidistant directions from 0 to 2pi
+        theta=np.zeros(num_sensors)
+        for i in range(num_sensors):
+            theta[i]=i*2*pi/num_sensors
+        
         r_steps=int(rmax/dr)
-        theta_steps=int(pose[2]/dtheta)
+        theta_steps=int(pose[2]/dtheta) #beam width code implemented here??
 
-        rout=rmax
+        rout=np.zeros(num_sensors)+rmax
 
-        #fix this so it starts from one side fo the theta in question and goes over the whole space
-        for i in range(theta_steps):
-            for j in range(r_steps):
-                theta=pose[2]+i*dr
-                r=j*dr
+        for s in range(num_sensors):
 
-                x=pose[1]+r*cos(theta)
-                y=pose[0]+r*sin(theta)
+            #fix this so it starts from one side for the theta in question and goes over the whole space
+            for i in range(theta_steps):
+                for j in range(r_steps):
+                    theta=theta[s]+pose[2]+i*dtheta
+                    r=j*dr
 
-                #go through every possible r, theta position in this wedge and find the smallest possible r
-                if (map[y,x]==1):
-                    if (r<rout):
-                        rout=r
-                    break
+                    #this doesnt work yet :( I need to put a beam width on my sensor and it goes in this block here
 
-        return rout #This needs to be assembled into a z vector!
+                    x=pose[1]+r*cos(theta[s])
+                    y=pose[0]+r*sin(theta[s])
+
+                    #go through every possible r, theta position in this wedge and find the smallest possible r
+                    if (map[y,x]==1):
+                        if (r<rout[s]):
+                            rout[s]=r
+                        break
+
+        return np.concatenate([rout,theta],axis=0) #z vector
 

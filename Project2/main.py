@@ -29,15 +29,25 @@ stepsize=1
 
 real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
 
-measure = MeasurementWizard(real_pose)
-vis = Visualization(maze, real_pose) 
+
+#vis = Visualization(maze, real_pose)
 #this is extra and shouldnt be done until the very end but there's 
 #maybe a way to visuaize where we just track the measure particle
 
-
 u=np.array([pi/2,pi/2]) #trajectory planning will evenutally be handled by ucs.py
+measure = MeasurementWizard(maze, real_pose)
 
-z=measure.navigate_maze(u) #spits out the measurements
+
+
+#these values will eventually be handled inside the object but I want to test them here 
+pose=real_pose
+rmax=30
+dr=0.3
+dtheta=2*pi/360
+
+print(measure.ideal_measure(rmax,dr,dtheta))
+
+#z=measure.navigate_maze(u) #spits out the measurements
 
 
 

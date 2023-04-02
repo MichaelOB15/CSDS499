@@ -31,24 +31,32 @@ class Particle:
 
 
     def setpose(self,pose):
-        #method has the potential to leave the map
+        #pose has the potential to leave the map
         map=self.map
 
-        #map will be expanded by the difference between the default pose plus a cushion (repeatedly setting pose will increase map size)
-        row_error=self.pose[0]-pose[0]+self.row #instead of having the cushion be the size of the map use values from .yaml file
-        col_error=self.pose[1]-pose[1]+self.col #im talking about these self.col/row values
+        #map will be expanded by the difference between the default pose plus a cushion
+        cushion=50 #note that this method means repeated setpose() calls will repeatedly upsize the map
+        
+        row_error=self.pose[0]-pose[0] +cushion #instead of having the cushion be the size of the map use values from .yaml file
+        col_error=self.pose[1]-pose[1] +cushion
+        
+        #value needs to be an integer greater than zero
+        if row_error<1:
+            row_error=1
+        if col_error<1:
+            col_error=1
+            
+        n_col=np.shape(map)[1]
+        
+        #row overflow code seen in resize()
+        newmap=np.zeros((int(row_error),n_col))-1
+        map=np.concatenate([map,newmap],axis=0)
 
         n_row=np.shape(map)[0]
-        
-        #row overflow
-        newmap=np.zeros((n_row,row_error))-1
+
+        #column overflow code seen in resize()
+        newmap=np.zeros((n_row,int(col_error)))-1
         map=np.concatenate([map,newmap],axis=1)
-
-        n_col=np.shape(map)[1]
-
-        #column overflow
-        newmap=np.zeros((col_error,n_col))-1
-        map=np.concatenate([map,newmap],axis=0)
 
         self.map=map
         self.pose=pose
