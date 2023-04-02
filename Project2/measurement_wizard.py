@@ -28,11 +28,14 @@ class MeasurementWizard:
 
         self.maze=maze
 
-    def navigate_maze(self,u): #work on this last
+    def getpose(self):
+        return self.ideal.getpose()
+
+    def navigate_maze(self,u,a,stepsize): #work on this last and get these inputs in the config
         """When passed a trajectory u vector this method will return a set of measurements z"""
 
         #move particle along trajectory
-        self.ideal.sample_motion_model_velocity(u)
+        self.ideal.sample_motion_model_velocity(u,a,stepsize) #get a and stepsize out of the method call and into config :(
 
         #find ideal case for measurement
 
@@ -52,14 +55,12 @@ class MeasurementWizard:
         #generate the pdf for that probability and then do a probabilistic sampling of the function to get an output sensor measurement with noise
 
 
-    def ideal_measure(self,rmax,dr,dtheta): #This wont work and needs testing!! input values are gonna need some help so tune this up
-
-        #Import all thetas that have sensors
-        #do the math to calculate the phi values associated with the r
+    def ideal_measure(self,rmax,dr,dtheta):
+        
         map=self.maze
         pose=self.ideal.getpose()
 
-        # 6 sensors on the robot
+        # 6 sensors on the robot, put this in config
         num_sensors=6
 
         # each sensor is pointing in equidistant directions from 0 to 2pi
@@ -67,29 +68,33 @@ class MeasurementWizard:
         for i in range(num_sensors):
             theta[i]=i*2*pi/num_sensors
         
+        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        spread = beam_width*pi/180
+
         r_steps=int(rmax/dr)
-        theta_steps=int(pose[2]/dtheta) #beam width code implemented here??
+        theta_steps=int(spread/dtheta)
 
         rout=np.zeros(num_sensors)+rmax
 
         for s in range(num_sensors):
 
-            #fix this so it starts from one side for the theta in question and goes over the whole space
             for i in range(theta_steps):
                 for j in range(r_steps):
-                    theta=theta[s]+pose[2]+i*dtheta
-                    r=j*dr
 
-                    #this doesnt work yet :( I need to put a beam width on my sensor and it goes in this block here
+                    temp_angle=pose[2]+theta[s]-spread/2+i*dtheta
+                    temp_r=j*dr
 
-                    x=pose[1]+r*cos(theta[s])
-                    y=pose[0]+r*sin(theta[s])
+                    x=int(pose[1]+temp_r*cos(temp_angle))
+                    y=int(pose[0]+temp_r*sin(temp_angle))
 
                     #go through every possible r, theta position in this wedge and find the smallest possible r
                     if (map[y,x]==1):
-                        if (r<rout[s]):
-                            rout[s]=r
+                        if (temp_r<rout[s]):
+                            rout[s]=temp_r
                         break
 
-        return np.concatenate([rout,theta],axis=0) #z vector
+                    #Im using this for testing-- delete later!! this will seriously mess things up but it makes the map boxes grey
+                    map[y,x]=-1
+
+        return np.concatenate([rout,theta+pose[2]],axis=0) #z vector
 

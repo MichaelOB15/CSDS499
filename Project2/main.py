@@ -25,16 +25,17 @@ maze=maze.out()
 #book has their robot cone opening 15 degrees
 
 a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
-stepsize=1
+stepsize=5
 
 real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
 
 
 #vis = Visualization(maze, real_pose)
 #this is extra and shouldnt be done until the very end but there's 
-#maybe a way to visuaize where we just track the measure particle
+#maybe a way to visualize where we just track the measure particle
+#I cant use the visualize class as I go cuz it's really slow :(
 
-u=np.array([pi/2,pi/2]) #trajectory planning will evenutally be handled by ucs.py
+u=np.array([1,0]) #trajectory planning will evenutally be handled by ucs.py
 measure = MeasurementWizard(maze, real_pose)
 
 
@@ -43,9 +44,48 @@ measure = MeasurementWizard(maze, real_pose)
 pose=real_pose
 rmax=30
 dr=0.3
-dtheta=2*pi/360
+dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+
+
 
 print(measure.ideal_measure(rmax,dr,dtheta))
+img = maze.copy()
+img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
+measure.navigate_maze(u,a,stepsize)
+
+'''
+print(measure.ideal_measure(rmax,dr,dtheta))
+img=img+maze.copy()
+img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
+measure.navigate_maze(u,a,stepsize)
+
+print(measure.ideal_measure(rmax,dr,dtheta))
+img=img+maze.copy()
+img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
+measure.navigate_maze(u,a,stepsize)
+
+print(measure.ideal_measure(rmax,dr,dtheta))
+img=img+maze.copy()
+img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
+'''
+
+
+
+
+
+#images have high intensity as white so walls need to change to zeros
+for a in range(np.shape(img)[0]):
+    for b in range(np.shape(img)[1]):
+        if (img[a,b]<0):
+            img[a,b]=100
+        if (img[a,b]==0):
+            img[a,b]=255
+        if (img[a,b]==1):
+            img[a,b]=0
+
+img = Image.fromarray(img.astype('uint8'))
+img.show()
+img.save("MazeTestingRangefinderFunction.png")
 
 #z=measure.navigate_maze(u) #spits out the measurements
 
