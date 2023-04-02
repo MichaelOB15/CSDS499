@@ -4,12 +4,11 @@ from particle import Particle
 from PIL import Image
 from math import pi
 from visualize import Visualization
-
 from measurement_wizard import MeasurementWizard
 
 
 #imports need to be fixed at the end once these files are finished
-
+#we should probably go through this at the end and fix up my weird naming conventions etc idk what the standard is
 
 ############################ MAZE CODE #############################################
 
@@ -29,65 +28,16 @@ maze=maze.out()
 #I cant use the visualize class as I go cuz it's really slow :(
 
 
-a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 stepsize=5
 real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
 u=np.array([1,0]) #trajectory planning will evenutally be handled by ucs.py
 
-
-
 measure = MeasurementWizard(maze, real_pose)
-z=measure.navigate_maze(u,a,stepsize)
+z=measure.navigate_maze(u,stepsize)
 #z=measure.getZ() #also works
 
 print(z)
 
-
-#this is a mess... I know the ideal_measure code works so i'll rework how these fit together
-
-'''
-leave this here in case i need to make more sensor measurement photos?
-print(measure.ideal_measure(rmax,dr,dtheta))
-img = maze.copy()
-img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
-measure.navigate_maze(u,a,stepsize)
-
-
-print(measure.ideal_measure(rmax,dr,dtheta))
-img=img+maze.copy()
-img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
-measure.navigate_maze(u,a,stepsize)
-'''
-
-'''
-print(measure.ideal_measure(rmax,dr,dtheta))
-img=img+maze.copy()
-img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
-measure.navigate_maze(u,a,stepsize)
-
-print(measure.ideal_measure(rmax,dr,dtheta))
-img=img+maze.copy()
-img[int(measure.getpose()[0]),int(measure.getpose()[1])]=1
-'''
-
-'''
-#images have high intensity as white so walls need to change to zeros
-for a in range(np.shape(img)[0]):
-    for b in range(np.shape(img)[1]):
-        if (img[a,b]<0):
-            img[a,b]=100
-        if (img[a,b]==0):
-            img[a,b]=255
-        if (img[a,b]==1):
-            img[a,b]=0
-
-img = Image.fromarray(img.astype('uint8'))
-img.show()
-img.save("MazeTestingRangefinderFunction.png")
-
-#z=measure.navigate_maze(u) #spits out the measurements
-
-'''
 
 #### fastSLAM occupancy grid algorithm ####
 
@@ -124,6 +74,7 @@ img.save("MazeTestingRangefinderFunction.png")
 This shows a map including the unmapped spaces
 img=belief_map.copy()
 
+#images have high intensity as white so walls need to change to zeros
 for a in range(np.shape(belief_map)[0]):
     for b in range(np.shape(belief_map)[1]):
         if (img[a,b]==-1):

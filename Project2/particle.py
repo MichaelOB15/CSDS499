@@ -1,22 +1,15 @@
 import numpy as np
 from math import sin, cos, sqrt
 
-
-'''
-    things to put in config.yaml:
-    initial map sizes for the particle
-    a
-    stepsize
-    offset
-    
-'''
-
 class Particle:
     def __init__(self):
         """Initialize the particle at the center of its internal map."""
 
         #initial map size without any resizes
         row,col=300,300
+
+        #error matrix-- this might be a weird place to put this but it's the same between all robots
+        self.a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 
         #initial condition
         self.map=np.zeros((row,col))-1
@@ -25,7 +18,7 @@ class Particle:
         self.measurements=None
 
 
-    #there should be a particle.update(u) that runs the three update commands... ORDER MATTERS. implement this last
+    #there should be a particle.recieve_measurement(z)? or not
 
     #use pg 478 as a reference for an overview of the full algorithm
 
@@ -64,8 +57,10 @@ class Particle:
     def getpose(self):
         return self.pose
 
-    def sample_motion_model_velocity(self,u0,a,stepsize):
+    def sample_motion_model_velocity(self,u0,stepsize):
         '''Move the location of the robot with trajectory error'''
+
+        a=self.a
 
         v=u0[0]
         w=u0[1]
@@ -101,10 +96,9 @@ class Particle:
         theta_update=(w+epsilon[2])*stepsize
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
-        print(self.pose)
 
    
-    def measurement_model_map(self,map,z): #z in this method comes from measurement.py and is sent in from the main.py script
+    def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
         '''Set the weight of the particle'''
 
         #algorithm on pg 288
@@ -112,7 +106,7 @@ class Particle:
         #I think the algo for the next method is on pg 286
         pass
 
-    def updated_occupancy_grid():
+    def update_occupancy_grid(self):
         '''update the map based on measurement data'''
         
 
