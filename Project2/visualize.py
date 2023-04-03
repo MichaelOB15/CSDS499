@@ -2,6 +2,7 @@ from typing import List
 from matplotlib import pyplot as plt, patches
 from math import sin, cos
 import numpy as np
+import time
 
 
 RADIUS = 3
@@ -12,11 +13,12 @@ class Visualization:
 
     def __init__(self, m: List[List[int]], starting_pos: List[int]):
         """Constructor for the Visualization Object and Draws Initial State"""
+        plt.ion()
         self.m = np.abs(m-1)
         self.pos = starting_pos
         self.path: List[List[int]] = [starting_pos]
         assert len(starting_pos) >= 2
-        fig, self.ax = plt.subplots(1)
+        self.fig, self.ax = plt.subplots(1)
         self.visualize()
 
     def update(self, m: List[List[int]], new_pos: List[int], draw: bool = True):
@@ -25,7 +27,7 @@ class Visualization:
         self.path.append(new_pos)
         self.pos = new_pos
         if draw:
-            fig, self.ax = plt.subplots(1)
+            # fig, self.ax = plt.subplots(1)
             self.draw_movement()
             self.visualize()
 
@@ -35,9 +37,11 @@ class Visualization:
         circle1 = patches.Circle((self.pos[0], self.pos[1]), RADIUS, color='blue')
         self.ax.add_patch(circle1)
         self.draw_direction()
-        plt.show(block=False)
-        plt.pause(0.5)
-        plt.close()
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        time.sleep(0.25)
+        # plt.pause(1)
+        # plt.close()
 
     def draw_direction(self):
         x_0 = self.pos[0]
@@ -53,4 +57,4 @@ class Visualization:
         for pos in self.path:
             x.append(pos[0])
             y.append(pos[1])
-        self.ax.plot(x, y)
+        self.ax.plot(x, y, color='blue')
