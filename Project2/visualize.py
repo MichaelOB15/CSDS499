@@ -39,9 +39,7 @@ class Visualization:
         self.draw_direction()
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        time.sleep(0.25)
-        # plt.pause(1)
-        # plt.close()
+        plt.show(block=False)
 
     def draw_direction(self):
         x_0 = self.pos[0]
