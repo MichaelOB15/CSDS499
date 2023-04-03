@@ -49,9 +49,9 @@ class Node:
 
         return remove_explored
 
-    def get_motion(self, delta_t) -> List[int]:
-        p1 = self.pos
-        p2 = self.parent.pos
+    def get_motion(self, next_node: Any, delta_t) -> List[float]:
+        p2 = self.pos
+        p1 = next_node.pos
 
         x_hat = p2[1] - p1[1]
         y_hat = p2[0] - p1[0]
@@ -79,7 +79,7 @@ class Node:
         return [v, w]
 
     def __str__(self) -> str:
-        return f'y = {self.pos[0]}, x = {self.pos[1]}, theta = {self.pos[2]},  cost = {self.cost}'
+        return f'x = {self.pos[1]}, y = {self.pos[0]}, theta = {self.pos[2]},  cost = {self.cost}'
 
 
 # Returns index of nearest UNEXPLORED
@@ -109,18 +109,18 @@ def nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
     raise ValueError("No unexplored space found")
 
 
-def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
-    motions: List[List[int]] = []
-    while node.parent is not None:
-        motion = node.get_motion(delta_t)
-        if type(motion[0]) != float:
-            motions.insert(0, motion[1])
-            motions.insert(0, motion[0])
-        else:
-            motions.insert(0, motion)
-        node = node.parent
+# def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
+#     motions: List[List[int]] = []
+#     while node.parent is not None:
+#         motion = node.get_motion(delta_t)
+#         if type(motion[0]) != float:
+#             motions.insert(0, motion[1])
+#             motions.insert(0, motion[0])
+#         else:
+#             motions.insert(0, motion)
+#         node = node.parent
 
-    return motions
+#     return motions
 
 
 # m = [[OPEN, OPEN, OPEN, OPEN, OPEN], [OPEN, WALL, WALL, WALL, OPEN],  [OPEN, WALL, OPEN, OPEN, OPEN], [OPEN, WALL, WALL, WALL, WALL], [OPEN, OPEN, OPEN, OPEN, UNEXPLORED]]
@@ -128,12 +128,12 @@ def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
 # m = np.array([[WALL, WALL, WALL, WALL], [WALL, WALL, WALL, WALL], [UNEXPLORED, OPEN, OPEN, OPEN], [WALL, WALL, WALL, WALL]])
 # start_pos = np.array([3, 2, 0])
 
-nx, ny = 3, 3
+nx, ny = 10, 10
 # Maze entry position
 ix, iy = 0, 0
 
 # allows passageways to have widths
-scaling = 4
+scaling = 8
 
 maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
@@ -144,30 +144,55 @@ m = maze.out()
 for i in range(len(m)):
     for j in range(scaling):
         m[i][j] = UNEXPLORED
-print(m)
+# print(m)
 
-start_pos = [floor(len(m[0])/2) - 0, floor(len(m)/2) - 0, 0]
+start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
 
 viz = Visualization(m, start_pos)
 # a = np.zeros([1, 6])
-a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+# a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 
 node = nearest_unexplored(m, start_pos)
 
+node_list: List[Node] = []
+
+tmp = node
+
+# Flips path
+while tmp is not None:
+    node_list.insert(0, tmp)
+    tmp = tmp.parent
+
+for node in node_list:
+    print(node)
+
 delta_t = 1
-
-discrete_path = generate_discrete_path(node, delta_t)
-print(discrete_path)
 x_t_next = start_pos
-
 counter = 0
 
-for command in discrete_path:
-    # TODO walls lmao
-    x_t_next = Robot_motion(command, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+# while UNEXPLORED in m:
+for i in range(len(node_list) - 1):
     print(x_t_next)
-    # if counter % 5 == 0:
-    viz.update(m, x_t_next, counter % 5 == 0)
-    counter = counter + 1
+    # TODO walls lmao
+    # command = [1, 0]
+    motions = node_list[i].get_motion(node_list[i + 1], delta_t)
 
+    # print(motions)
+    # print(type(motions))
+    assert len(motions) > 1
+
+    if type(motions[0]) == float:
+
+        x_t_next = Robot_motion(motions, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+        # print(x_t_next)
+        # if counter % 5 == 0:
+        viz.update(m, x_t_next, counter % 40 == 0)
+    else:
+        # print(motions)
+        x_t_next = Robot_motion(motions[0], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+        x_t_next = Robot_motion(motions[1], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+
+    counter = counter + 1
+print(x_t_next)
 viz.update(m, x_t_next)
