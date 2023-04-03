@@ -81,8 +81,19 @@ class Node:
         return f'x = {self.pos[1]}, y = {self.pos[0]}, theta = {self.pos[2]},  cost = {self.cost}'
 
 
+def nearest_list(m: List[List[int]], pos: List[int]) -> List[Node]:
+    tmp: Node = _nearest_unexplored(m, pos)
+
+    node_list: List[Node] = []
+    # Flips path
+    while tmp is not None:
+        node_list.insert(0, tmp)
+        tmp = tmp.parent
+    return node_list
+
+
 # Returns index of nearest UNEXPLORED
-def nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
+def _nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
     robot_x_in_m = floor(pos[0])
     robot_y_in_m = floor(pos[1])
     robot_theta = pos[2]
@@ -143,7 +154,7 @@ m = maze.out()
 for i in range(scaling, 2*scaling):
     for j in range(scaling):
         m[i][j] = UNEXPLORED
-# print(m)
+
 
 start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
 
@@ -153,16 +164,7 @@ viz = Visualization(m, start_pos)
 # a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 
-node = nearest_unexplored(m, start_pos)
-
-node_list: List[Node] = []
-
-tmp = node
-
-# Flips path
-while tmp is not None:
-    node_list.insert(0, tmp)
-    tmp = tmp.parent
+node_list: List[Node] = nearest_list(m, start_pos)
 
 for node in node_list:
     print(node)
