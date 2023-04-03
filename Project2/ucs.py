@@ -173,15 +173,7 @@ counter = 0
 
 # while UNEXPLORED in m:
 for i in range(len(node_list) - 1):
-    print(x_t_next)
-    # TODO walls lmao
-    # command = [1, 0]
     motions = node_list[i].get_motion(node_list[i + 1], delta_t)
-
-
-    # print(motions)
-    # print(type(motions))
-    assert len(motions) > 1
 
     if type(motions[0]) == float:
 
