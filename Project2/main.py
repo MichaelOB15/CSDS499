@@ -1,39 +1,38 @@
 import numpy as np
 from maze import Maze
 from particle import Particle
-from PIL import Image
 from math import pi
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
 
 
-#imports need to be fixed at the end once these files are finished
-#we should probably go through this at the end and fix up my weird naming conventions etc idk what the standard is
+# imports need to be fixed at the end once these files are finished
+# we should probably go through this at the end and fix up my weird naming conventions etc idk what the standard is
 
 ############################ MAZE CODE #############################################
 
 nx, ny = 5, 5
-ix, iy = 0, 0 # Maze entry position
-scaling=30
+ix, iy = 0, 0  # Maze entry position
+scaling = 30
 
 maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
-maze=maze.out()
+maze = maze.out()
 
 ############################# MEASUREMENT CODE ##############################################
 
-#vis = Visualization(maze, real_pose)
-#this is extra and shouldnt be done until the very end but there's 
-#maybe a way to visualize where we just track the measure particle
-#I cant use the visualize class as I go cuz it's really slow :(
+# vis = Visualization(maze, real_pose)
+# this is extra and shouldnt be done until the very end but there's
+# maybe a way to visualize where we just track the measure particle
+# I cant use the visualize class as I go cuz it's really slow :(
 
 
-stepsize=5
-real_pose=np.array([maze.shape[0]/2,maze.shape[1]/2,0]) #the initial position of the robot is set here
-u=np.array([1,0]) #trajectory planning will evenutally be handled by ucs.py
+stepsize = 5
+real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
+u = np.array([1, 0])  # trajectory planning will evenutally be handled by ucs.py
 
 measure = MeasurementWizard(maze, real_pose)
-z=measure.navigate_maze(u,stepsize)
+z = measure.navigate_maze(u, stepsize)
 #z=measure.getZ() #also works
 
 print(z)
@@ -41,21 +40,19 @@ print(z)
 
 #### fastSLAM occupancy grid algorithm ####
 
-#an array of particles updates every particle with these three methods (input should be a movement u vector)
+# an array of particles updates every particle with these three methods (input should be a movement u vector)
 
-#based on the weights calculated internal to the particle the particles are resampled particle filter style
+# based on the weights calculated internal to the particle the particles are resampled particle filter style
 
-#the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
+# the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
 
 #### end of fastSLAM algo ####
 
 
 
 
-#a normal way to test this without trajectory code would be to just slowly spin in a circle and 
-#keep the range of the sensor high enough to see all the walls...
-
-
+# a normal way to test this without trajectory code would be to just slowly spin in a circle and
+# keep the range of the sensor high enough to see all the walls...
 
 
 
