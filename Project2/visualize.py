@@ -56,3 +56,6 @@ class Visualization:
             x.append(pos[0])
             y.append(pos[1])
         self.ax.plot(x, y, color='blue')
+
+    def pause(self):
+        plt.pause(5)

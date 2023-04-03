@@ -3,8 +3,7 @@ from typing import List, Tuple, Any, Union, Dict
 from math import floor
 from visualize import Visualization
 from robot_motion import Robot_motion, in_wall
-import numpy as np
-from math import sin, cos, pi, sqrt
+from math import pi, sqrt
 from maze import Maze
 
 
@@ -94,7 +93,7 @@ def nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
     queue: deque[Node] = deque()
     queue.append(Node(None, pos, 0))
     explored.update({pos: Node(None, pos, 0)})
-    while len(queue) >= 1:
+    while queue:
 
         node = queue.popleft()
         if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
@@ -141,7 +140,7 @@ maze.make_maze()
 
 # m is 2D matrix
 m = maze.out()
-for i in range(len(m)):
+for i in range(scaling, 2*scaling):
     for j in range(scaling):
         m[i][j] = UNEXPLORED
 # print(m)
@@ -149,6 +148,8 @@ for i in range(len(m)):
 start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
 
 viz = Visualization(m, start_pos)
+
+
 # a = np.zeros([1, 6])
 # a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
@@ -187,5 +188,5 @@ for i in range(len(node_list) - 1):
         x_t_next = Robot_motion(motions[1], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
 
     counter = counter + 1
-print(x_t_next)
 viz.update(m, x_t_next)
+viz.pause()
