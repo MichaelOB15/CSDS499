@@ -149,7 +149,6 @@ start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
 
 viz = Visualization(m, start_pos)
 
-
 # a = np.zeros([1, 6])
 # a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
@@ -170,7 +169,6 @@ for node in node_list:
 
 delta_t = 1
 x_t_next = start_pos
-counter = 0
 
 # while UNEXPLORED in m:
 for i in range(len(node_list) - 1):
@@ -181,12 +179,11 @@ for i in range(len(node_list) - 1):
         x_t_next = Robot_motion(motions, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
         # print(x_t_next)
         # if counter % 5 == 0:
-        viz.update(m, x_t_next, counter % 40 == 0)
+        viz.update(m, x_t_next, i % 40 == 0)
     else:
         # print(motions)
         x_t_next = Robot_motion(motions[0], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
         x_t_next = Robot_motion(motions[1], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
 
-    counter = counter + 1
 viz.update(m, x_t_next)
 viz.pause()
