@@ -19,14 +19,15 @@ class Visualization:
         fig, self.ax = plt.subplots(1)
         self.visualize()
 
-    def update(self, m: List[List[int]], new_pos: List[int]):
+    def update(self, m: List[List[int]], new_pos: List[int], draw: bool = True):
         """Takes an updated position and generates a plot with the updated path built upon previous positions"""
-        fig, self.ax = plt.subplots(1)
         self.m = np.abs(m-1)
         self.path.append(new_pos)
         self.pos = new_pos
-        self.draw_movement()
-        self.visualize()
+        if draw:
+            fig, self.ax = plt.subplots(1)
+            self.draw_movement()
+            self.visualize()
 
     def visualize(self):
         """Helper method to plot Maze and Robot within Maze"""

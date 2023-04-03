@@ -128,12 +128,12 @@ def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
 # m = np.array([[WALL, WALL, WALL, WALL], [WALL, WALL, WALL, WALL], [UNEXPLORED, OPEN, OPEN, OPEN], [WALL, WALL, WALL, WALL]])
 # start_pos = np.array([3, 2, 0])
 
-nx, ny = 10, 10
+nx, ny = 3, 3
 # Maze entry position
 ix, iy = 0, 0
 
 # allows passageways to have widths
-scaling = 5
+scaling = 4
 
 maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
@@ -146,10 +146,11 @@ for i in range(len(m)):
         m[i][j] = UNEXPLORED
 print(m)
 
-start_pos = [floor(len(m[0])/2) - scaling, floor(len(m)/2) - scaling, 0]
+start_pos = [floor(len(m[0])/2) - 0, floor(len(m)/2) - 0, 0]
 
 viz = Visualization(m, start_pos)
-a = np.zeros([1, 6])
+# a = np.zeros([1, 6])
+a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
 node = nearest_unexplored(m, start_pos)
 
@@ -165,8 +166,8 @@ for command in discrete_path:
     # TODO walls lmao
     x_t_next = Robot_motion(command, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
     print(x_t_next)
-    if counter % 5 == 0:
-        viz.update(m, x_t_next)
+    # if counter % 5 == 0:
+    viz.update(m, x_t_next, counter % 5 == 0)
     counter = counter + 1
 
 viz.update(m, x_t_next)
