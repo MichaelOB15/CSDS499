@@ -4,7 +4,7 @@ from math import sin, cos
 import numpy as np
 
 
-RADIUS = 0.75/2
+RADIUS = 0.25
 
 
 class Visualization:
@@ -35,7 +35,7 @@ class Visualization:
         self.ax.add_patch(circle1)
         self.draw_direction()
         plt.show(block=False)
-        plt.pause(10)
+        plt.pause(0.5)
         plt.close()
 
     def draw_direction(self):

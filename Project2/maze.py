@@ -2,6 +2,7 @@
 import random
 import numpy as np
 
+
 class Cell:
     """A cell in the maze.
     A maze "Cell" is a point in the grid which may be surrounded by walls to
@@ -40,7 +41,7 @@ class Maze:
         self.nx, self.ny = nx, ny
         self.ix, self.iy = ix, iy
 
-        self.scaling=scaling
+        self.scaling = scaling
 
         self.maze_map = [[Cell(x, y) for y in range(ny)] for x in range(nx)]
 
@@ -61,8 +62,8 @@ class Maze:
         for x in range(self.nx):
             for y in range(self.ny):
 
-            # Draw the "South" and "East" walls of each cell, if present (these
-            # are the "North" and "West" walls of a neighbouring cell)
+                # Draw the "South" and "East" walls of each cell, if present (these
+                # are the "North" and "West" walls of a neighbouring cell)
 
                 xindex=x*2+1
                 yindex=y*2+1
