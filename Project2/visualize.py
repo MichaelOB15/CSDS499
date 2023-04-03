@@ -4,7 +4,7 @@ from math import sin, cos
 import numpy as np
 
 
-RADIUS = 1
+RADIUS = 3
 
 
 class Visualization:

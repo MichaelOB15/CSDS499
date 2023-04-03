@@ -1,37 +1,92 @@
 import numpy as np
 import math
+from typing import List
+from math import floor, ceil, sqrt
+from visualize import RADIUS
+
+SQUARE_SIZE = 1
+WALL = 1
 
 
 class Robot_motion:
 
-    def __init__(self, u_t, x_t_1, alpha, delta_t):
+    def __init__(self, u_t, x_t_1, alpha, delta_t, maze: List[List[float]], change_in_t: float):
         u_t[1] += 10**(-6)
         self.u_t = u_t
         self.x_t_1 = x_t_1
         self.alpha = alpha
         self.delta_t = delta_t
+        self.m = maze
+        self.change_in_t = change_in_t
 
     def sample_motion_model_velocity(self):
-        try:
-            v_hat = self.u_t[0] + self.sample(self.alpha[0]*(self.u_t[0]**2)+self.alpha[1]*(self.u_t[1]**2))
-            w_hat = self.u_t[1] + self.sample(self.alpha[2]*(self.u_t[0]**2)+self.alpha[3]*(self.u_t[1]**2))
-            gamma_hat = self.sample(self.alpha[4]*(self.u_t[0]**2)+self.alpha[5]*(self.u_t[1]**2))
+        while True:
+            if self.delta_t <= 0:
+                return self.x_t_1
+            try:
+                v_hat = self.u_t[0] + self.sample(self.alpha[0]*(self.u_t[0]**2)+self.alpha[1]*(self.u_t[1]**2))
+                w_hat = self.u_t[1] + self.sample(self.alpha[2]*(self.u_t[0]**2)+self.alpha[3]*(self.u_t[1]**2))
+                gamma_hat = self.sample(self.alpha[4]*(self.u_t[0]**2)+self.alpha[5]*(self.u_t[1]**2))
 
-            new_x = self.x_t_1[0] - (v_hat/w_hat)*math.sin(self.x_t_1[2]) + (v_hat/w_hat)*math.sin(self.x_t_1[2]+w_hat*self.delta_t)
-            new_y = self.x_t_1[1] + (v_hat/w_hat)*math.cos(self.x_t_1[2]) - (v_hat/w_hat)*math.cos(self.x_t_1[2]+w_hat*self.delta_t)
-            new_theta = self.x_t_1[2] + w_hat*self.delta_t + gamma_hat*self.delta_t
+                new_x = self.x_t_1[0] - (v_hat/w_hat)*math.sin(self.x_t_1[2]) + (v_hat/w_hat)*math.sin(self.x_t_1[2]+w_hat*self.delta_t)
+                new_y = self.x_t_1[1] + (v_hat/w_hat)*math.cos(self.x_t_1[2]) - (v_hat/w_hat)*math.cos(self.x_t_1[2]+w_hat*self.delta_t)
+                new_theta = self.x_t_1[2] + w_hat*self.delta_t + gamma_hat*self.delta_t
 
-            return [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
-        except:
-            print(self.u_t)
-            print(self.x_t_1)
+                pos = [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
+                if not in_wall(self.m, pos):
+                    return pos
+                else:
+                    self.delta_t = self.delta_t - self.change_in_t
+            except Exception:
+                print(self.u_t)
+                print(self.x_t_1)
 
     def actual_motion_model_velocity(self):
-        new_x = self.x_t_1[0] - (self.u_t[0]/self.u_t[1])*math.sin(self.x_t_1[2]) + (self.u_t[0]/self.u_t[1])*math.sin(self.x_t_1[2]+self.u_t[1]*self.delta_t)
-        new_y = self.x_t_1[1] + (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]) - (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]+self.u_t[1]*self.delta_t)
-        new_theta = self.x_t_1[2] + self.u_t[1]*self.delta_t
+        while True:
+            if self.delta_t <= 0:
+                return self.x_t_1
 
-        return [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
+            new_x = self.x_t_1[0] - (self.u_t[0]/self.u_t[1])*math.sin(self.x_t_1[2]) + (self.u_t[0]/self.u_t[1])*math.sin(self.x_t_1[2]+self.u_t[1]*self.delta_t)
+            new_y = self.x_t_1[1] + (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]) - (self.u_t[0]/self.u_t[1])*math.cos(self.x_t_1[2]+self.u_t[1]*self.delta_t)
+            new_theta = self.x_t_1[2] + self.u_t[1]*self.delta_t
+
+            pos = [round(new_x, 3), round(new_y, 3), round(new_theta, 3)]
+            if not in_wall(self.m, pos):
+                return pos
+            else:
+                self.delta_t = self.delta_t - self.change_in_t
 
     def sample(self, b):
         return np.random.normal(0, b)
+
+
+# magic math https://math.stackexchange.com/questions/2984061/cover-a-circle-with-squares
+def in_wall(m, pos):
+    x_in_m = floor(pos[0])
+    y_in_m = floor(pos[1])
+
+    lambdaval = RADIUS/SQUARE_SIZE
+
+    assert lambdaval >= 1
+
+    for x in range(floor(lambdaval)):
+        y = ceil(sqrt(lambdaval**2 - x**2))
+        if m[y_in_m + y][x_in_m + x] == WALL:
+            return True
+
+    for x in range(floor(lambdaval)):
+        y = ceil(sqrt(lambdaval**2 - x**2))
+        if m[y_in_m + y][x_in_m - x] == WALL:
+            return True
+
+    for x in range(floor(lambdaval)):
+        y = ceil(sqrt(lambdaval**2 - x**2))
+        if m[y_in_m - y][x_in_m - x] == WALL:
+            return True
+
+    for x in range(floor(lambdaval)):
+        y = ceil(sqrt(lambdaval**2 - x**2))
+        if m[y_in_m - y][x_in_m + x] == WALL:
+            return True
+
+    return False

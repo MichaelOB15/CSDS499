@@ -2,7 +2,7 @@ from collections import deque
 from typing import List, Tuple, Any, Union, Dict
 from math import floor
 from visualize import Visualization
-from robot_motion import Robot_motion
+from robot_motion import Robot_motion, in_wall
 import numpy as np
 from math import sin, cos, pi, sqrt
 from maze import Maze
@@ -27,19 +27,19 @@ class Node:
         x = self.pos[1]
 
         if y - 1 >= 0:
-            if m[y - 1][x] != WALL:
+            if not in_wall(m, (x, y - 1)):
                 children.append(Node(self, (y - 1, x, pi/2), self.cost + 1))
 
         if y + 1 < len(m):
-            if m[y + 1][x] != WALL:
+            if not in_wall(m, (x, y + 1)):
                 children.append(Node(self, (y + 1, x, -pi/2), self.cost + 1))
 
         if x - 1 >= 0:
-            if m[y][x - 1] != WALL:
+            if not in_wall(m, (x - 1, y)):
                 children.append(Node(self, (y, x - 1, -pi), self.cost + 1))
 
         if x + 1 < len(m[x]):
-            if m[y][x + 1] != WALL:
+            if not in_wall(m, (x + 1, y)):
                 children.append(Node(self, (y, x + 1, 0), self.cost + 1))
 
         remove_explored: List[Node] = []
@@ -177,6 +177,7 @@ for i in range(len(node_list) - 1):
     # TODO walls lmao
     # command = [1, 0]
     motions = node_list[i].get_motion(node_list[i + 1], delta_t)
+
 
     # print(motions)
     # print(type(motions))
