@@ -2,8 +2,10 @@ import numpy as np
 from math import sin, cos, sqrt
 
 class Particle:
-    def __init__(self):
+    def __init__(self, position, map = None):
         """Initialize the particle at the center of its internal map."""
+
+        # TODO Add these variables to the config
 
         #initial map size without any resizes
         row,col=300,300
@@ -11,17 +13,19 @@ class Particle:
         #error matrix-- this might be a weird place to put this but it's the same between all robots
         self.a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 
-        #initial condition
-        self.map=np.zeros((row,col))-1
-        self.pose=np.array([row/2,col/2,0]) #y,x,theta
+        #initial condition - [-1 is not yet identifie, 1 is an object, 0 is open]
+        if map == None:
+            self.map=np.zeros((row,col))-1
+
+        self.pose=np.array(position) #y,x,theta
+
         self.weight=None
         self.measurements=None
 
-
-    #there should be a particle.recieve_measurement(z)? or not
-
     #use pg 478 as a reference for an overview of the full algorithm
 
+    def setmeasurements(self, measurement):
+        self.measurements = measurement
 
     def setpose(self,pose):
         #pose has the potential to leave the map
@@ -56,6 +60,9 @@ class Particle:
 
     def getpose(self):
         return self.pose
+
+    def getmap(self):
+        return self.map
 
     def sample_motion_model_velocity(self,u0,stepsize):
         '''Move the location of the robot with trajectory error'''
@@ -97,7 +104,6 @@ class Particle:
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
 
-   
     def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
         '''Set the weight of the particle'''
 
@@ -109,9 +115,10 @@ class Particle:
     def update_occupancy_grid(self):
         '''update the map based on measurement data'''
         
-
         pass
-        
+    
+    def update_particle_map(self, position, value):
+        self.map[position[0], position[1]] = value
 
     
     #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
@@ -122,50 +129,49 @@ class Particle:
     #book has their robot cone opening 15 degrees
     #based on pg 303 it's not unusual to have a robot with evenly spaced sensors on all sides
 
-    def resize(self,map):
+    def resize(self):
         '''Determines whether the robot's internal map is  at risk of being too small and resizes it accordingly'''
         
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
         #I need to go around every edge (with a cushion) and see if I have room to work
-        cushion=40 ########################################if these two are added to .yaml file then setpose method also could use these 
+        cushion=50 ########################################if these two are added to .yaml file then setpose method also could use these 
         resize_magnitude=200
 
+        x_pos = self.pose[0]
+        y_pos = self.pose[1]
+
         #unmapped regions will hold a value of -1
-        for a in range(n_row):
-            #row overflow (x axis)
-            if (not map[a,n_col-cushion]==-1):
-                newmap=np.zeros((n_row,resize_magnitude))-1
-                map=np.concatenate([map,newmap],axis=1)
-                n_col=np.shape(map)[1]
-                
-            #row underflow
-            if (not map[a,cushion]==-1):
-                newmap=np.zeros((n_row,resize_magnitude))-1
-                map=np.concatenate([newmap,map],axis=1)
-                n_col=np.shape(map)[1]
 
-                #underflows need to update pose
-                self.pose[1]=self.pose[1]+resize_magnitude
-                
-        for a in range(n_col):
-            #column overflow (y axis)
-            if (not map[n_row-cushion,a]==-1):
-                newmap=np.zeros((resize_magnitude,n_col))-1
-                map=np.concatenate([map,newmap],axis=0)
-                n_row=np.shape(map)[0]
-                
-            #column underflow
-            if (not map[cushion,a]==-1):
-                newmap=np.zeros((resize_magnitude,n_col))-1
-                map=np.concatenate([newmap,map],axis=0)
-                n_row=np.shape(map)[0]
+        # row underflow (x axis)
+        if (x_pos <= cushion):
+            newmap=np.zeros((n_row,resize_magnitude))-1
+            self.map=np.concatenate([newmap, self.map],axis=1)
+            self.pose[0] += cushion
+            n_col += 200
 
-                #underflows need to update pose
-                self.pose[0]=self.pose[0]+resize_magnitude
-        
-        return map
+        # row overflow (x axis)
+        if (x_pos >= (n_col - cushion)):
+            newmap=np.zeros((n_row,resize_magnitude))-1
+            self.map=np.concatenate([self.map, newmap],axis=1)
+            n_col += 200
+
+        # column underflow (y axis)
+        if (y_pos <= cushion): 
+            newmap=np.zeros((resize_magnitude,n_col))-1
+            self.map=np.concatenate([newmap, self.map],axis=0)
+            self.pose[1] += cushion
+
+        # column overflow (x axis)
+        if (y_pos >= (n_row - cushion)):
+            newmap=np.zeros((resize_magnitude,n_col))-1
+            self.map=np.concatenate([self.map, newmap],axis=0)
+
+        return self.map
     
 
-    
+pose = [50,250,0]
+particle = Particle(pose)
+print(particle.resize().shape)
+print(particle.getpose())
