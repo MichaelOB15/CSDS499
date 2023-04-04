@@ -129,42 +129,6 @@ class Particle:
         if r <= z_t_k[0]:
             return l_free
 
-    '''
-    def likelihood_field_range_finder_model(self):
-        """algorithm seen on pg 172"""
-        q = 1
-        zmax = 30
-        zhit = .5
-        zrandom = .5
-        sigma_hit = .5
-
-        n_row=np.shape(self.map)[0]
-        n_col=np.shape(self.map)[1]
-
-        for k in range(len([self.measurements])):
-            z_t_k = [self.measurements[0][k],self.measurements[1][k]]
-            if z_t_k != zmax:
-                x_k_sensor = self.measurements[0][k]*cos(self.measurements[1][k]) + self.pose[0]
-                y_k_sensor = self.measurements[0][k]*sin(self.measurements[1][k]) + self.pose[1]
-                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pose[2]) - y_k_sensor * sin(self.pose[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[1][k])
-                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pose[2]) - x_k_sensor * sin(self.pose[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[1][k])
-
-                min_dist = zmax + 1
-
-                for x_prime in range(n_col):
-                    for y_prime in range(n_row):
-                        if self.map[x_prime,y_prime] == 1:
-                            dist = sqrt((x_z_k_t- x_prime)**2+(y_z_k_t-y_prime)**2)
-                            if dist < min_dist:
-                                min_dist = dist
-                
-                q = q * (zhit * self.prob(min_dist, sigma_hit)+ zrandom/zmax)
-        
-        return q
-    '''
-
-    ##########################GET THIS DONE WELL ONCE IN PARTICLE AND GET IT OUT OUF MEASUREMENT WIZARD (once everything else works though)
-    #lmao this is already written as perceptual_field
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
 
@@ -185,8 +149,8 @@ class Particle:
             #go through every cell of the perceptual field
             index=len(perceptual_field)
             for i in range(index):
-                row=perceptual_field[i,0]
-                col=perceptual_field[i,1]
+                row=perceptual_field[0,i]
+                col=perceptual_field[1,i]
 
                 #find the corresponding closest radius for the sensor
                 if self.map[row,col]==1:
@@ -209,32 +173,30 @@ class Particle:
 
         lo = self.config.l_o
 
-        init_row=self.pose[0]
-        init_col=self.pose[1]
-
-        #check all values within the cushion #no bad fix this I have a list of my pairs why do this 
-        cushion=self.config.cushion
-        init_row=init_row-cushion
-        init_col=init_col-cushion
-        index=2*cushion
-
         for s in range(self.config.num_sensors):
             perceptual_field = self.perceptual_field(s) 
-                
-            for row in range(index):
-                for col in range(index):
-                    if [init_row+row,init_col+col] in perceptual_field:
-                        self.occupancy_weight_map[row,col] = self.occupancy_weight_map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
-                        if self.occupancy_weight_map[row,col] > 0.5: #order of x,y got mixed up here; method could use some cleaning
-                            self.map[row,col] = 1
-                        else:
-                            self.map[row,col] = 0
-                    else:
-                        pass
+
+            index=len(perceptual_field)
+            for i in range(index):
+                row=perceptual_field[0,i]
+                col=perceptual_field[1,i]
+
+                self.occupancy_weight_map[row,col] = self.occupancy_weight_map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
+
+                #I kinda want the actual probability as an output and then we can have probability fields in the output image
+                #why do we have two maps? the only one we need is the probability one??
+                '''
+                if self.occupancy_weight_map[row,col] > 0.5:
+                    self.map[row,col] = 1
+                else:
+                    self.map[row,col] = 0
+                '''
 
         self.resize()
 
     def perceptual_field(self, s):
+        """return the cells that are imaged in a sensor reading"""
+
         num_sensors = self.config.num_sensors
         theta = s*2*pi/num_sensors
         dtheta=self.config.dtheta
