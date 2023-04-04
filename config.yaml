@@ -10,7 +10,8 @@ delta_t: 1
 
 alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 
-initial_occupancy_map_size: [300, 300]
+initial_occupancy_map_size: [150, 150]
+cushion: 40
 initial_weight: .5
 
 rmax: 30

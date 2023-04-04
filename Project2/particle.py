@@ -31,7 +31,7 @@ class Particle:
         else:
             self.set_pose(pose)
 
-        self.weight= config.initial_weight
+        self.weight= 1 #weight of the particle, not the map
         self.measurements = []
         
     #use pg 478 as a reference for an overview of the full algorithm
@@ -224,7 +224,7 @@ class Particle:
                 for y in range(n_row):
                     if [x,y] in perceptual_field:
                         self.occupancy_weight_map[y,x] = self.occupancy_weight_map[y,x] + self.inverse_range_sensor_model([x,y]) - lo
-                        if self.occupancy_weight_map[y,x] > self.config.initial_weight: #order of x,y got mixed up here; method could use some cleaning
+                        if self.occupancy_weight_map[y,x] > 0.5: #order of x,y got mixed up here; method could use some cleaning
                             self.map[y,x] = 1
                         else:
                             self.map[y,x] = 0
@@ -272,7 +272,7 @@ class Particle:
         n_col=np.shape(self.map)[1]
 
         #I need to go around every edge (with a cushion) and see if I have room to work
-        cushion=50 ########################################if these two are added to .yaml file then setpose method also could use these 
+        cushion=self.config.cushion ########################################if these two are added to .yaml file then setpose method also could use these 
         resize_magnitude=200
 
         x_pos = self.pose[0]

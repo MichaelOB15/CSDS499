@@ -59,6 +59,8 @@ def recieve_motion_command(u,particle_samples):
 
     #move measurement wizard according to command
     z=measure.navigate_maze(u,stepsize)
+    
+
 
     #move particles according to command
     for i in range(num_particles):
@@ -66,11 +68,13 @@ def recieve_motion_command(u,particle_samples):
         particle_samples[i].set_measurement(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
 
+
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
     for i in range(num_particles):
         if particle_samples[i].get_weight()>maxweight:
             maxweight=particle_samples[i].get_weight()
+
 
     #implement rejection sampling
     new_samples=np.empty(num_particles,dtype=Particle)
@@ -85,6 +89,7 @@ def recieve_motion_command(u,particle_samples):
             if b<=a:
                 j=1
                 new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
+
 
     for i in range(num_particles):
         new_samples[i].update_occupancy_grid() #apparently update occupancy grid updates the map of the particle? make sure it copies. this is slower
