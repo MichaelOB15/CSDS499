@@ -20,14 +20,6 @@ maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
 maze = maze.out()
 
-############################# MEASUREMENT CODE ##############################################
-
-# vis = Visualization(maze, real_pose)
-# this is extra and shouldnt be done until the very end but there's
-# maybe a way to visualize where we just track the measure particle
-# I cant use the visualize class as I go cuz it's really slow :(
-
-
 stepsize = 5
 real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
 measure = MeasurementWizard(maze, real_pose)
@@ -42,15 +34,13 @@ for n in range(num_particles):
 def recieve_motion_command(u):
 
     #move measurement wizard according to command
-    measure.navigate_maze(u,stepsize)
-    
+    z=measure.navigate_maze(u,stepsize)
 
     #move particles according to command
     for i in range(num_particles):
         particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
-        #give robot measurement and have it establish weights
-        #particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
-
+        particle_samples[n].set_measurements(z)
+        particle_samples[n].likelihood_field_range_finder_model()
 
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
@@ -76,12 +66,16 @@ def recieve_motion_command(u):
     weightlog=np.zeros(num_particles)
     for i in range(num_particles):
         if not new_samples[i].getweight().isin(weightlog):
-            #new_samples[i].(some code here that updates the map it's not written properly yet)
+            new_samples[i].update_occupancy_grid_map()
             weightlog[i]=new_samples[i].getweight()
 
     #now I need to np.copy() the map in each particle to split the objects and make them independent
+    for i in range(num_particles):
+        new_samples[i].setmap(new_samples[i].getmap().copy())
 
-    particle_samples=new_samples
+    #overwrite the old set of samples
+    particle_samples=new_samples 
+    
 
 
 
@@ -103,10 +97,9 @@ def recieve_motion_command(u):
 
 # the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
 
-#### end of fastSLAM algo ####
 
 
-
+#visualization stuff here
 
 # a normal way to test this without trajectory code would be to just slowly spin in a circle and
 # keep the range of the sensor high enough to see all the walls...
