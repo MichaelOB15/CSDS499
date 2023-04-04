@@ -5,14 +5,15 @@ from math import pi
 import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
-from ucs import UCS
+from ucs import UCS, Node
+from typing import List
 from pathlib import Path
 import yaml
 import argparse
 from PIL import Image
 
-############################ Parameter Initialization #############################################
 
+############################ Parameter Initialization #############################################
 def load_config():
     config_filepath = Path.cwd() / "config.yaml"
     with config_filepath.open() as f:
@@ -21,6 +22,7 @@ def load_config():
     for key, value in config_dict.items():
         setattr(config, key, value)
     return config
+
 
 config = load_config()
 
@@ -51,6 +53,7 @@ num_particles = config.num_particle
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
     particle_samples[n]=Particle(config)
+
 
 def recieve_motion_command(u,particle_samples):
 
@@ -106,10 +109,11 @@ def recieve_motion_command(u,particle_samples):
     #overwrite the old set of samples
     return new_samples 
 
+
 vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
 while 0.5 in particle_samples[0].get_map():
-    l = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
+    l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
@@ -146,20 +150,12 @@ img = Image.fromarray(img.astype('uint8'))
 img.show()
 
 
-
-
-
-
-
 # the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
-
-
 
 #visualization stuff here
 
 # a normal way to test this without trajectory code would be to just slowly spin in a circle and
 # keep the range of the sensor high enough to see all the walls...
-
 
 
 '''
