@@ -138,54 +138,54 @@ def _nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
 # m = np.array([[WALL, WALL, WALL, WALL], [WALL, WALL, WALL, WALL], [UNEXPLORED, OPEN, OPEN, OPEN], [WALL, WALL, WALL, WALL]])
 # start_pos = np.array([3, 2, 0])
 
-nx, ny = 10, 10
-# Maze entry position
-ix, iy = 0, 0
+# nx, ny = 10, 10
+# # Maze entry position
+# ix, iy = 0, 0
 
-# allows passageways to have widths
-scaling = 8
+# # allows passageways to have widths
+# scaling = 8
 
-maze = Maze(nx, ny, scaling, ix, iy)
-maze.make_maze()
-
-
-# m is 2D matrix
-m = maze.out()
-for i in range(scaling, 2*scaling):
-    for j in range(scaling):
-        m[i][j] = UNEXPLORED
+# maze = Maze(nx, ny, scaling, ix, iy)
+# maze.make_maze()
 
 
-start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
+# # m is 2D matrix
+# m = maze.out()
+# for i in range(scaling, 2*scaling):
+#     for j in range(scaling):
+#         m[i][j] = UNEXPLORED
 
-viz = Visualization(m, start_pos)
 
-# a = np.zeros([1, 6])
-# a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
+# start_pos = [floor(len(m[0])/2) + scaling, floor(len(m)/2) + scaling, 0]
 
-node_list: List[Node] = nearest_list(m, start_pos)
+# viz = Visualization(m, start_pos)
 
-for node in node_list:
-    print(node)
+# # a = np.zeros([1, 6])
+# # a = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+# a = [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 
-delta_t = 1
-x_t_next = start_pos
+# node_list: List[Node] = nearest_list(m, start_pos)
 
-# while UNEXPLORED in m:
-for i in range(len(node_list) - 1):
-    motions = node_list[i].get_motion(node_list[i + 1], delta_t)
+# for node in node_list:
+#     print(node)
 
-    if type(motions[0]) == float:
+# delta_t = 1
+# x_t_next = start_pos
 
-        x_t_next = Robot_motion(motions, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
-        # print(x_t_next)
-        # if counter % 5 == 0:
-        viz.update(m, x_t_next, i % 40 == 0)
-    else:
-        # print(motions)
-        x_t_next = Robot_motion(motions[0], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
-        x_t_next = Robot_motion(motions[1], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+# # while UNEXPLORED in m:
+# for i in range(len(node_list) - 1):
+#     motions = node_list[i].get_motion(node_list[i + 1], delta_t)
 
-viz.update(m, x_t_next)
-viz.pause()
+#     if type(motions[0]) == float:
+
+#         x_t_next = Robot_motion(motions, x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+#         # print(x_t_next)
+#         # if counter % 5 == 0:
+#         viz.update(m, x_t_next, i % 40 == 0)
+#     else:
+#         # print(motions)
+#         x_t_next = Robot_motion(motions[0], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+#         x_t_next = Robot_motion(motions[1], x_t_next, a, delta_t, m, 0.01).actual_motion_model_velocity()
+
+# viz.update(m, x_t_next)
+# viz.pause()
