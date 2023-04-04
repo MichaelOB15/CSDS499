@@ -94,28 +94,27 @@ class Particle:
         # TODO might need to add wall collision
         self.resize()
 
-    def inverse_range_sensor_model(self, m_i, sensor):
+    def inverse_range_sensor_model(self, coordinate, sensor):
         """Implements the inverse measurement model seen on pg 288"""
 
         rmax = self.config.rmax
-        # alpha = 1
 
         l_occ = self.config.l_occ
         l_free = self.config.l_free
         lo = self.config.l_o
 
-        x_i = m_i[1]
-        y_i = m_i[0]
+        row=coordinate[0]
+        col=coordinate[1]
 
-        r = sqrt((x_i - self.pose[1])**2+(y_i - self.pose[0])**2)
+        r = sqrt((col - self.pose[1])**2+(row - self.pose[0])**2)
 
-        z_t_k = [self.measurements[0][sensor], self.measurements[1][sensor]]
+        z = [self.measurements[0][sensor], self.measurements[1][sensor]]
 
         rmax_offset = 1
 
         if (r > (rmax-rmax_offset)):
             return lo
-        elif r < z_t_k[0]:
+        elif r < z[0]:
             return l_free
         else:
             return l_occ

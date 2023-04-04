@@ -132,7 +132,7 @@ while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
 #testparticle=Particle(config)
 #img=testparticle.get_map()
 
-u=np.array([0,2*pi/10])
+u=np.array([0,0.001])
 particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[0].get_map().copy()
