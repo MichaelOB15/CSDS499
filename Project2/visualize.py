@@ -2,7 +2,6 @@ from typing import List
 from matplotlib import pyplot as plt, patches
 from math import sin, cos
 import numpy as np
-import time
 
 
 RADIUS = 3
@@ -27,7 +26,6 @@ class Visualization:
         self.path.append(new_pos)
         self.pos = new_pos
         if draw:
-            # fig, self.ax = plt.subplots(1)
             self.draw_movement()
             self.visualize()
 
