@@ -58,4 +58,3 @@ class Robot_motion:
 
     def sample(self, b):
         return np.random.normal(0, b)
-
