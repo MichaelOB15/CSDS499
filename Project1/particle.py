@@ -163,7 +163,7 @@ class Particle:
         self.weight = q
 
     def update_occupancy_grid(self):
-        '''update the map based on measurement data'''
+        '''update the map based on measurement data, see pg 301'''
 
         lo = self.config.l_o
 
