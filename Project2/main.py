@@ -2,6 +2,7 @@ import numpy as np
 from maze import Maze
 from particle import Particle
 from math import pi
+import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
 
@@ -29,41 +30,64 @@ maze = maze.out()
 
 stepsize = 5
 real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
-u = np.array([1, 0])  # trajectory planning will evenutally be handled by ucs.py
-
 measure = MeasurementWizard(maze, real_pose)
-z = measure.navigate_maze(u, stepsize)
-#z=measure.getZ() #also works
-
-print(z)
-
-
-#### fastSLAM occupancy grid algorithm ####
-num_particles=100
 
 #initialize an array of particles
+num_particles=100
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
     particle_samples[n]=Particle()
 
-#when motion command goes in:
-
-
-#give robot measurement and have it establish weights
-#rejection sampling to see which robots survive -> multiple robots represented multiple times
-
-#update map- to keep the code quick im going to iterate through the surviving particles' address in memory and 
-#if i've already seen the weight I don't update the map
-
 
 def recieve_motion_command(u):
+
+    #move measurement wizard according to command
+    measure.navigate_maze(u,stepsize)
+    
 
     #move particles according to command
     for i in range(num_particles):
         particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
+        #give robot measurement and have it establish weights
+        #particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
 
-    #move measurement wizard according to command
-    measure.navigate_maze(u,stepsize)
+
+    #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
+    maxweight=0
+    for i in range(num_particles):
+        if particle_samples[n].getweight()>maxweight:
+            maxweight=particle_samples[n].getweight()
+
+    #implement rejection sampling
+    new_samples=np.empty(num_particles,dtype=Particle)
+    for i in range(num_particles):
+        j=0
+        while j==0:
+            samplenumber=random.randint(0,num_particles)
+
+            a=particle_samples[samplenumber].getweight()
+            b=random.random()*maxweight*1.1 #scaled up so the weight guess is solidly above the largest weight
+
+            if b<=a:
+                j=1
+                new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
+
+    #update map, but update is expensive so only run if particle not seen before
+    weightlog=np.zeros(num_particles)
+    for i in range(num_particles):
+        if not new_samples[i].getweight().isin(weightlog):
+            #new_samples[i].(some code here that updates the map it's not written properly yet)
+            weightlog[i]=new_samples[i].getweight()
+
+    #now I need to np.copy() the map in each particle to split the objects and make them independent
+
+    particle_samples=new_samples
+
+
+
+        
+
+
     
 
 
