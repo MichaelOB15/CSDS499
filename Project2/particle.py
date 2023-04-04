@@ -4,16 +4,19 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, pose = [], occupancy_map = None, occupancy_weight_map = None):
+    def __init__(self, config, pose = [], occupancy_map = None, occupancy_weight_map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
 
         #initial map size without any resizes
-        row,col=300,300
+        row = config.initial_occupancy_map_size[0]
+        col = config.initial_occupancy_map_size[1]
 
         #error matrix-- this might be a weird place to put this but it's the same between all robots
-        self.a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
+        self.a=np.array(config.alpha)
+
+        self.config = config
 
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if occupancy_map == None:
@@ -28,47 +31,16 @@ class Particle:
         else:
             self.set_pose(pose)
 
-        self.weight=0.5
+        self.weight= config.initial_weight
         self.measurements = []
         
     #use pg 478 as a reference for an overview of the full algorithm
 
-    def set_measurements(self, measurement):
+    def set_measurement(self, measurement):
         self.measurements = measurement
 
     def set_pose(self,pose):
         self.pose = pose
-
-        '''
-        #pose has the potential to leave the map
-        map=self.map
-
-        #map will be expanded by the difference between the default pose plus a cushion
-        cushion=50 #note that this method means repeated setpose() calls will repeatedly upsize the map
-        
-        row_error=self.pose[0]-pose[0] +cushion #instead of having the cushion be the size of the map use values from .yaml file
-        col_error=self.pose[1]-pose[1] +cushion
-        
-        #value needs to be an integer greater than zero
-        if row_error<1:
-            row_error=1
-        if col_error<1:
-            col_error=1
-            
-        n_col=np.shape(map)[1]
-        
-        #row overflow code seen in resize()
-        newmap=np.zeros((int(row_error),n_col))-1
-        map=np.concatenate([map,newmap],axis=0)
-
-        n_row=np.shape(map)[0]
-
-        #column overflow code seen in resize()
-        newmap=np.zeros((n_row,int(col_error)))-1
-        map=np.concatenate([map,newmap],axis=1)
-
-        self.map=map
-        self.pose=pose'''
 
     def get_pose(self):
         return self.pose
@@ -220,22 +192,21 @@ class Particle:
             for i in range(theta_steps):
                 for j in range(r_steps):
 
-                    temp_angle=self.pose[2]+self.measurements[1,s]-spread/2+i*dtheta
+                    temp_angle=self.pose[2]+self.measurements[1][s]-spread/2+i*dtheta
                     temp_r=j*dr
 
                     x=int(self.pose[1]+temp_r*cos(temp_angle))
                     y=int(self.pose[0]+temp_r*sin(temp_angle))
 
                     #go through every possible r, theta position in this wedge and find the smallest possible r
-                    if (map[y,x]==1):
+                    if (self.map[y][x]==1):
                         if (temp_r<rout[s]):
                             rout[s]=temp_r
                         break
 
-
                     ###here is where the code is actually different
 
-            difference=self.measurements[0,s]-rout[s]
+            difference=self.measurements[0][s]-rout[s]
             q=q*(zhit*np.random.normal(difference,sigma_hit)+zrandom/zmax)
 
         return q

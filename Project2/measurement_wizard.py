@@ -7,12 +7,13 @@ class MeasurementWizard:
     a single particle that knows its position in the map, and the motion of this separate particle is considered to be
     the "real" position of the robot. """
 
-    def __init__(self, maze, real_pose):
+    def __init__(self, maze, real_pose, config):
         """Initialize variables"""
 
-        self.ideal=Particle(real_pose)
+        self.ideal=Particle(config, pose = real_pose)
         self.maze=maze #there's a way to do this where we just ping the particle because it's simple to just send it the maze now
                         #so this field might not be necessary but a small amount of work to get rid of it
+        self.config = config
         self.z=None
 
     def getpose(self):

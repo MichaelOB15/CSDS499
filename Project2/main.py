@@ -6,20 +6,30 @@ import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
 from ucs import nearest_list
-
+from pathlib import Path
+import yaml
+import argparse
 from PIL import Image
 
+############################ Parameter Initialization #############################################
+
+def load_config():
+    config_filepath = Path.cwd() / "config.yaml"
+    with config_filepath.open() as f:
+        config_dict = yaml.load(f, Loader=yaml.FullLoader)
+    config = argparse.Namespace()
+    for key, value in config_dict.items():
+        setattr(config, key, value)
+    return config
+
+config = load_config()
 
 # imports need to be fixed at the end once these files are finished
 # we should probably go through this at the end and fix up my weird naming conventions etc idk what the standard is
 
 ############################ MAZE CODE #############################################
 
-nx, ny = 2, 2
-ix, iy = 0, 0  # Maze entry position
-scaling = 6
-
-maze = Maze(nx, ny, scaling, ix, iy)
+maze = Maze(config.maze_n[0], config.maze_n[1], config.maze_scaling, config.maze_i[0], config.maze_i[1])
 maze.make_maze()
 maze = maze.out()
 
@@ -30,21 +40,17 @@ maze = maze.out()
 # maybe a way to visualize where we just track the measure particle
 # I cant use the visualize class as I go cuz it's really slow :(
 
-
-stepsize = 5
+stepsize = config.movement_stepsize
 real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
-measure = MeasurementWizard(maze, real_pose)
+measure = MeasurementWizard(maze, real_pose, config)
 
-
-
-delta_t = 1
+delta_t = config.delta_t
 
 # initialize an array of particles
 num_particles=5
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
-    particle_samples[n]=Particle()
-
+    particle_samples[n]=Particle(config)
 
 def recieve_motion_command(u,particle_samples):
 
@@ -56,7 +62,7 @@ def recieve_motion_command(u,particle_samples):
     #move particles according to command
     for i in range(num_particles):
         particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
-        particle_samples[i].set_measurements(z) #recieves measurement
+        particle_samples[i].set_measurement(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
 
     print("lots of stuff")
@@ -99,7 +105,6 @@ def recieve_motion_command(u,particle_samples):
 
     #overwrite the old set of samples
     return new_samples 
-
 
 vis = Visualization(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
