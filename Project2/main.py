@@ -39,10 +39,43 @@ print(z)
 
 
 #### fastSLAM occupancy grid algorithm ####
+num_particles=100
 
-# an array of particles updates every particle with these three methods (input should be a movement u vector)
+#initialize an array of particles
+particle_samples=np.empty(num_particles,dtype=Particle)
+for n in range(num_particles):
+    particle_samples[n]=Particle()
 
-# based on the weights calculated internal to the particle the particles are resampled particle filter style
+#when motion command goes in:
+
+
+#give robot measurement and have it establish weights
+#rejection sampling to see which robots survive -> multiple robots represented multiple times
+
+#update map- to keep the code quick im going to iterate through the surviving particles' address in memory and 
+#if i've already seen the weight I don't update the map
+
+
+def recieve_motion_command(u):
+
+    #move particles according to command
+    for i in range(num_particles):
+        particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
+
+    #move measurement wizard according to command
+    measure.navigate_maze(u,stepsize)
+    
+
+
+
+
+
+
+
+
+
+
+
 
 # the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
 

@@ -4,7 +4,7 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, position = None, map = None):
+    def __init__(self, pose = None, map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
@@ -15,11 +15,14 @@ class Particle:
         #error matrix-- this might be a weird place to put this but it's the same between all robots
         self.a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 
-        #initial condition - [-1 is not yet identifie, 1 is an object, 0 is open]
+        #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if map == None:
             self.map=np.zeros((row,col))-1
 
-        self.pose=np.array(position) #y,x,theta
+        if pose == None:
+            self.pose=np.array([row/2, col/2, 0]) #y,x,theta
+        else:
+            self.setpose(pose)
 
         self.weight=None
         self.measurements=None
@@ -221,8 +224,3 @@ class Particle:
 
         return self.map
     
-
-pose = [50,250,0]
-particle = Particle(pose)
-print(particle.resize().shape)
-print(particle.getpose())

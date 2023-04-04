@@ -10,10 +10,9 @@ class MeasurementWizard:
     def __init__(self, maze, real_pose):
         """Initialize variables"""
 
-        self.ideal=Particle()
-        self.ideal.setpose(real_pose)
-
-        self.maze=maze
+        self.ideal=Particle(real_pose,maze)
+        self.maze=maze #there's a way to do this where we just ping the particle because it's simple to just send it the maze now
+                        #so this field might not be necessary but a small amount of work to get rid of it
         self.z=None
 
     def getpose(self):
