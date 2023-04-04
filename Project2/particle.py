@@ -183,7 +183,7 @@ class Particle:
                             if dist < min_dist:
                                 min_dist = dist
                 
-                q = q * (zhit * self.prob(dist, sigma_hit)+ zrandom/zmax)
+                q = q * (zhit * self.prob(min_dist, sigma_hit)+ zrandom/zmax)
         
         return q
 
