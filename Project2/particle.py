@@ -273,25 +273,33 @@ class Particle:
         # row underflow (x axis)
         if (x_pos <= cushion):
             newmap=np.zeros((n_row,resize_magnitude))-1
+            new_weight_map=np.zeros((n_row,resize_magnitude))+.5
             self.map=np.concatenate([newmap, self.map],axis=1)
+            self.occupancy_weight_map=np.concatenate([new_weight_map, self.occupancy_weight_map],axis=1)
             self.pose[0] += cushion
             n_col += 200
 
         # row overflow (x axis)
         if (x_pos >= (n_col - cushion)):
             newmap=np.zeros((n_row,resize_magnitude))-1
+            new_weight_map=np.zeros((n_row,resize_magnitude))+.5
             self.map=np.concatenate([self.map, newmap],axis=1)
+            self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=1)
             n_col += 200
 
         # column underflow (y axis)
         if (y_pos <= cushion): 
             newmap=np.zeros((resize_magnitude,n_col))-1
+            new_weight_map=np.zeros((resize_magnitude,n_col))+.5
             self.map=np.concatenate([newmap, self.map],axis=0)
+            self.occupancy_weight_map=np.concatenate([new_weight_map, self.map],axis=0)
             self.pose[1] += cushion
 
         # column overflow (x axis)
         if (y_pos >= (n_row - cushion)):
             newmap=np.zeros((resize_magnitude,n_col))-1
+            new_weight_map=np.zeros((resize_magnitude,n_col))+.5
             self.map=np.concatenate([self.map, newmap],axis=0)
+            self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=0)
 
         return self.map
