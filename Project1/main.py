@@ -50,12 +50,12 @@ delta_t = config.delta_t
 
 # initialize an array of particles
 num_particles = config.num_particle
-particle_samples=np.empty(num_particles,dtype=Particle)
+particle_samples = np.empty(num_particles, dtype=Particle)
 for n in range(num_particles):
-    particle_samples[n]=Particle(config)
+    particle_samples[n] = Particle(config)
 
 
-def recieve_motion_command(u, particle_samples):
+def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
     # move measurement wizard according to command
     z = measure.navigate_maze(u, stepsize)
 
