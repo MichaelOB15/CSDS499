@@ -19,7 +19,7 @@ class Visualization:
         assert len(starting_pos) >= 2
         self.fig, self.ax = plt.subplots(1)
         self.r = r
-        self.pause = 5
+        self.pause_val = pause
         self.visualize()
 
     def update(self, m: List[List[int]], new_pos: List[int], draw: bool = True):
@@ -58,4 +58,4 @@ class Visualization:
         self.ax.plot(x, y, color='blue')
 
     def pause(self):
-        plt.pause(self.pause)
+        plt.pause(self.pause_val)
