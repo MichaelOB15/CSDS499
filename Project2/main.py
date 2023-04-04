@@ -71,9 +71,6 @@ def recieve_motion_command(u,particle_samples):
 
     #move particles according to command
     for i in range(num_particles):
-        print(particle_samples[i])
-        print(u)
-        print(stepsize)
         particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
         particle_samples[i].set_measurements(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model

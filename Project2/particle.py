@@ -156,7 +156,9 @@ class Particle:
         if r <= z_t_k[0]:
             return l_free
 
+    '''
     def likelihood_field_range_finder_model(self):
+        """algorithm seen on pg 172"""
         q = 1
         zmax = 30
         zhit = .5
@@ -186,9 +188,57 @@ class Particle:
                 q = q * (zhit * self.prob(dist, sigma_hit)+ zrandom/zmax)
         
         return q
+    '''
 
-    def prob(self, a, b):
-        return np.random.normal(a, b)
+    ##########################GET THIS DONE WELL ONCE IN PARTICLE AND GET IT OUT OUF MEASUREMENT WIZARD
+    def likelihood_field_range_finder_model(self):
+        """This method is heavily modified but implements the algorithm seen on pg 172"""
+        
+
+        rmax=30 #use config
+        num_sensors=6
+        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        spread = beam_width*pi/180
+        dr=0.3
+        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+        r_steps=int(rmax/dr)
+        theta_steps=int(spread/dtheta)
+
+
+        sigma_hit = .5 #doesnt belong to smallest r code this is new
+        q = 1
+        zmax = .1
+        zhit = .4
+        zrandom = .1
+        sigma_hit = .4 #get these into a config and tune them :(   
+
+
+        rout=np.zeros(num_sensors)+rmax
+        
+        for s in range(num_sensors):
+
+            for i in range(theta_steps):
+                for j in range(r_steps):
+
+                    temp_angle=self.pose[2]+self.measurements[1,s]-spread/2+i*dtheta
+                    temp_r=j*dr
+
+                    x=int(self.pose[1]+temp_r*cos(temp_angle))
+                    y=int(self.pose[0]+temp_r*sin(temp_angle))
+
+                    #go through every possible r, theta position in this wedge and find the smallest possible r
+                    if (map[y,x]==1):
+                        if (temp_r<rout[s]):
+                            rout[s]=temp_r
+                        break
+
+
+                    ###here is where the code is actually different
+
+            difference=self.measurements[0,s]-rout[s]
+            q=q*(zhit*np.random.normal(difference,sigma_hit)+zrandom/zmax)
+
+        return q
 
 
     def update_occupancy_grid(self):
