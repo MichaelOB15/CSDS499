@@ -48,7 +48,7 @@ for n in range(num_particles):
 # print(particle_samples[0].get_map())
 # vis = Visualization(particle_samples[0].get_map(), real_pose)
 
-
+'''
 while 0.5 in particle_samples[0].get_map():
     l = nearest_list(particle_samples[0].get_map(), particle_samples[0].get_pose())
     for i in range(len(l) - 1):
@@ -62,15 +62,18 @@ while 0.5 in particle_samples[0].get_map():
             recieve_motion_command(motions[1])
 
 print("Mapped Maze!")
+'''
 
-
-def recieve_motion_command(u):
+def recieve_motion_command(u,particle_samples):
 
     #move measurement wizard according to command
     z=measure.navigate_maze(u,stepsize)
 
     #move particles according to command
     for i in range(num_particles):
+        print(particle_samples[i])
+        print(u)
+        print(stepsize)
         particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
         particle_samples[i].set_measurements(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
@@ -107,13 +110,13 @@ def recieve_motion_command(u):
         new_samples[i].setmap(new_samples[i].getmap().copy())
 
     #overwrite the old set of samples
-    particle_samples=new_samples 
+    return new_samples 
     
 
 
 u=np.array([1,0])
 
-recieve_motion_command(u)
+particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[5].get_map().copy()
 
