@@ -104,6 +104,44 @@ class Particle:
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
 
+    def inverse_range_sensor_model(self, m_i):
+
+        # CHANGE LOC LFREE AND LO
+        
+        zmax = 30
+        alpha = 1
+
+        lo = 1
+        locc = 1
+        lfree = 1
+
+        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        beta = beam_width*pi/180
+
+        x_i = m_i[0] + .5
+        y_i = m_i[1] + .5
+
+        r = sqrt((x_i - self.pose[0])**2+(y_i - self.pose[1])**2)
+        phi = math.atan2((y_i - self.pose[1]),(x_i - self.pose[0])) - self.pose[2]
+
+        k = 0
+        min_val = 2*math.pi
+        for j in range(len(self.measurements[1])):
+            new_val = math.abs(phi - self.measurements[1][j])
+            if min_val > new_val:
+                min_val = new_val
+                k = j
+
+
+        z_t_k = [self.measurements[0][k],self.measurements[1][k]]
+            
+        if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
+            return lo
+        if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2
+            return locc
+        if r <= z_t_k[0]:
+            return lfree
+
     def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
         '''Set the weight of the particle'''
 
