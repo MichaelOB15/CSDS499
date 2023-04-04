@@ -132,7 +132,7 @@ while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
 #testparticle=Particle(config)
 #img=testparticle.get_map()
 
-u=np.array([1,pi/10])
+u=np.array([1,0])
 particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[0].get_map().copy()
@@ -156,12 +156,15 @@ img.save("correspondingMaze.png")
 
 
 particle_samples = recieve_motion_command(u,particle_samples)
-
-'''
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
+particle_samples = recieve_motion_command(u,particle_samples)
 particle_samples = recieve_motion_command(u,particle_samples)
 
-particle_samples = recieve_motion_command(u,particle_samples)
-'''
 
 img=particle_samples[0].get_map().copy()
 img=(img-1)*-255
