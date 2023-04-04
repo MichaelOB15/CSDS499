@@ -87,6 +87,7 @@ class Particle:
         theta_update=(w+epsilon[2])*stepsize
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
+        # TODO might need to add wall collision
 
     def get_weight(self):
         return self.weight

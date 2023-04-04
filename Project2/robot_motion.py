@@ -1,8 +1,8 @@
 import numpy as np
 import math
 from typing import List
-from math import floor, ceil, sqrt
-from visualize import RADIUS
+# from math import floor, ceil, sqrt
+from ucs import in_wall
 
 SQUARE_SIZE = 1
 WALL = 1
@@ -59,34 +59,3 @@ class Robot_motion:
     def sample(self, b):
         return np.random.normal(0, b)
 
-
-# magic math https://math.stackexchange.com/questions/2984061/cover-a-circle-with-squares
-def in_wall(m, pos):
-    x_in_m = floor(pos[0])
-    y_in_m = floor(pos[1])
-
-    lambdaval = RADIUS/SQUARE_SIZE
-
-    assert lambdaval >= 1
-
-    for x in range(floor(lambdaval)):
-        y = ceil(sqrt(lambdaval**2 - x**2))
-        if m[y_in_m + y][x_in_m + x] == WALL:
-            return True
-
-    for x in range(floor(lambdaval)):
-        y = ceil(sqrt(lambdaval**2 - x**2))
-        if m[y_in_m + y][x_in_m - x] == WALL:
-            return True
-
-    for x in range(floor(lambdaval)):
-        y = ceil(sqrt(lambdaval**2 - x**2))
-        if m[y_in_m - y][x_in_m - x] == WALL:
-            return True
-
-    for x in range(floor(lambdaval)):
-        y = ceil(sqrt(lambdaval**2 - x**2))
-        if m[y_in_m - y][x_in_m + x] == WALL:
-            return True
-
-    return False

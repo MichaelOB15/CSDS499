@@ -1,9 +1,9 @@
 from collections import deque
 from typing import List, Any, Union, Dict
-from math import floor
+# from math import 
 from visualize import Visualization
-from robot_motion import Robot_motion, in_wall
-from math import pi, sqrt
+# from robot_motion import Robot_motion
+from math import pi, sqrt, floor, ceil
 from maze import Maze
 
 
@@ -15,10 +15,12 @@ OPEN = 0
 
 
 class Node:
-    def __init__(self, parent, pos, cost):
+    def __init__(self, parent, pos, cost, r, square_size):
         self.parent: Union[Node, None] = parent
         self.pos: List[float] = pos
         self.cost: int = cost
+        self.r = r
+        self.square_size = square_size
 
     def get_children(self, m, explored: Dict) -> List[Any]:
         children: List[Node] = []
@@ -26,20 +28,20 @@ class Node:
         x = self.pos[1]
 
         if y - 1 >= 0:
-            if not in_wall(m, (x, y - 1)):
-                children.append(Node(self, (y - 1, x, pi/2), self.cost + 1))
+            if not self.in_wall(m, (x, y - 1)):
+                children.append(Node(self, (y - 1, x, pi/2), self.cost + 1, self.r, self.square_size))
 
         if y + 1 < len(m):
-            if not in_wall(m, (x, y + 1)):
-                children.append(Node(self, (y + 1, x, -pi/2), self.cost + 1))
+            if not self.in_wall(m, (x, y + 1)):
+                children.append(Node(self, (y + 1, x, -pi/2), self.cost + 1, self.r, self.square_size))
 
         if x - 1 >= 0:
-            if not in_wall(m, (x - 1, y)):
-                children.append(Node(self, (y, x - 1, -pi), self.cost + 1))
+            if not self.in_wall(m, (x - 1, y)):
+                children.append(Node(self, (y, x - 1, -pi), self.cost + 1, self.r, self.square_size))
 
         if x + 1 < len(m[x]):
-            if not in_wall(m, (x + 1, y)):
-                children.append(Node(self, (y, x + 1, 0), self.cost + 1))
+            if not self.in_wall(m, (x + 1, y)):
+                children.append(Node(self, (y, x + 1, 0), self.cost + 1, self.r, self.square_size))
 
         remove_explored: List[Node] = []
         for child in children:
@@ -80,44 +82,84 @@ class Node:
     def __str__(self) -> str:
         return f'x = {self.pos[1]}, y = {self.pos[0]}, theta = {self.pos[2]},  cost = {self.cost}'
 
+    # https://math.stackexchange.com/questions/2984061/cover-a-circle-with-squares
+    def in_wall(self, m, pos) -> bool:
+        x_in_m = floor(pos[0])
+        y_in_m = floor(pos[1])
 
-def nearest_list(m: List[List[int]], pos: List[int]) -> List[Node]:
-    tmp: Node = _nearest_unexplored(m, pos)
+        lambdaval = self.r/self.square_size
 
-    node_list: List[Node] = []
-    # Flips path
-    while tmp is not None:
-        node_list.insert(0, tmp)
-        tmp = tmp.parent
-    return node_list
+        assert lambdaval >= 1
+
+        for x in range(floor(lambdaval)):
+            y = ceil(sqrt(lambdaval**2 - x**2))
+            if m[y_in_m + y][x_in_m + x] == WALL:
+                return True
+
+        for x in range(floor(lambdaval)):
+            y = ceil(sqrt(lambdaval**2 - x**2))
+            if m[y_in_m + y][x_in_m - x] == WALL:
+                return True
+
+        for x in range(floor(lambdaval)):
+            y = ceil(sqrt(lambdaval**2 - x**2))
+            if m[y_in_m - y][x_in_m - x] == WALL:
+                return True
+
+        for x in range(floor(lambdaval)):
+            y = ceil(sqrt(lambdaval**2 - x**2))
+            if m[y_in_m - y][x_in_m + x] == WALL:
+                return True
+
+        return False
 
 
-# Returns index of nearest UNEXPLORED
-def _nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
-    robot_x_in_m = floor(pos[0])
-    robot_y_in_m = floor(pos[1])
-    robot_theta = pos[2]
-    pos = (robot_y_in_m, robot_x_in_m, robot_theta)
+class UCS:
 
-    explored: Dict[List[float], Node] = {}
+    def __init__(self, r, square_size):
+        self.r = r
+        self.square_size = square_size
 
-    queue: deque[Node] = deque()
-    queue.append(Node(None, pos, 0))
-    explored.update({pos: Node(None, pos, 0)})
-    while queue:
+    def nearest_list(self, m: List[List[int]], pos: List[int]) -> List[Node]:
+        tmp: Node = self._nearest_unexplored(m, pos)
 
-        node = queue.popleft()
-        if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
-            return node
-        else:
-            children: List[Node] = node.get_children(m, explored)
-            for child in children:
-                queue.append(child)
-                explored.update({child.pos: child})
+        node_list: List[Node] = []
+        # Flips path
+        while tmp is not None:
+            node_list.insert(0, tmp)
+            tmp = tmp.parent
+        return node_list
 
-    # TODO add check -1 remains
-    raise ValueError("No unexplored space found")
+    # Returns index of nearest UNEXPLORED
+    def _nearest_unexplored(self, m: List[List[int]], pos: List[int]) -> Node:
+        robot_x_in_m = floor(pos[0])
+        robot_y_in_m = floor(pos[1])
+        robot_theta = pos[2]
+        pos = (robot_y_in_m, robot_x_in_m, robot_theta)
 
+        explored: Dict[List[float], Node] = {}
+
+        queue: deque[Node] = deque()
+
+        n = Node(None, pos, 0, self.r, self.square_size)
+
+        queue.append(n)
+        explored.update({pos: n})
+        while queue:
+
+            node = queue.popleft()
+            if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
+                return node
+            else:
+                children: List[Node] = node.get_children(m, explored)
+                for child in children:
+                    queue.append(child)
+                    explored.update({child.pos: child})
+
+        # TODO add check -1 remains
+        raise ValueError("No unexplored space found")
+
+# magic math http
 
 # def generate_discrete_path(node: Node, delta_t: int) -> List[List[int]]:
 #     motions: List[List[int]] = []

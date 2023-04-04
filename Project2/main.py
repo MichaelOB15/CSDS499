@@ -5,7 +5,7 @@ from math import pi
 import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
-from ucs import nearest_list
+from ucs import UCS
 from pathlib import Path
 import yaml
 import argparse
@@ -106,10 +106,10 @@ def recieve_motion_command(u,particle_samples):
     #overwrite the old set of samples
     return new_samples 
 
-vis = Visualization(particle_samples[0].get_map(),particle_samples[0].get_pose())
+vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
 while 0.5 in particle_samples[0].get_map():
-    l = nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
+    l = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
