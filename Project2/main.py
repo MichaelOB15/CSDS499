@@ -47,7 +47,7 @@ measure = MeasurementWizard(maze, real_pose, config)
 delta_t = config.delta_t
 
 # initialize an array of particles
-num_particles=5
+num_particles = config.num_particle
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
     particle_samples[n]=Particle(config)

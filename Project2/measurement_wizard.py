@@ -38,14 +38,14 @@ class MeasurementWizard:
         pose=self.ideal.get_pose()
 
         # 6 sensors on the robot, put this in config
-        num_sensors=6
+        num_sensors=self.config.num_sensors
 
         # each sensor is pointing in equidistant directions from 0 to 2pi
         theta=np.zeros(num_sensors)
         for i in range(num_sensors):
             theta[i]=i*2*pi/num_sensors
         
-        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
 
         r_steps=int(rmax/dr)
@@ -82,8 +82,8 @@ class MeasurementWizard:
             self.ideal.sample_motion_model_velocity(u,stepsize)
             
             #specifications for sensors
-            rmax=30
-            dr=0.3
+            rmax=self.config.rmax
+            dr=self.config.dr
             dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
 
             #ideal positional values
