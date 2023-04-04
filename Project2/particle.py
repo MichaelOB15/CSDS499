@@ -206,7 +206,7 @@ class Particle:
             difference=self.measurements[0][s]-rout[s]
             q=q*(zhit*np.random.normal(difference,sigma_hit)+zrandom/zmax)
 
-        return q
+        self.weight = q
 
 
     def update_occupancy_grid(self):

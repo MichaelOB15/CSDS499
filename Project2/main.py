@@ -60,22 +60,17 @@ def recieve_motion_command(u,particle_samples):
     #move measurement wizard according to command
     z=measure.navigate_maze(u,stepsize)
 
-    print("recieved measurment")
-
     #move particles according to command
     for i in range(num_particles):
         particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
         particle_samples[i].set_measurement(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
 
-    print("lots of stuff")
-
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
     for i in range(num_particles):
         if particle_samples[i].get_weight()>maxweight:
             maxweight=particle_samples[i].get_weight()
-    print("resampling 1")
 
     #implement rejection sampling
     new_samples=np.empty(num_particles,dtype=Particle)
@@ -91,7 +86,6 @@ def recieve_motion_command(u,particle_samples):
                 j=1
                 new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
 
-    print("resampling 2")
 
     #update map, but update is expensive so only run if particle not seen before
     weightlog=np.zeros(num_particles)
@@ -104,15 +98,13 @@ def recieve_motion_command(u,particle_samples):
     # for i in range(num_particles):
     #     new_samples[i].set_map(new_samples[i].getmap().copy())
 
-    print("map update")
-
     #overwrite the old set of samples
     return new_samples 
 
 
 vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
-while 0.5 in particle_samples[0].get_map():
+while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:

@@ -13,12 +13,11 @@ alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 initial_occupancy_map_size: [300, 300]
 initial_weight: .5
 
-
 rmax: 30
 beam_width: 15
 dr: 0.3
 num_sensors: 6
-num_particle: 5
+num_particle: 100
 
 obstacle_thickness: 1
 
