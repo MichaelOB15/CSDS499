@@ -162,7 +162,6 @@ class Particle:
 
         self.weight = q
 
-
     def update_occupancy_grid(self):
         '''update the map based on measurement data'''
 
@@ -170,12 +169,14 @@ class Particle:
 
         for s in range(self.config.num_sensors):
             perceptual_field = self.perceptual_field(s) 
+            print(" ")
 
             #go through every cell of the perceptual field
-            index=len(perceptual_field[0])
+            index=len(perceptual_field)
             for i in range(index):
-                row=perceptual_field[0][i]
-                col=perceptual_field[1][i]
+                row=perceptual_field[i][1]
+                col=perceptual_field[i][0]
+                print("row: ",row," col: ",col)
 
                 #changed cuz im just using the map as a probability field
                 self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
@@ -244,7 +245,7 @@ class Particle:
             newmap=np.zeros((n_row,resize_magnitude))-1
             new_weight_map=np.zeros((n_row,resize_magnitude))+.5
             self.map=np.concatenate([newmap, self.map],axis=1)
-            self.occupancy_weight_map=np.concatenate([new_weight_map, self.occupancy_weight_map],axis=1)
+            #self.occupancy_weight_map=np.concatenate([new_weight_map, self.occupancy_weight_map],axis=1)
             self.pose[0] += cushion
             n_col += 200
 
@@ -253,7 +254,7 @@ class Particle:
             newmap=np.zeros((n_row,resize_magnitude))-1
             new_weight_map=np.zeros((n_row,resize_magnitude))+.5
             self.map=np.concatenate([self.map, newmap],axis=1)
-            self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=1)
+            #self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=1)
             n_col += 200
 
         # column underflow (y axis)
@@ -261,7 +262,7 @@ class Particle:
             newmap=np.zeros((resize_magnitude,n_col))-1
             new_weight_map=np.zeros((resize_magnitude,n_col))+.5
             self.map=np.concatenate([newmap, self.map],axis=0)
-            self.occupancy_weight_map=np.concatenate([new_weight_map, self.map],axis=0)
+            #self.occupancy_weight_map=np.concatenate([new_weight_map, self.map],axis=0)
             self.pose[1] += cushion
 
         # column overflow (x axis)
@@ -269,6 +270,6 @@ class Particle:
             newmap=np.zeros((resize_magnitude,n_col))-1
             new_weight_map=np.zeros((resize_magnitude,n_col))+.5
             self.map=np.concatenate([self.map, newmap],axis=0)
-            self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=0)
+            #self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=0)
 
         return self.map

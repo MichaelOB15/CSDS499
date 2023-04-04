@@ -82,13 +82,11 @@ def recieve_motion_command(u,particle_samples):
         j=0
         while j==0:
             samplenumber=random.randint(0,num_particles - 1)
-            
 
             a=particle_samples[samplenumber].get_weight()
             b=random.random()*maxweight*1.1 #scaled up so the weight guess is solidly above the largest weight
-            print(maxweight)
-            print("sep")
-            print(a)
+            #print(maxweight)
+            #print(a)
             if b<=a:
                 j=1
                 new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
