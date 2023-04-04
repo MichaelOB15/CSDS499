@@ -229,7 +229,7 @@ class Particle:
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=1)
                 n_col=np.shape(self.map)[1]
-                
+
             #row underflow
             if (not self.map[a,cushion]==initial_weight):
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
@@ -237,14 +237,14 @@ class Particle:
                 n_col=np.shape(self.map)[1]
                 #underflows need to update pose
                 self.pose[1]=self.pose[1]+resize_magnitude
-                
+
         for a in range(n_col):
             #column overflow (y axis)
             if (not self.map[n_row-cushion,a]==initial_weight):
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=0)
                 n_row=np.shape(self.map)[0]
-                
+
             #column underflow
             if (not self.map[cushion,a]==initial_weight):
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
@@ -252,5 +252,3 @@ class Particle:
                 n_row=np.shape(self.map)[0]
                 #underflows need to update pose
                 self.pose[0]=self.pose[0]+resize_magnitude
-        
-        return self.map
