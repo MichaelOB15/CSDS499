@@ -2,7 +2,7 @@ import numpy as np
 from math import sin, cos, sqrt
 
 class Particle:
-    def __init__(self, position, map = None):
+    def __init__(self, position = None, map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
