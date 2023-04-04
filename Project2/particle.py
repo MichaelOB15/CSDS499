@@ -95,14 +95,14 @@ class Particle:
 
         # CHANGE LOC LFREE AND LO
 
-        zmax = 30
-        alpha = 1
+        zmax = self.config.zmax
+        alpha = self.config.obstacle_thickness
 
-        l_occ = np.log(0.65/0.35)
-        l_free = np.log(0.35/0.65)
-        lo = np.log(0.4/.0,6)
+        l_occ = self.config.l_occ
+        l_free = self.config.l_free
+        lo = self.config.l_o
 
-        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         beta = beam_width*pi/180
 
         x_i = m_i[0] + .5
@@ -166,24 +166,20 @@ class Particle:
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
         
-
-        rmax=30 #use config
-        num_sensors=6
-        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        rmax= self.config.rmax #use config
+        num_sensors= len(self.measurements)
+        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
-        dr=0.3
+        dr = self.config.dr
         dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
         r_steps=int(rmax/dr)
         theta_steps=int(spread/dtheta)
 
-
-        sigma_hit = .5 #doesnt belong to smallest r code this is new
         q = 1
-        zmax = .1
-        zhit = .4
-        zrandom = .1
-        sigma_hit = .4 #get these into a config and tune them :(   
-
+        zmax = self.config.zmax
+        zhit = self.config.zhit
+        zrandom = self.config.zrandom
+        sigma_hit = self.config.sigma_hit #get these into a config and tune them :(   
 
         rout=np.zeros(num_sensors)+rmax
         
@@ -215,7 +211,7 @@ class Particle:
     def update_occupancy_grid(self):
         '''update the map based on measurement data'''
 
-        lo = np.log(0.4/0.6)
+        lo = self.config.l_o
 
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
@@ -238,13 +234,13 @@ class Particle:
         self.resize()
 
     def perceptual_field(self, sensor):
-        rmax=30
-        dr=0.3
+        rmax= self.config.rmax
+        dr= self.config.dr
         dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
 
-        num_sensors = 6
+        num_sensors = len(self.measurements)
 
-        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
 
         theta = sensor*2*pi/num_sensors

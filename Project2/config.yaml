@@ -9,3 +9,21 @@ alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 
 initial_occupancy_map_size: [300, 300]
 initial_weight: .5
+
+rmax: 30
+beam_width: 15
+dr: 0.3
+
+obstacle_thickness: 1
+
+zmax: .1
+zhit: .4
+zrandom: .1
+sigma_hit: .4
+
+# l_occ = np.log(0.65/0.35)
+l_occ: 0.2688453123
+# l_free = np.log(0.35/0.65)
+l_free: -0.2688453123
+# lo = np.log(0.4/0.6)
+l_o: -0.1760912591
