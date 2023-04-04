@@ -94,6 +94,7 @@ class Particle:
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
         # TODO might need to add wall collision
+        self.resize()
 
     def inverse_range_sensor_model(self, m_i, sensor): 
         """Implements the inverse measurement model seen on pg 288"""
@@ -177,7 +178,6 @@ class Particle:
 
                 self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col], s) - lo
 
-        self.resize()
 
     def perceptual_field(self, s):
         """return the cells that are imaged in a sensor reading"""
@@ -218,44 +218,39 @@ class Particle:
         n_col=np.shape(self.map)[1]
 
         #I need to go around every edge (with a cushion) and see if I have room to work
-        cushion=self.config.cushion ########################################if these two are added to .yaml file then setpose method also could use these 
-        resize_magnitude=200
+        cushion=self.config.cushion
+        resize_magnitude=self.config.resize_magnitude
 
-        x_pos = self.pose[0]
-        y_pos = self.pose[1]
+        initial_weight=self.config.initial_weight
 
-        #unmapped regions will hold a value of -1
-
-        # row underflow (x axis)
-        if (x_pos <= cushion):
-            newmap=np.zeros((n_row,resize_magnitude))-1
-            new_weight_map=np.zeros((n_row,resize_magnitude))+.5
-            self.map=np.concatenate([newmap, self.map],axis=1)
-            #self.occupancy_weight_map=np.concatenate([new_weight_map, self.occupancy_weight_map],axis=1)
-            self.pose[0] += cushion
-            n_col += 200
-
-        # row overflow (x axis)
-        if (x_pos >= (n_col - cushion)):
-            newmap=np.zeros((n_row,resize_magnitude))-1
-            new_weight_map=np.zeros((n_row,resize_magnitude))+.5
-            self.map=np.concatenate([self.map, newmap],axis=1)
-            #self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=1)
-            n_col += 200
-
-        # column underflow (y axis)
-        if (y_pos <= cushion): 
-            newmap=np.zeros((resize_magnitude,n_col))-1
-            new_weight_map=np.zeros((resize_magnitude,n_col))+.5
-            self.map=np.concatenate([newmap, self.map],axis=0)
-            #self.occupancy_weight_map=np.concatenate([new_weight_map, self.map],axis=0)
-            self.pose[1] += cushion
-
-        # column overflow (x axis)
-        if (y_pos >= (n_row - cushion)):
-            newmap=np.zeros((resize_magnitude,n_col))-1
-            new_weight_map=np.zeros((resize_magnitude,n_col))+.5
-            self.map=np.concatenate([self.map, newmap],axis=0)
-            #self.occupancy_weight_map=np.concatenate([self.map, new_weight_map],axis=0)
-
-        return self.map
+        for a in range(n_row):
+            #row overflow (x axis)
+            if (not map[a,n_col-cushion]==initial_weight):
+                newmap=np.zeros((n_row,resize_magnitude))+initial_weight
+                map=np.concatenate([map,newmap],axis=1)
+                n_col=np.shape(map)[1]
+                
+            #row underflow
+            if (not map[a,cushion]==initial_weight):
+                newmap=np.zeros((n_row,resize_magnitude))+initial_weight
+                map=np.concatenate([newmap,map],axis=1)
+                n_col=np.shape(map)[1]
+                #underflows need to update pose
+                self.pose[1]=self.pose[1]+resize_magnitude
+                
+        for a in range(n_col):
+            #column overflow (y axis)
+            if (not map[n_row-cushion,a]==initial_weight):
+                newmap=np.zeros((resize_magnitude,n_col))+initial_weight
+                map=np.concatenate([map,newmap],axis=0)
+                n_row=np.shape(map)[0]
+                
+            #column underflow
+            if (not map[cushion,a]==initial_weight):
+                newmap=np.zeros((resize_magnitude,n_col))+initial_weight
+                map=np.concatenate([newmap,map],axis=0)
+                n_row=np.shape(map)[0]
+                #underflows need to update pose
+                self.pose[0]=self.pose[0]+resize_magnitude
+        
+        return map
