@@ -196,18 +196,29 @@ class Particle:
         for sensor in range(len(self.measurements[0])):
             perceptual_field.append(self.perceptual_field(sensor))
                 
-        for x in range(n_col):
-            for y in range(n_row):
-                if [x,y] in perceptual_field:
-                    prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
-                else:
-                    pass
+            for x in range(n_col):
+                for y in range(n_row):
+                    if [x,y] in perceptual_field:
+                        prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
+                    else:
+                        pass
 
         self.resize()
             
         return prev_weights
 
     # update map from weights
+    def update_map_from_weights(self, weights):
+        n_row=np.shape(weights)[0]
+        n_col=np.shape(weights)[1]
+
+        for x in range(n_col):
+            for y in range(n_row):
+                if weights[x,y] > .5:
+                    self.map[x,y] = 1
+                else:
+                    self.map[x,y] = 0
+
 
     def perceptual_field(self, sensor):
         rmax=30
