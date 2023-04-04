@@ -1,4 +1,4 @@
-maze_n: [5, 5]
+maze_n: [1, 1]
 maze_scaling: 30
 maze_i: [0, 0]
 
@@ -36,4 +36,4 @@ sigma_hit: .04
 
 l_occ: 0.2688453123
 l_free: -0.2688453123
-l_o: -0.5
+l_o: 0.5
