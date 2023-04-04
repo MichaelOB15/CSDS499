@@ -178,7 +178,7 @@ class Particle:
 
                 for x_prime in range(n_col):
                     for y_prime in range(n_row):
-                        if self.map[x,y] == 1:
+                        if self.map[x_prime,y_prime] == 1:
                             dist = sqrt((x_z_k_t- x_prime)**2+(y_z_k_t-y_prime)**2)
                             if dist < min_dist:
                                 min_dist = dist
