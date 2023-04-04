@@ -14,6 +14,7 @@ rmax: 30
 beam_width: 15
 dr: 0.3
 num_sensors: 6
+num_particle: 5
 
 obstacle_thickness: 1
 
