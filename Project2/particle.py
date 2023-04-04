@@ -4,7 +4,7 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, pose = None, map = None, occupancy_weight_map = None):
+    def __init__(self, pose = None, occupancy_map = None, occupancy_weight_map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
@@ -16,9 +16,11 @@ class Particle:
         self.a=np.array([0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001])
 
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
-        if map == None:
+        if occupancy_map == None:
             self.map=np.zeros((row,col))-1
             self.occupancy_weight_map = np.ones((row,col)) - .5
+        else:
+            self.map = occupancy_map
 
         if pose == None:
             self.pose=np.array([row/2, col/2, 0]) #y,x,theta
@@ -30,10 +32,13 @@ class Particle:
         
     #use pg 478 as a reference for an overview of the full algorithm
 
-    def addmeasurements(self, measurement):
-        self.measurements.append(measurement)
+    def set_measurements(self, measurement):
+        self.measurements = measurement
 
-    def setpose(self,pose):
+    def set_pose(self,pose):
+        self.pose = pose
+
+        '''
         #pose has the potential to leave the map
         map=self.map
 
@@ -62,7 +67,7 @@ class Particle:
         map=np.concatenate([map,newmap],axis=1)
 
         self.map=map
-        self.pose=pose
+        self.pose=pose'''
 
     def get_pose(self):
         return self.pose
@@ -135,13 +140,13 @@ class Particle:
 
         k = 0
         min_val = 2*math.pi
-        for j in range(len(self.measurements[0])):
-            new_val = math.abs(phi - self.measurements[-1][1][j])
+        for j in range(len(self.measurements)):
+            new_val = math.abs(phi - self.measurements[1][j])
             if min_val > new_val:
                 min_val = new_val
                 k = j
 
-        z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
+        z_t_k = [self.measurements[0][k],self.measurements[1][k]]
             
         if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
             return lo
@@ -160,13 +165,13 @@ class Particle:
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
-        for k in range(len([self.measurements[0]])):
-            z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
+        for k in range(len([self.measurements)):
+            z_t_k = [self.measurements[0][k],self.measurements[1][k]]
             if z_t_k != zmax:
-                x_k_sensor = self.measurements[-1][0][k]*cos(self.measurements[-1][1][k]) + self.pose[0]
-                y_k_sensor = self.measurements[-1][0][k]*sin(self.measurements[-1][1][k]) + self.pose[1]
-                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pos[2]) - y_k_sensor * sin(self.pos[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[-1][1][k])
-                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pos[2]) - x_k_sensor * sin(self.pos[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[-1][1][k])
+                x_k_sensor = self.measurements[0][k]*cos(self.measurements[1][k]) + self.pose[0]
+                y_k_sensor = self.measurements[0][k]*sin(self.measurements[1][k]) + self.pose[1]
+                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pos[2]) - y_k_sensor * sin(self.pos[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[1][k])
+                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pos[2]) - x_k_sensor * sin(self.pos[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[1][k])
 
                 min_dist = zmax + 1
 
@@ -194,7 +199,7 @@ class Particle:
         n_col=np.shape(self.map)[1]
 
         perceptual_field = []
-        for sensor in range(len(self.measurements[0])):
+        for sensor in range(len(self.measurements)):
             perceptual_field.append(self.perceptual_field(sensor))
                 
             for x in range(n_col):
@@ -229,11 +234,11 @@ class Particle:
 
         for i in range(theta_steps):
             for j in range(r_steps):
-                temp_angle=pose[2]+theta-spread/2+i*dtheta
+                temp_angle=self.pose[2]+theta-spread/2+i*dtheta
                 temp_r=j*dr
 
-                x=int(pose[1]+temp_r*cos(temp_angle))
-                y=int(pose[0]+temp_r*sin(temp_angle))
+                x=int(self.pose[1]+temp_r*cos(temp_angle))
+                y=int(self.pose[0]+temp_r*sin(temp_angle))
 
                 if [x,y] not in distinct_pairs:
                     distinct_pairs.append([x,y])
