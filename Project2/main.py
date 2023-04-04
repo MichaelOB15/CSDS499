@@ -5,6 +5,7 @@ from math import pi
 import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
+from ucs import nearest_list
 
 
 # imports need to be fixed at the end once these files are finished
@@ -12,23 +13,53 @@ from measurement_wizard import MeasurementWizard
 
 ############################ MAZE CODE #############################################
 
-nx, ny = 5, 5
+nx, ny = 2, 2
 ix, iy = 0, 0  # Maze entry position
-scaling = 30
+scaling = 6
 
 maze = Maze(nx, ny, scaling, ix, iy)
 maze.make_maze()
 maze = maze.out()
 
+############################# MEASUREMENT CODE ##############################################
+
+
+# this is extra and shouldnt be done until the very end but there's
+# maybe a way to visualize where we just track the measure particle
+# I cant use the visualize class as I go cuz it's really slow :(
+
+
 stepsize = 5
 real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
 measure = MeasurementWizard(maze, real_pose)
 
-#initialize an array of particles
+
+
+delta_t = 1
+
+# initialize an array of particles
 num_particles=100
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
     particle_samples[n]=Particle()
+
+# print(particle_samples[0].get_map())
+# vis = Visualization(particle_samples[0].get_map(), real_pose)
+
+
+while 0.5 in particle_samples[0].get_map():
+    l = nearest_list(particle_samples[0].get_map(), particle_samples[0].get_pose())
+    for i in range(len(l) - 1):
+        motions = l[i].get_motion(l[i + 1], delta_t)
+        if type(motions[0]) == float:
+            recieve_motion_command(motions)
+            # vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 40 == 0)
+            # vis.pause()
+        else:
+            recieve_motion_command(motions[0])
+            recieve_motion_command(motions[1])
+
+print("Mapped Maze!")
 
 
 def recieve_motion_command(u):

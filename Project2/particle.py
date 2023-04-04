@@ -17,7 +17,7 @@ class Particle:
 
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if occupancy_map == None:
-            self.map=np.zeros((row,col))-1
+            self.map=np.ones((row,col)) - .5
             self.occupancy_weight_map = np.ones((row,col)) - .5
         else:
             self.map = occupancy_map
