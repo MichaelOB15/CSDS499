@@ -34,7 +34,7 @@ class Visualization:
     def visualize(self):
         """Helper method to plot Maze and Robot within Maze"""
         self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=1)
-        circle1 = patches.Circle((self.pos[0], self.pos[1]), self.r, color='blue')
+        circle1 = patches.Circle((self.pos[1], self.pos[0]), self.r, color='blue')
         self.ax.add_patch(circle1)
         self.draw_direction()
         self.fig.canvas.draw()
@@ -42,8 +42,8 @@ class Visualization:
         plt.show(block=False)
 
     def draw_direction(self):
-        x_0 = self.pos[0]
-        y_0 = self.pos[1]
+        x_0 = self.pos[1]
+        y_0 = self.pos[0]
         x_1 = x_0 + cos(self.pos[2])*self.r
         y_1 = y_0 + sin(self.pos[2])*self.r
         self.ax.plot([x_0, x_1], [y_0, y_1], color="red")
@@ -53,8 +53,8 @@ class Visualization:
         x = []
         y = []
         for pos in self.path:
-            x.append(pos[0])
-            y.append(pos[1])
+            x.append(pos[1])
+            y.append(pos[0])
         self.ax.plot(x, y, color='blue')
 
     def pause(self):
