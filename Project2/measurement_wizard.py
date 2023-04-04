@@ -16,7 +16,7 @@ class MeasurementWizard:
         self.z=None
 
     def getpose(self):
-        return self.ideal.getpose()
+        return self.ideal.get_pose()
     
     def getZ(self):
         return self.z.copy()
@@ -34,7 +34,7 @@ class MeasurementWizard:
     def ideal_measure(self,rmax,dr,dtheta):
         
         map=self.maze
-        pose=self.ideal.getpose()
+        pose=self.ideal.get_pose()
 
         # 6 sensors on the robot, put this in config
         num_sensors=6

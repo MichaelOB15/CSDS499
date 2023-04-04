@@ -6,6 +6,8 @@ import random
 from visualize import Visualization
 from measurement_wizard import MeasurementWizard
 
+from PIL import Image
+
 
 # imports need to be fixed at the end once these files are finished
 # we should probably go through this at the end and fix up my weird naming conventions etc idk what the standard is
@@ -38,15 +40,15 @@ def recieve_motion_command(u):
 
     #move particles according to command
     for i in range(num_particles):
-        particle_samples[n].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
-        particle_samples[n].set_measurements(z)
-        particle_samples[n].likelihood_field_range_finder_model()
+        particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
+        particle_samples[i].set_measurements(z) #recieves measurement
+        particle_samples[i].likelihood_field_range_finder_model() #measurement model
 
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
     for i in range(num_particles):
-        if particle_samples[n].getweight()>maxweight:
-            maxweight=particle_samples[n].getweight()
+        if particle_samples[i].getweight()>maxweight:
+            maxweight=particle_samples[i].getweight()
 
     #implement rejection sampling
     new_samples=np.empty(num_particles,dtype=Particle)
@@ -78,8 +80,24 @@ def recieve_motion_command(u):
     
 
 
+u=np.array([1,0])
 
-        
+recieve_motion_command(u)
+
+img=particle_samples[5].get_map().copy()
+
+#images have high intensity as white so walls need to change to zeros
+for a in range(np.shape(img)[0]):
+    for b in range(np.shape(img)[1]):
+        if (img[a,b]==-1):
+            img[a,b]=100
+        if (img[a,b]==0):
+            img[a,b]=0
+        if (img[a,b]==1):
+            img[a,b]=255
+
+img = Image.fromarray(img.astype('uint8'))
+img.show()
 
 
     
