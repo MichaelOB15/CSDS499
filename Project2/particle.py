@@ -1,5 +1,6 @@
 import numpy as np
 from math import sin, cos, sqrt
+import math
 
 class Particle:
     def __init__(self, position = None, map = None):
