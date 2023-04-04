@@ -253,4 +253,4 @@ class Particle:
                 #underflows need to update pose
                 self.pose[0]=self.pose[0]+resize_magnitude
         
-        return map
+        return self.map
