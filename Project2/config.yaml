@@ -13,6 +13,7 @@ initial_weight: .5
 rmax: 30
 beam_width: 15
 dr: 0.3
+num_sensors: 6
 
 obstacle_thickness: 1
 
