@@ -40,7 +40,7 @@ measure = MeasurementWizard(maze, real_pose)
 delta_t = 1
 
 # initialize an array of particles
-num_particles=100
+num_particles=5
 particle_samples=np.empty(num_particles,dtype=Particle)
 for n in range(num_particles):
     particle_samples[n]=Particle()
@@ -71,9 +71,9 @@ def recieve_motion_command(u,particle_samples):
 
     #move particles according to command
     for i in range(num_particles):
-        print(particle_samples[i])
-        print(u)
-        print(stepsize)
+        # print(particle_samples[i])
+        # print(u)
+        # print(stepsize)
         particle_samples[i].sample_motion_model_velocity(u,stepsize) #should probably put stepsize in config
         particle_samples[i].set_measurements(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
@@ -81,17 +81,17 @@ def recieve_motion_command(u,particle_samples):
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
     for i in range(num_particles):
-        if particle_samples[i].getweight()>maxweight:
-            maxweight=particle_samples[i].getweight()
+        if particle_samples[i].get_weight()>maxweight:
+            maxweight=particle_samples[i].get_weight()
 
     #implement rejection sampling
     new_samples=np.empty(num_particles,dtype=Particle)
     for i in range(num_particles):
         j=0
         while j==0:
-            samplenumber=random.randint(0,num_particles)
+            samplenumber=random.randint(0,num_particles - 1)
 
-            a=particle_samples[samplenumber].getweight()
+            a=particle_samples[samplenumber].get_weight()
             b=random.random()*maxweight*1.1 #scaled up so the weight guess is solidly above the largest weight
 
             if b<=a:
@@ -101,22 +101,40 @@ def recieve_motion_command(u,particle_samples):
     #update map, but update is expensive so only run if particle not seen before
     weightlog=np.zeros(num_particles)
     for i in range(num_particles):
-        if not new_samples[i].getweight().isin(weightlog):
-            new_samples[i].update_occupancy_grid_map()
-            weightlog[i]=new_samples[i].getweight()
+        if not new_samples[i].get_weight() in weightlog:
+            new_samples[i].update_occupancy_grid()
+            weightlog[i]=new_samples[i].get_weight()
 
     #now I need to np.copy() the map in each particle to split the objects and make them independent
-    for i in range(num_particles):
-        new_samples[i].setmap(new_samples[i].getmap().copy())
+    # for i in range(num_particles):
+    #     new_samples[i].setmap(new_samples[i].getmap().copy())
 
     #overwrite the old set of samples
     return new_samples 
-    
 
 
-u=np.array([1,0])
+vis = Visualization(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
-particle_samples = recieve_motion_command(u,particle_samples)
+while 0.5 in particle_samples[0].get_map():
+    l = nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
+
+    if len(l) == 1:
+        particle_samples = recieve_motion_command([0, 0], particle_samples)
+
+    for i in range(len(l) - 1):
+        motions = l[i].get_motion(l[i + 1], delta_t)
+
+        if type(motions[0]) == float:
+            particle_samples = recieve_motion_command(motions, particle_samples)
+            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            print("completed one motion")
+            vis.pause()
+        else:
+            particle_samples = recieve_motion_command(motions[0], particle_samples)
+            particle_samples = recieve_motion_command(motions[1], particle_samples)
+
+# u=np.array([1,0])
+# particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[5].get_map().copy()
 
@@ -132,14 +150,6 @@ for a in range(np.shape(img)[0]):
 
 img = Image.fromarray(img.astype('uint8'))
 img.show()
-
-
-    
-
-
-
-
-
 
 
 
