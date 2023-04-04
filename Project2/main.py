@@ -86,7 +86,10 @@ def recieve_motion_command(u,particle_samples):
                 j=1
                 new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
 
+    for i in range(num_particles):
+        new_samples[i].update_occupancy_grid() #apparently update occupancy grid updates the map of the particle? make sure it copies. this is slower
 
+    '''
     #update map, but update is expensive so only run if particle not seen before
     weightlog=np.zeros(num_particles)
     for i in range(num_particles):
@@ -95,9 +98,9 @@ def recieve_motion_command(u,particle_samples):
             weightlog[i]=new_samples[i].get_weight()
 
     # now I need to np.copy() the map in each particle to split the objects and make them independent
-    # for i in range(num_particles):
-    #     new_samples[i].set_map(new_samples[i].getmap().copy())
-
+    for i in range(num_particles):
+        new_samples[i].set_map(new_samples[i].getmap().copy())
+    '''
     #overwrite the old set of samples
     return new_samples 
 
@@ -106,6 +109,7 @@ vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(
 
 runcounter=0 #delete this it's for testing
 
+'''
 while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
@@ -127,23 +131,32 @@ while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
 
     runcounter=runcounter+1
 
-# u=np.array([1,0])
-# particle_samples = recieve_motion_command(u,particle_samples)
+'''
+
+#testparticle=Particle(config)
+#img=testparticle.get_map()
+
+u=np.array([1,0])
+particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[5].get_map().copy()
+
 
 #images have high intensity as white so walls need to change to zeros
 for a in range(np.shape(img)[0]):
     for b in range(np.shape(img)[1]):
-        if (img[a,b]==-1):
+        if (img[a,b]==config.initial_weight):
             img[a,b]=100
-        if (img[a,b]==0):
-            img[a,b]=0
-        if (img[a,b]==1):
+        elif (img[a,b]<config.initial_weight):
             img[a,b]=255
+        elif (img[a,b]>config.initial_weight):
+            img[a,b]=0
 
 img = Image.fromarray(img.astype('uint8'))
 img.show()
+
+#img2=maze
+
 
 
 # the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory

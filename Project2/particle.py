@@ -20,8 +20,8 @@ class Particle:
 
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if occupancy_map == None:
-            self.map=np.ones((row,col)) - .5
-            self.occupancy_weight_map = np.ones((row,col)) - .5
+            self.map=np.ones((row,col)) - config.initial_weight
+            self.occupancy_weight_map = np.ones((row,col)) - config.initial_weight
         else:
             self.map = occupancy_map
             self.occupancy_weight_map = occupancy_weight_map
@@ -114,7 +114,7 @@ class Particle:
 
         k = 0
         min_val = 2*math.pi
-        for j in range(len(self.measurements)):
+        for j in range(len(self.measurements[0])):
             new_val = abs(phi - self.measurements[1][j])
             if min_val > new_val:
                 min_val = new_val
@@ -168,7 +168,7 @@ class Particle:
         """This method is heavily modified but implements the algorithm seen on pg 172"""
         
         rmax= self.config.rmax #use config
-        num_sensors= len(self.measurements)
+        num_sensors= len(self.measurements[0])
         beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
         dr = self.config.dr
@@ -217,17 +217,17 @@ class Particle:
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
-        for sensor in range(len(self.measurements)):
+        for sensor in range(len(self.measurements[0])):
             perceptual_field = self.perceptual_field(sensor)
                 
             for x in range(n_col):
                 for y in range(n_row):
                     if [x,y] in perceptual_field:
-                        self.occupancy_weight_map[x,y] = self.occupancy_weight_map[x,y] + self.inverse_range_sensor_model([x,y]) - lo
-                        if self.occupancy_weight_map[x,y] > .5:
-                            self.map[x,y] = 1
+                        self.occupancy_weight_map[y,x] = self.occupancy_weight_map[y,x] + self.inverse_range_sensor_model([x,y]) - lo
+                        if self.occupancy_weight_map[y,x] > self.config.initial_weight: #order of x,y got mixed up here; method could use some cleaning
+                            self.map[y,x] = 1
                         else:
-                            self.map[x,y] = 0
+                            self.map[y,x] = 0
                     else:
                         pass
 
@@ -238,7 +238,7 @@ class Particle:
         dr= self.config.dr
         dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
 
-        num_sensors = len(self.measurements)
+        num_sensors = len(self.measurements[0])
 
         beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
