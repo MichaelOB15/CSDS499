@@ -28,7 +28,7 @@ class Particle:
         if len(pose) == 0:
             self.pose=np.array([row/2, col/2, 0])  # y,x,theta
         else:
-            self.set_pose(pose)
+            self.pose = pose
 
         self.weight = 1  # weight of the particle, not the map
         self.measurements = []
@@ -40,8 +40,8 @@ class Particle:
     def set_measurement(self, measurement):
         self.measurements = measurement
 
-    def set_pose(self, pose):
-        self.pose = pose
+    # def set_pose(self, pose):
+        # self.pose = pose
 
     def get_pose(self):
         return self.pose
@@ -52,37 +52,37 @@ class Particle:
     def get_weight(self):
         return self.weight
 
-    def sample_motion_model_velocity(self,u0,stepsize):
+    def sample_motion_model_velocity(self, u0, stepsize):
         '''Move the location of the robot with trajectory error'''
 
-        a=self.a
+        a = self.a
 
-        v=u0[0]
-        w=u0[1]
+        v = u0[0]
+        w = u0[1]
 
         variance = np.zeros(3)
         variance[0]=a[0]*abs(v)+a[1]*abs(w)
         variance[1]=a[2]*abs(v)+a[3]*abs(w)
         variance[2]=a[4]*abs(v)+a[5]*abs(w)
 
-        offset=1e-18
+        offset = 1e-18
 
         # avoids any divide by zero errors
         variance = variance + offset
 
         # sample normal distribution:
-        mu=0
-        sigma=np.zeros(3)
+        mu = 0
+        sigma = np.zeros(3)
         for i in range(len(variance)):
             sigma[i]=sqrt(variance[i])
         epsilon=np.random.normal(mu,sigma)
 
         # add error to motion command
-        u=u0+epsilon[0:1]
+        u = u0+epsilon[0:1]
 
         # reset motion, this time with error
-        v=u[0]
-        w=u[1]
+        v = u[0]
+        w = u[1]
         theta=self.pose[2]
 
         # apply motion
@@ -90,7 +90,7 @@ class Particle:
         y_update=v/w*cos(theta)-v/w*cos(theta+w*stepsize)
         theta_update=(w+epsilon[2])*stepsize
 
-        self.pose=self.pose+np.array([y_update,x_update,theta_update])
+        self.pose = self.pose+np.array([y_update, x_update, theta_update])
         # TODO might need to add wall collision
 
     def inverse_range_sensor_model(self, m_i, sensor):
@@ -137,8 +137,10 @@ class Particle:
             perceptual_field = self.perceptual_field(s)
 
             # go through every cell of the perceptual field
-            index=len(perceptual_field[0])
+            index=len(perceptual_field)
+
             for i in range(index):
+                # print(i)
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
 
