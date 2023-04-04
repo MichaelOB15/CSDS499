@@ -171,8 +171,8 @@ class Particle:
             if z_t_k != zmax:
                 x_k_sensor = self.measurements[0][k]*cos(self.measurements[1][k]) + self.pose[0]
                 y_k_sensor = self.measurements[0][k]*sin(self.measurements[1][k]) + self.pose[1]
-                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pos[2]) - y_k_sensor * sin(self.pos[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[1][k])
-                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pos[2]) - x_k_sensor * sin(self.pos[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[1][k])
+                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pose[2]) - y_k_sensor * sin(self.pose[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[1][k])
+                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pose[2]) - x_k_sensor * sin(self.pose[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[1][k])
 
                 min_dist = zmax + 1
 
