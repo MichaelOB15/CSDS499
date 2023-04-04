@@ -82,10 +82,13 @@ def recieve_motion_command(u,particle_samples):
         j=0
         while j==0:
             samplenumber=random.randint(0,num_particles - 1)
+            
 
             a=particle_samples[samplenumber].get_weight()
             b=random.random()*maxweight*1.1 #scaled up so the weight guess is solidly above the largest weight
-
+            print(maxweight)
+            print("sep")
+            print(a)
             if b<=a:
                 j=1
                 new_samples[i]=particle_samples[samplenumber] #I want to pass the address in memory not split the object
@@ -110,9 +113,8 @@ def recieve_motion_command(u,particle_samples):
     return new_samples 
 
 
-vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
+#vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
-runcounter=0 #delete this it's for testing
 '''
 while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
@@ -143,9 +145,11 @@ while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
 u=np.array([1,0])
 particle_samples = recieve_motion_command(u,particle_samples)
 
-img=particle_samples[5].get_map().copy()
+img=particle_samples[0].get_map().copy()
 
+img=(img-1)*-255
 
+'''
 #images have high intensity as white so walls need to change to zeros
 for a in range(np.shape(img)[0]):
     for b in range(np.shape(img)[1]):
@@ -155,6 +159,7 @@ for a in range(np.shape(img)[0]):
             img[a,b]=255
         elif (img[a,b]>config.initial_weight):
             img[a,b]=0
+'''
 
 img = Image.fromarray(img.astype('uint8'))
 img.show()

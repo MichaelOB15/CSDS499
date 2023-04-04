@@ -88,7 +88,7 @@ class Particle:
     def get_weight(self):
         return self.weight
 
-    def inverse_range_sensor_model(self, m_i):
+    def inverse_range_sensor_model(self, m_i): #Here is where I left off checking last-- I need to go through the logic of this but I'll come back later
         """Implements the inverse measurement model seen on pg 288"""
 
         zmax = self.config.zmax
@@ -129,10 +129,10 @@ class Particle:
 
         q = 1
 
-        zmax = self.config.zmax
+        zmax = self.config.zmax #tune these values!
         zhit = self.config.zhit
         zrandom = self.config.zrandom
-        sigma_hit = self.config.sigma_hit #get these into a config and tune them :(   
+        sigma_hit = self.config.sigma_hit   
         
         rout=np.zeros(self.config.num_sensors)+self.config.rmax
 
@@ -140,7 +140,6 @@ class Particle:
 
             #efficient code to get exactly the perceptual field of a sensor
             perceptual_field = self.perceptual_field(s)
-            print(perceptual_field[0][0])
 
             #go through every cell of the perceptual field
             index=len(perceptual_field[0])
@@ -172,12 +171,14 @@ class Particle:
         for s in range(self.config.num_sensors):
             perceptual_field = self.perceptual_field(s) 
 
-            index=len(perceptual_field)
+            #go through every cell of the perceptual field
+            index=len(perceptual_field[0])
             for i in range(index):
-                row=perceptual_field[0,i]
-                col=perceptual_field[1,i]
+                row=perceptual_field[0][i]
+                col=perceptual_field[1][i]
 
-                self.occupancy_weight_map[row,col] = self.occupancy_weight_map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
+                #changed cuz im just using the map as a probability field
+                self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
 
                 #I kinda want the actual probability as an output and then we can have probability fields in the output image
                 #why do we have two maps? the only one we need is the probability one??
@@ -187,6 +188,7 @@ class Particle:
                 else:
                     self.map[row,col] = 0
                 '''
+
 
         self.resize()
 

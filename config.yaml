@@ -19,14 +19,12 @@ beam_width: 15
 dr: 0.3
 dtheta: 0.017453292519943295 #(2*pi/360) every degree
 num_sensors: 6
-num_particle: 10
+num_particle: 5
 
-obstacle_thickness: 1
-
-zmax: .1
-zhit: .4
+zmax: .3
+zhit: .6
 zrandom: .1
-sigma_hit: .4
+sigma_hit: .04
 
 # l_occ = np.log(0.65/0.35)
 l_occ: 0.2688453123
