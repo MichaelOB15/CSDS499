@@ -146,7 +146,7 @@ class Particle:
                 col=perceptual_field[i][0]
 
                 # find the corresponding closest radius for the sensor
-                if self.map[row][col]== 1:
+                if self.map[row][col]>self.config.initial_weight:
                     r=sqrt((self.pose[0]-row)**2+(self.pose[1]-col)**2)
 
                     # the smallest value is the closest radius
