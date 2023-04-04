@@ -25,12 +25,12 @@ class Particle:
             self.setpose(pose)
 
         self.weight=None
-        self.measurements=None
+        self.measurements= []
         
     #use pg 478 as a reference for an overview of the full algorithm
 
-    def setmeasurements(self, measurement):
-        self.measurements = measurement
+    def addmeasurements(self, measurement):
+        self.measurements.append(measurement)
 
     def setpose(self,pose):
         #pose has the potential to leave the map
@@ -109,6 +109,9 @@ class Particle:
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
 
+    def get_weight(self):
+        return self.weight
+
     def inverse_range_sensor_model(self, m_i):
 
         # CHANGE LOC LFREE AND LO
@@ -131,13 +134,13 @@ class Particle:
 
         k = 0
         min_val = 2*math.pi
-        for j in range(len(self.measurements[1])):
-            new_val = math.abs(phi - self.measurements[1][j])
+        for j in range(len(self.measurements[0])):
+            new_val = math.abs(phi - self.measurements[-1][1][j])
             if min_val > new_val:
                 min_val = new_val
                 k = j
 
-        z_t_k = [self.measurements[0][k],self.measurements[1][k]]
+        z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
             
         if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
             return lo
@@ -146,13 +149,40 @@ class Particle:
         if r <= z_t_k[0]:
             return l_free
 
-    def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
-        '''Set the weight of the particle'''
+    def likelihood_field_range_finder_model(self):
+        q = 1
+        zmax = 30
+        zhit = .5
+        zrandom = .5
+        sigma_hit = .5
 
-        #algorithm on pg 288
+        n_row=np.shape(self.map)[0]
+        n_col=np.shape(self.map)[1]
 
-        #I think the algo for the next method is on pg 286
-        pass
+        for k in range(len([self.measurements[0]])):
+            z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
+            if z_t_k != zmax:
+                x_k_sensor = self.measurements[-1][0][k]*cos(self.measurements[-1][1][k]) + self.pose[0]
+                y_k_sensor = self.measurements[-1][0][k]*sin(self.measurements[-1][1][k]) + self.pose[1]
+                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pos[2]) - y_k_sensor * sin(self.pos[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[-1][1][k])
+                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pos[2]) - x_k_sensor * sin(self.pos[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[-1][1][k])
+
+                min_dist = zmax + 1
+
+                for x_prime in range(n_col):
+                    for y_prime in range(n_row):
+                        if self.map[x,y] == 1:
+                            dist = sqrt((x_z_k_t- x_prime)**2+(y_z_k_t-y_prime)**2)
+                            if dist < min_dist:
+                                min_dist = dist
+                
+                q = q * (zhit * self.prob(dist, sigma_hit)+ zrandom/zmax)
+        
+        return q
+
+    def prob(self, a, b):
+        return np.random.normal(a, b)
+
 
     def update_occupancy_grid(self, prev_weights):
         '''update the map based on measurement data'''
@@ -163,7 +193,7 @@ class Particle:
         n_col=np.shape(self.map)[1]
 
         perceptual_field = []
-        for sensor in range(len(self.measurements)):
+        for sensor in range(len(self.measurements[0])):
             perceptual_field.append(self.perceptual_field(sensor))
                 
         for x in range(n_col):
@@ -172,8 +202,12 @@ class Particle:
                     prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
                 else:
                     pass
+
+        self.resize()
             
         return prev_weights
+
+    # update map from weights
 
     def perceptual_field(self, sensor):
         rmax=30
