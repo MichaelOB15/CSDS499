@@ -68,7 +68,6 @@ def recieve_motion_command(u,particle_samples):
         particle_samples[i].set_measurement(z) #recieves measurement
         particle_samples[i].likelihood_field_range_finder_model() #measurement model
 
-
     #rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight=0
     for i in range(num_particles):

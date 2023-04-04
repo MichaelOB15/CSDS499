@@ -50,7 +50,7 @@ class Particle:
         return self.map
 
     def get_weight(self):
-        print(self)
+        #print(self)
         assert self.weight > 0
         return self.weight
 
@@ -95,41 +95,48 @@ class Particle:
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
         # TODO might need to add wall collision
 
-    def inverse_range_sensor_model(self, m_i): #Here is where I left off checking last-- I need to go through the logic of this but I'll come back later
+    def inverse_range_sensor_model(self, m_i, sensor): 
         """Implements the inverse measurement model seen on pg 288"""
 
-        zmax = self.config.zmax
+        rmax = self.config.rmax
         alpha = 1  # this parameter is hard-coded -> cell size is always 1
 
         l_occ = self.config.l_occ  # these values need to be tuned!
         l_free = self.config.l_free
         lo = self.config.l_o
 
-        beam_width = self.config.beam_width
-        beta = beam_width*pi/180
+        #beam_width = self.config.beam_width
+        #beta = beam_width*pi/180
 
-        x_i = m_i[0] + .5 #we maybe should get rid of this-- it doesnt really matter and its just weird
-        y_i = m_i[1] + .5
+        x_i = m_i[1]
+        y_i = m_i[0]
 
-        r = sqrt((x_i - self.pose[0])**2+(y_i - self.pose[1])**2)
-        phi = math.atan2((y_i - self.pose[1]),(x_i - self.pose[0])) - self.pose[2]
+        r = sqrt((x_i - self.pose[1])**2+(y_i - self.pose[0])**2)
+        #print("r: ",r)
+        #phi = math.atan2((y_i - self.pose[0]),(x_i - self.pose[1])) - self.pose[2]
+        
+        #k = 0 #I need to think about this line again this doesn't quite seem right
+        #min_val = 2*math.pi
+        #for j in range(len(self.measurements[0])):
+        #    new_val = abs(phi - self.measurements[1][j])
+        #    if min_val > new_val:
+        #        min_val = new_val
+        #        k = j
 
-        k = 0 #I need to think about this line again this doesn't quite seem right
-        min_val = 2*math.pi
-        for j in range(len(self.measurements[0])):
-            new_val = abs(phi - self.measurements[1][j])
-            if min_val > new_val:
-                min_val = new_val
-                k = j
-
-        z_t_k = [self.measurements[0][k],self.measurements[1][k]]
+        z_t_k = [self.measurements[0][sensor],self.measurements[1][sensor]]
             
-        if (r > min(zmax, z_t_k[0] + alpha/2)) or (abs(phi - z_t_k[1]) >  beta/2):
+        rmax_offset = 1
+
+        if (r > (rmax-rmax_offset)):
             return lo
-        if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2:
-            return l_occ
-        if r <= z_t_k[0]:
+        elif r < z_t_k[0]:
             return l_free
+        else:
+            return l_occ
+        #if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2:
+        #    return l_occ
+        #if r <= z_t_k[0]:
+        #    return l_free
 
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
@@ -149,7 +156,7 @@ class Particle:
             perceptual_field = self.perceptual_field(s)
 
             # go through every cell of the perceptual field
-            index=len(perceptual_field)
+            index=len(perceptual_field[0])
             for i in range(index):
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
@@ -190,7 +197,8 @@ class Particle:
                 col=perceptual_field[i][0]
 
                 #changed cuz im just using the map as a probability field
-                self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
+                #print(self.inverse_range_sensor_model([row,col], s))
+                self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col], s) - lo
 
                 #I kinda want the actual probability as an output and then we can have probability fields in the output image
                 #why do we have two maps? the only one we need is the probability one??
