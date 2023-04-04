@@ -175,7 +175,8 @@ class Particle:
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
 
-                self.map[row,col] = self.map[row,col] + self.inverse_range_sensor_model([row,col], s) - lo
+                #this is heavily improvised...
+                self.map[row,col] = self.map[row,col] * self.inverse_range_sensor_model([row,col], s)# - lo
 
 
     def perceptual_field(self, s):

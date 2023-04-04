@@ -1,4 +1,4 @@
-maze_n: [1, 1]
+maze_n: [5, 5]
 maze_scaling: 30
 maze_i: [0, 0]
 
@@ -8,7 +8,8 @@ RADIUS: 3
 movement_stepsize: 5
 delta_t: 1
 
-alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
+#alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
+alpha: [0,0,0,0,0,0]
 
 initial_occupancy_map_size: [150, 150]
 cushion: 40 #must be greater than the maximum range of the sensor
@@ -20,7 +21,7 @@ beam_width: 15
 dr: 0.3
 dtheta: 0.017453292519943295 #(2*pi/360) every degree
 num_sensors: 6
-num_particle: 5
+num_particle: 1
 
 zmax: .3
 zhit: .6
@@ -34,6 +35,6 @@ sigma_hit: .04
 # lo = np.log(0.4/0.6)
 #l_o: -0.1760912591
 
-l_occ: 0.2688453123
-l_free: -0.2688453123
+l_occ: 1.5
+l_free: 0.9
 l_o: 0.5
