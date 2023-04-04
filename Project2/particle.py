@@ -25,12 +25,12 @@ class Particle:
             self.setpose(pose)
 
         self.weight=None
-        self.measurements=None
-
+        self.measurements= []
+        
     #use pg 478 as a reference for an overview of the full algorithm
 
-    def setmeasurements(self, measurement):
-        self.measurements = measurement
+    def addmeasurements(self, measurement):
+        self.measurements.append(measurement)
 
     def setpose(self,pose):
         #pose has the potential to leave the map
@@ -109,6 +109,9 @@ class Particle:
 
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
 
+    def get_weight(self):
+        return self.weight
+
     def inverse_range_sensor_model(self, m_i):
 
         # CHANGE LOC LFREE AND LO
@@ -131,13 +134,13 @@ class Particle:
 
         k = 0
         min_val = 2*math.pi
-        for j in range(len(self.measurements[1])):
-            new_val = math.abs(phi - self.measurements[1][j])
+        for j in range(len(self.measurements[0])):
+            new_val = math.abs(phi - self.measurements[-1][1][j])
             if min_val > new_val:
                 min_val = new_val
                 k = j
 
-        z_t_k = [self.measurements[0][k],self.measurements[1][k]]
+        z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
             
         if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
             return lo
@@ -146,34 +149,109 @@ class Particle:
         if r <= z_t_k[0]:
             return l_free
 
-    def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
-        '''Set the weight of the particle'''
+    def likelihood_field_range_finder_model(self):
+        q = 1
+        zmax = 30
+        zhit = .5
+        zrandom = .5
+        sigma_hit = .5
 
-        #algorithm on pg 288
+        n_row=np.shape(self.map)[0]
+        n_col=np.shape(self.map)[1]
 
-        #I think the algo for the next method is on pg 286
-        pass
+        for k in range(len([self.measurements[0]])):
+            z_t_k = [self.measurements[-1][0][k],self.measurements[-1][1][k]]
+            if z_t_k != zmax:
+                x_k_sensor = self.measurements[-1][0][k]*cos(self.measurements[-1][1][k]) + self.pose[0]
+                y_k_sensor = self.measurements[-1][0][k]*sin(self.measurements[-1][1][k]) + self.pose[1]
+                x_z_k_t = self.pose[0] + x_k_sensor * cos(self.pos[2]) - y_k_sensor * sin(self.pos[2]) + z_t_k[0] * cos(self.pose[2] + self.measurements[-1][1][k])
+                y_z_k_t = self.pose[1] + y_k_sensor * cos(self.pos[2]) - x_k_sensor * sin(self.pos[2]) + z_t_k[0] * sin(self.pose[2] + self.measurements[-1][1][k])
 
-    def update_occupancy_grid(self):
+                min_dist = zmax + 1
+
+                for x_prime in range(n_col):
+                    for y_prime in range(n_row):
+                        if self.map[x,y] == 1:
+                            dist = sqrt((x_z_k_t- x_prime)**2+(y_z_k_t-y_prime)**2)
+                            if dist < min_dist:
+                                min_dist = dist
+                
+                q = q * (zhit * self.prob(dist, sigma_hit)+ zrandom/zmax)
+        
+        return q
+
+    def prob(self, a, b):
+        return np.random.normal(a, b)
+
+
+    def update_occupancy_grid(self, prev_weights):
+        '''update the map based on measurement data'''
 
         lo = np.log(0.4/.0,6)
 
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
+        perceptual_field = []
+        for sensor in range(len(self.measurements[0])):
+            perceptual_field.append(self.perceptual_field(sensor))
+                
+            for x in range(n_col):
+                for y in range(n_row):
+                    if [x,y] in perceptual_field:
+                        prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
+                    else:
+                        pass
 
+        self.resize()
+            
+        return prev_weights
+
+    # update map from weights
+    def update_map_from_weights(self, weights):
+        n_row=np.shape(weights)[0]
+        n_col=np.shape(weights)[1]
 
         for x in range(n_col):
             for y in range(n_row):
-                if self.map[x,y]:
+                if weights[x,y] > .5:
+                    self.map[x,y] = 1
+                else:
+                    self.map[x,y] = 0
+
+
+    def perceptual_field(self, sensor):
+        rmax=30
+        dr=0.3
+        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+
+        num_sensors = 6
+
+        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        spread = beam_width*pi/180
+
+        theta = sensor*2*pi/num_sensors
+
+        r_steps=int(rmax/dr)
+        theta_steps=int(spread/dtheta)
+
+        distinct_pairs = []
+
+        for i in range(theta_steps):
+            for j in range(r_steps):
+                temp_angle=pose[2]+theta-spread/2+i*dtheta
+                temp_r=j*dr
+
+                x=int(pose[1]+temp_r*cos(temp_angle))
+                y=int(pose[0]+temp_r*sin(temp_angle))
+
+                if [x,y] not in distinct_pairs:
+                    distinct_pairs.append([x,y])
+                else:
                     pass
-        '''update the map based on measurement data'''
         
-        pass
+        return distinct_pairs
 
-    def perceptual_field(self):
-
-        pass
     
     #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
     #here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
@@ -223,4 +301,3 @@ class Particle:
             self.map=np.concatenate([self.map, newmap],axis=0)
 
         return self.map
-    
