@@ -104,7 +104,9 @@ def recieve_motion_command(u,particle_samples):
 
 vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
-while config.initial_weight in particle_samples[0].get_map():
+runcounter=0 #delete this it's for testing
+
+while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
@@ -122,6 +124,8 @@ while config.initial_weight in particle_samples[0].get_map():
         else:
             particle_samples = recieve_motion_command(motions[0], particle_samples)
             particle_samples = recieve_motion_command(motions[1], particle_samples)
+
+    runcounter=runcounter+1
 
 # u=np.array([1,0])
 # particle_samples = recieve_motion_command(u,particle_samples)
