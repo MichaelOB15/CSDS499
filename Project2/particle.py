@@ -26,7 +26,7 @@ class Particle:
 
         self.weight=None
         self.measurements=None
-
+        
     #use pg 478 as a reference for an overview of the full algorithm
 
     def setmeasurements(self, measurement):
@@ -154,26 +154,59 @@ class Particle:
         #I think the algo for the next method is on pg 286
         pass
 
-    def update_occupancy_grid(self):
+    def update_occupancy_grid(self, prev_weights):
+        '''update the map based on measurement data'''
 
         lo = np.log(0.4/.0,6)
 
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
-
-
+        perceptual_field = []
+        for sensor in range(len(self.measurements)):
+            perceptual_field.append(self.perceptual_field(sensor))
+                
         for x in range(n_col):
             for y in range(n_row):
-                if self.map[x,y]:
+                if [x,y] in perceptual_field:
+                    prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
+                else:
                     pass
-        '''update the map based on measurement data'''
+            
+        return prev_weights
+
+    def perceptual_field(self, sensor):
+        rmax=30
+        dr=0.3
+        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+
+        num_sensors = 6
+
+        beam_width = 15 #15 degree beam width, this should probably go in the config file
+        spread = beam_width*pi/180
+
+        theta = sensor*2*pi/num_sensors
+
+        r_steps=int(rmax/dr)
+        theta_steps=int(spread/dtheta)
+
+        distinct_pairs = []
+
+        for i in range(theta_steps):
+            for j in range(r_steps):
+                temp_angle=pose[2]+theta-spread/2+i*dtheta
+                temp_r=j*dr
+
+                x=int(pose[1]+temp_r*cos(temp_angle))
+                y=int(pose[0]+temp_r*sin(temp_angle))
+
+                if [x,y] not in distinct_pairs:
+                    distinct_pairs.append([x,y])
+                else:
+                    pass
         
-        pass
+        return distinct_pairs
 
-    def perceptual_field(self):
-
-        pass
     
     #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
     #here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
@@ -223,4 +256,3 @@ class Particle:
             self.map=np.concatenate([self.map, newmap],axis=0)
 
         return self.map
-    
