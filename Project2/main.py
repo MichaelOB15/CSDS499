@@ -160,7 +160,7 @@ for a in range(np.shape(img)[0]):
 '''
 
 img = Image.fromarray(img.astype('uint8'))
-img.show()
+# img.show()
 
 #img2=maze
 

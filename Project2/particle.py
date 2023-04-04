@@ -3,6 +3,7 @@ import numpy as np
 from math import sin, cos, sqrt, pi
 import math
 
+
 class Particle:
     def __init__(self, config, pose = [], occupancy_map = None, occupancy_weight_map = None): #get rid of occupancy weight map once this compiles
         """Initialize the particle at the center of its internal map. Use pg 478 as a reference for an overview of the full algorithm"""
@@ -32,10 +33,14 @@ class Particle:
         self.weight = 1 #weight of the particle, not the map
         self.measurements = []
 
+    def __str__(self) -> str:
+        # TODO maybe map?
+        return f'pose = {self.pose}, weight = {self.weight}, measurements = {self.measurements}'
+
     def set_measurement(self, measurement):
         self.measurements = measurement
 
-    def set_pose(self,pose):
+    def set_pose(self, pose):
         self.pose = pose
 
     def get_pose(self):
@@ -43,6 +48,11 @@ class Particle:
 
     def get_map(self):
         return self.map
+
+    def get_weight(self):
+        print(self)
+        assert self.weight > 0
+        return self.weight
 
     def sample_motion_model_velocity(self,u0,stepsize):
         '''Move the location of the robot with trajectory error'''
@@ -85,16 +95,13 @@ class Particle:
         self.pose=self.pose+np.array([y_update,x_update,theta_update])
         # TODO might need to add wall collision
 
-    def get_weight(self):
-        return self.weight
-
     def inverse_range_sensor_model(self, m_i): #Here is where I left off checking last-- I need to go through the logic of this but I'll come back later
         """Implements the inverse measurement model seen on pg 288"""
 
         zmax = self.config.zmax
-        alpha = 1 #this parameter is hard-coded -> cell size is always 1
+        alpha = 1  # this parameter is hard-coded -> cell size is always 1
 
-        l_occ = self.config.l_occ # these values need to be tuned!
+        l_occ = self.config.l_occ  # these values need to be tuned!
         l_free = self.config.l_free
         lo = self.config.l_o
 
@@ -129,37 +136,43 @@ class Particle:
 
         q = 1
 
-        zmax = self.config.zmax
+        zmax = self.config.zmax  # TODO tune these values!
         zhit = self.config.zhit
         zrandom = self.config.zrandom
-        sigma_hit = self.config.sigma_hit   
-        
+        sigma_hit = self.config.sigma_hit
+
         rout=np.zeros(self.config.num_sensors)+self.config.rmax
 
         for s in range(self.config.num_sensors):
 
-            #efficient code to get exactly the perceptual field of a sensor
+            # efficient code to get exactly the perceptual field of a sensor
             perceptual_field = self.perceptual_field(s)
 
-            #go through every cell of the perceptual field
-            index=len(perceptual_field)
+            # go through every cell of the perceptual field
+            index=len(perceptual_field[0])
             for i in range(index):
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
 
-                #find the corresponding closest radius for the sensor
-                if self.map[row,col]==1:
+                # find the corresponding closest radius for the sensor
+                if self.map[row][col]== 1:
                     r=sqrt((self.pose[0]-row)**2+(self.pose[1]-col)**2)
 
-                    #the smallest value is the closest radius
+                    # the smallest value is the closest radius
                     if r<rout[s]:
                         rout[s]=r
 
-            difference=self.measurements[0][s]-rout[s]
+            difference = abs(self.measurements[0][s]-rout[s])
 
-            #error between the recieved sensor value and the expected one placed on normal distribution 
-            q=q*(zhit*np.random.normal(difference,sigma_hit)+zrandom/zmax)
+            # error between the recieved sensor value and the expected one placed on normal distribution
+            norm = np.random.normal(difference, sigma_hit)
+            # print(norm)
+            q = q*(zhit*norm + zrandom/zmax)
 
+        # print(f'difference = {difference}, sigma_hit = {sigma_hit}')
+        # print(f'zhit = {zhit}, norm = {norm}, zrand = {zrandom}, zmax = {zmax}')
+        # print(q)
+        assert q > 0
         self.weight = q
 
     def update_occupancy_grid(self):
