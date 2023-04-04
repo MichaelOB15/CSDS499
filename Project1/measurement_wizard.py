@@ -73,19 +73,19 @@ class MeasurementWizard:
         self.z = [rout, theta+pose[2]]
 
     def navigate_maze(self,u,stepsize):
-            """When passed a trajectory u vector this method will return a set of measurements z"""
+        """When passed a trajectory u vector this method will return a set of measurements z"""
 
-            #move particle along trajectory
-            self.ideal.sample_motion_model_velocity(u,stepsize)
-            
-            #specifications for sensors
-            rmax=self.config.rmax
-            dr=self.config.dr
-            dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+        #move particle along trajectory
+        self.ideal.sample_motion_model_velocity(u,stepsize)
+        
+        #specifications for sensors
+        rmax=self.config.rmax
+        dr=self.config.dr
+        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
 
-            #ideal positional values
-            self.ideal_measure(rmax,dr,dtheta)
+        #ideal positional values
+        self.ideal_measure(rmax,dr,dtheta)
 
-            #self.add_error_to_measurement()
+        #self.add_error_to_measurement()
 
-            return self.getZ()
+        return self.getZ()
