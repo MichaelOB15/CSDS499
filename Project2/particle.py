@@ -115,14 +115,14 @@ class Particle:
         k = 0
         min_val = 2*math.pi
         for j in range(len(self.measurements)):
-            new_val = math.abs(phi - self.measurements[1][j])
+            new_val = abs(phi - self.measurements[1][j])
             if min_val > new_val:
                 min_val = new_val
                 k = j
 
         z_t_k = [self.measurements[0][k],self.measurements[1][k]]
             
-        if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
+        if (r > min(zmax, z_t_k[0] + alpha/2)) or (abs(phi - z_t_k[1]) >  beta/2):
             return lo
         if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2:
             return l_occ
@@ -217,9 +217,8 @@ class Particle:
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
-        perceptual_field = []
         for sensor in range(len(self.measurements)):
-            perceptual_field.append(self.perceptual_field(sensor))
+            perceptual_field = self.perceptual_field(sensor)
                 
             for x in range(n_col):
                 for y in range(n_row):
