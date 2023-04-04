@@ -50,11 +50,12 @@ delta_t = config.delta_t
 
 # initialize an array of particles
 num_particles = config.num_particle
-particle_samples=np.empty(num_particles,dtype=Particle)
+particle_samples = np.empty(num_particles, dtype=Particle)
 for n in range(num_particles):
-    particle_samples[n]=Particle(config)
+    particle_samples[n] = Particle(config)
 
-def recieve_motion_command(u, particle_samples):
+
+def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
     # move measurement wizard according to command
     z = measure.navigate_maze(u, stepsize)
 
@@ -103,9 +104,8 @@ def recieve_motion_command(u, particle_samples):
     '''
     #overwrite the old set of samples
 
-#vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
-
 '''
+vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
@@ -177,9 +177,7 @@ img.save("map.png")
 
 
 # the next trajectory is calculated here or the algorithm is ended based on there not being a suitable trajectory
-
-#visualization stuff here
-
+# visualization stuff here
 # a normal way to test this without trajectory code would be to just slowly spin in a circle and
 # keep the range of the sensor high enough to see all the walls...
 

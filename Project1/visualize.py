@@ -4,13 +4,10 @@ from math import sin, cos
 import numpy as np
 
 
-# RADIUS = 3
-
-
 class Visualization:
     """Visualization used for visualizing known map and unknown map"""
 
-    def __init__(self, m: List[List[int]], starting_pos: List[int], r, pause = 5):
+    def __init__(self, m: List[List[int]], starting_pos: List[int], r, pause=5):
         """Constructor for the Visualization Object and Draws Initial State"""
         plt.ion()
         self.m = np.abs(m-1)
