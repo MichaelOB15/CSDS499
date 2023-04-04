@@ -4,7 +4,7 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, pose = None, occupancy_map = None, occupancy_weight_map = None):
+    def __init__(self, pose = [], occupancy_map = None, occupancy_weight_map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
@@ -23,10 +23,10 @@ class Particle:
             self.map = occupancy_map
             self.occupancy_weight_map = occupancy_weight_map
 
-        if pose == None:
+        if len(pose) == 0:
             self.pose=np.array([row/2, col/2, 0]) #y,x,theta
         else:
-            self.setpose(pose)
+            self.set_pose(pose)
 
         self.weight=None
         self.measurements = []
