@@ -1,3 +1,4 @@
+
 import numpy as np
 from math import sin, cos, sqrt, pi
 import math
@@ -108,13 +109,13 @@ class Particle:
     def inverse_range_sensor_model(self, m_i):
 
         # CHANGE LOC LFREE AND LO
-        
+
         zmax = 30
         alpha = 1
 
-        lo = 1
-        locc = 1
-        lfree = 1
+        l_occ = np.log(0.65/0.35)
+        l_free = np.log(0.35/0.65)
+        lo = np.log(0.4/.0,6)
 
         beam_width = 15 #15 degree beam width, this should probably go in the config file
         beta = beam_width*pi/180
@@ -133,15 +134,24 @@ class Particle:
                 min_val = new_val
                 k = j
 
-
         z_t_k = [self.measurements[0][k],self.measurements[1][k]]
             
         if (r > math.min(zmax, z_t_k[0] + alpha/2)) or (math.abs(phi - z_t_k[1]) >  beta/2):
             return lo
-        if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2
-            return locc
+        if z_t_k[0] < zmax and math.abs(r - z_t_k[0]) < alpha/2:
+            return l_occ
         if r <= z_t_k[0]:
-            return lfree
+            return l_free
+
+    def likelihood_field_range_finder_model(self):
+        
+        q = 1
+        zmax = 30
+
+        for k in range(len(self.measurements)):
+            z_t_k = [self.measurements[0][k],self.measurements[1][k]]
+            if z_t_k != zmax:
+                x_z_t_k = self.pose[0] + 
 
     def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
         '''Set the weight of the particle'''
