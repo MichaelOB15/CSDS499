@@ -50,7 +50,7 @@ class MeasurementWizard:
         r_steps=int(rmax/dr)
         theta_steps=int(spread/dtheta)
 
-        rout=np.zeros(num_sensors)+rmax
+        rout=np.zeros(num_sensors)+rmax ###############THIS CODE SHOULD JUST BE ITS OWN PARTICLE METHOD
 
         for s in range(num_sensors):
 
