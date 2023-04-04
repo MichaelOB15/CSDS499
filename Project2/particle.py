@@ -143,16 +143,6 @@ class Particle:
         if r <= z_t_k[0]:
             return l_free
 
-    def likelihood_field_range_finder_model(self):
-        
-        q = 1
-        zmax = 30
-
-        for k in range(len(self.measurements)):
-            z_t_k = [self.measurements[0][k],self.measurements[1][k]]
-            if z_t_k != zmax:
-                x_z_t_k = self.pose[0] + 
-
     def measurement_model_map(self,z): #z in this method comes from measurement.py and is sent in from the main.py script
         '''Set the weight of the particle'''
 
@@ -162,13 +152,25 @@ class Particle:
         pass
 
     def update_occupancy_grid(self):
+
+        lo = np.log(0.4/.0,6)
+
+        n_row=np.shape(self.map)[0]
+        n_col=np.shape(self.map)[1]
+
+
+
+        for x in range(n_col):
+            for y in range(n_row):
+                if self.map[x,y]:
+                    pass
         '''update the map based on measurement data'''
         
         pass
-    
-    def update_particle_map(self, position, value):
-        self.map[position[0], position[1]] = value
 
+    def perceptual_field(self):
+
+        pass
     
     #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
     #here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
