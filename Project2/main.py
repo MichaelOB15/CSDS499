@@ -139,29 +139,44 @@ while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
 #testparticle=Particle(config)
 #img=testparticle.get_map()
 
-u=np.array([1,0])
+u=np.array([1,pi/10])
 particle_samples = recieve_motion_command(u,particle_samples)
 
 img=particle_samples[0].get_map().copy()
 
+
+
+img=maze
 img=(img-1)*-255
-
-'''
-#images have high intensity as white so walls need to change to zeros
-for a in range(np.shape(img)[0]):
-    for b in range(np.shape(img)[1]):
-        if (img[a,b]==config.initial_weight):
-            img[a,b]=100
-        elif (img[a,b]<config.initial_weight):
-            img[a,b]=255
-        elif (img[a,b]>config.initial_weight):
-            img[a,b]=0
-'''
-
+ind1=2
+ind2=2
+for x in range(ind1):
+    for y in range(ind2):
+        img[int(maze.shape[0]/2+y), int(maze.shape[1]/2+x)]=0
+        img[int(maze.shape[0]/2-y), int(maze.shape[1]/2-x)]=0
+        img[int(maze.shape[0]/2+y), int(maze.shape[1]/2-x)]=0
+        img[int(maze.shape[0]/2-y), int(maze.shape[1]/2+x)]=0
 img = Image.fromarray(img.astype('uint8'))
-# img.show()
+img.show()
+img.save("correspondingMaze.png")
 
-#img2=maze
+
+
+particle_samples = recieve_motion_command(u,particle_samples)
+
+'''
+particle_samples = recieve_motion_command(u,particle_samples)
+
+particle_samples = recieve_motion_command(u,particle_samples)
+'''
+
+img=particle_samples[0].get_map().copy()
+img=(img-1)*-255
+img = Image.fromarray(img.astype('uint8'))
+
+img.show()
+img.save("map.png")
+
 
 
 
