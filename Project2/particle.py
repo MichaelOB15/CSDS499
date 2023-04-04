@@ -4,37 +4,33 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, config, pose = [], occupancy_map = None, occupancy_weight_map = None):
-        """Initialize the particle at the center of its internal map."""
+    def __init__(self, config, pose = [], occupancy_map = None, occupancy_weight_map = None): #get rid of occupancy weight map once this compiles
+        """Initialize the particle at the center of its internal map. Use pg 478 as a reference for an overview of the full algorithm"""
 
-        # TODO Add these variables to the config
+        self.config = config
 
         #initial map size without any resizes
         row = config.initial_occupancy_map_size[0]
         col = config.initial_occupancy_map_size[1]
 
         #error matrix-- this might be a weird place to put this but it's the same between all robots
-        self.a=np.array(config.alpha)
-
-        self.config = config
+        self.a=config.alpha
 
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if occupancy_map == None:
             self.map=np.ones((row,col)) - config.initial_weight
-            self.occupancy_weight_map = np.ones((row,col)) - config.initial_weight
+            #self.occupancy_weight_map = np.ones((row,col)) - config.initial_weight
         else:
             self.map = occupancy_map
-            self.occupancy_weight_map = occupancy_weight_map
+            #self.occupancy_weight_map = occupancy_weight_map
 
         if len(pose) == 0:
             self.pose=np.array([row/2, col/2, 0]) #y,x,theta
         else:
             self.set_pose(pose)
 
-        self.weight= 1 #weight of the particle, not the map
+        self.weight = 1 #weight of the particle, not the map
         self.measurements = []
-        
-    #use pg 478 as a reference for an overview of the full algorithm
 
     def set_measurement(self, measurement):
         self.measurements = measurement
@@ -93,26 +89,25 @@ class Particle:
         return self.weight
 
     def inverse_range_sensor_model(self, m_i):
-
-        # CHANGE LOC LFREE AND LO
+        """Implements the inverse measurement model seen on pg 288"""
 
         zmax = self.config.zmax
-        alpha = self.config.obstacle_thickness
+        alpha = 1 #this parameter is hard-coded -> cell size is always 1
 
-        l_occ = self.config.l_occ
+        l_occ = self.config.l_occ # these values need to be tuned!
         l_free = self.config.l_free
         lo = self.config.l_o
 
-        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
+        beam_width = self.config.beam_width
         beta = beam_width*pi/180
 
-        x_i = m_i[0] + .5
+        x_i = m_i[0] + .5 #we maybe should get rid of this-- it doesnt really matter and its just weird
         y_i = m_i[1] + .5
 
         r = sqrt((x_i - self.pose[0])**2+(y_i - self.pose[1])**2)
         phi = math.atan2((y_i - self.pose[1]),(x_i - self.pose[0])) - self.pose[2]
 
-        k = 0
+        k = 0 #I need to think about this line again this doesn't quite seem right
         min_val = 2*math.pi
         for j in range(len(self.measurements[0])):
             new_val = abs(phi - self.measurements[1][j])
