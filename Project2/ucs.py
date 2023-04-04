@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List, Tuple, Any, Union, Dict
+from typing import List, Any, Union, Dict
 from math import floor
 from visualize import Visualization
 from robot_motion import Robot_motion, in_wall
@@ -17,7 +17,7 @@ OPEN = 0
 class Node:
     def __init__(self, parent, pos, cost):
         self.parent: Union[Node, None] = parent
-        self.pos: Tuple[float, float, float] = pos
+        self.pos: List[float] = pos
         self.cost: int = cost
 
     def get_children(self, m, explored: Dict) -> List[Any]:
@@ -99,7 +99,7 @@ def _nearest_unexplored(m: List[List[int]], pos: List[int]) -> Node:
     robot_theta = pos[2]
     pos = (robot_y_in_m, robot_x_in_m, robot_theta)
 
-    explored: Dict[Tuple[int, int, int], Node] = {}
+    explored: Dict[List[float], Node] = {}
 
     queue: deque[Node] = deque()
     queue.append(Node(None, pos, 0))
