@@ -52,7 +52,7 @@ class Maze:
     def out(self):
         """Return a matrix representation of the maze."""
 
-        xdim,ydim = self.nx*2+1, self.ny*2+1
+        xdim, ydim = self.nx*2+1, self.ny*2+1
 
         scaling=self.scaling
 

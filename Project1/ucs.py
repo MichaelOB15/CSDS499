@@ -1,10 +1,6 @@
 from collections import deque
 from typing import List, Any, Union, Dict
-# from math import 
-from visualize import Visualization
-# from robot_motion import Robot_motion
 from math import pi, sqrt, floor, ceil
-from maze import Maze
 
 
 # TODO from params?
