@@ -145,6 +145,7 @@ class Particle:
 
             #efficient code to get exactly the perceptual field of a sensor
             perceptual_field = self.perceptual_field(s) 
+            print(perceptual_field[0,0])
 
             #go through every cell of the perceptual field
             index=len(perceptual_field)
