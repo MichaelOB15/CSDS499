@@ -4,7 +4,7 @@ from math import sin, cos, sqrt, pi
 import math
 
 class Particle:
-    def __init__(self, pose = None, map = None):
+    def __init__(self, pose = None, map = None, occupancy_weight_map = None):
         """Initialize the particle at the center of its internal map."""
 
         # TODO Add these variables to the config
@@ -18,6 +18,7 @@ class Particle:
         #initial condition -> -1 is not yet identified, 1 is an object, 0 is open
         if map == None:
             self.map=np.zeros((row,col))-1
+            self.occupancy_weight_map = np.ones((row,col)) - .5
 
         if pose == None:
             self.pose=np.array([row/2, col/2, 0]) #y,x,theta
@@ -25,7 +26,7 @@ class Particle:
             self.setpose(pose)
 
         self.weight=None
-        self.measurements= []
+        self.measurements = []
         
     #use pg 478 as a reference for an overview of the full algorithm
 
@@ -63,10 +64,10 @@ class Particle:
         self.map=map
         self.pose=pose
 
-    def getpose(self):
+    def get_pose(self):
         return self.pose
 
-    def getmap(self):
+    def get_map(self):
         return self.map
 
     def sample_motion_model_velocity(self,u0,stepsize):
@@ -184,7 +185,7 @@ class Particle:
         return np.random.normal(a, b)
 
 
-    def update_occupancy_grid(self, prev_weights):
+    def update_occupancy_grid(self):
         '''update the map based on measurement data'''
 
         lo = np.log(0.4/.0,6)
@@ -199,26 +200,15 @@ class Particle:
             for x in range(n_col):
                 for y in range(n_row):
                     if [x,y] in perceptual_field:
-                        prev_weights[x,y] = prev_weights[x,y] + self.inverse_range_sensor_model([x,y]) - lo
+                        self.occupancy_weight_map[x,y] = self.occupancy_weight_map[x,y] + self.inverse_range_sensor_model([x,y]) - lo
+                        if self.occupancy_weight_map[x,y] > .5:
+                            self.map[x,y] = 1
+                        else:
+                            self.map[x,y] = 0
                     else:
                         pass
 
         self.resize()
-            
-        return prev_weights
-
-    # update map from weights
-    def update_map_from_weights(self, weights):
-        n_row=np.shape(weights)[0]
-        n_col=np.shape(weights)[1]
-
-        for x in range(n_col):
-            for y in range(n_row):
-                if weights[x,y] > .5:
-                    self.map[x,y] = 1
-                else:
-                    self.map[x,y] = 0
-
 
     def perceptual_field(self, sensor):
         rmax=30
@@ -252,7 +242,6 @@ class Particle:
         
         return distinct_pairs
 
-    
     #####particle takes a measurement with all sensors and back-calculates likelihood of position (measurement model map)
     #here is where we write the sensor model -> use several spaced out ultrasound sensors, and these sensors are described as:
     # the correct algorithm for range finder sensor modelling is on book pg 172 (this is too simple)
