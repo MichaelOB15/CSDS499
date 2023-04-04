@@ -144,14 +144,14 @@ class Particle:
         for s in range(self.config.num_sensors):
 
             #efficient code to get exactly the perceptual field of a sensor
-            perceptual_field = self.perceptual_field(s) 
-            print(perceptual_field[0,0])
+            perceptual_field = self.perceptual_field(s)
+            print(perceptual_field[0][0])
 
             #go through every cell of the perceptual field
-            index=len(perceptual_field)
+            index=len(perceptual_field[0])
             for i in range(index):
-                row=perceptual_field[0,i]
-                col=perceptual_field[1,i]
+                row=perceptual_field[0][i]
+                col=perceptual_field[1][i]
 
                 #find the corresponding closest radius for the sensor
                 if self.map[row,col]==1:
