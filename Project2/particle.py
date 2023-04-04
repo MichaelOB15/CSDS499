@@ -224,7 +224,7 @@ class Particle:
         rmax= self.config.rmax
         dr= self.config.dr
 
-        r_steps=int(rmax/dr)
+        r_steps=int((self.measurements[0][s]+.5)/dr)
         theta_steps=int(spread/dtheta)
 
         distinct_pairs = []
