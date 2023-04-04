@@ -8,8 +8,8 @@ RADIUS: 3
 movement_stepsize: 5
 delta_t: 1
 
-#alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
-alpha: [0,0,0,0,0,0]
+alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
+#alpha: [0,0,0,0,0,0]
 
 initial_occupancy_map_size: [150, 150]
 cushion: 40 #must be greater than the maximum range of the sensor
@@ -35,6 +35,6 @@ sigma_hit: .04
 # lo = np.log(0.4/0.6)
 #l_o: -0.1760912591
 
-l_occ: 1.5
-l_free: 0.9
-l_o: 0.5
+l_occ: 20
+l_free: 0.6
+l_o: 0.2

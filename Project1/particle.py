@@ -112,7 +112,7 @@ class Particle:
 
         rmax_offset = 1
 
-        if (r > (rmax-rmax_offset)):
+        if (z[0] > (rmax-rmax_offset)):
             return lo
         elif r < z[0]:
             return l_free
