@@ -28,7 +28,7 @@ class Particle:
         else:
             self.set_pose(pose)
 
-        self.weight=None
+        self.weight=0.5
         self.measurements = []
         
     #use pg 478 as a reference for an overview of the full algorithm
@@ -185,7 +185,7 @@ class Particle:
                             if dist < min_dist:
                                 min_dist = dist
                 
-                q = q * (zhit * self.prob(dist, sigma_hit)+ zrandom/zmax)
+                q = q * (zhit * self.prob(min_dist, sigma_hit)+ zrandom/zmax)
         
         return q
     '''
