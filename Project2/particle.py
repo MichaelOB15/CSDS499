@@ -28,7 +28,7 @@ class Particle:
         else:
             self.set_pose(pose)
 
-        self.weight=None
+        self.weight=0.5
         self.measurements = []
         
     #use pg 478 as a reference for an overview of the full algorithm
