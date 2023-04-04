@@ -165,7 +165,7 @@ class Particle:
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
 
-        for k in range(len([self.measurements)):
+        for k in range(len([self.measurements])):
             z_t_k = [self.measurements[0][k],self.measurements[1][k]]
             if z_t_k != zmax:
                 x_k_sensor = self.measurements[0][k]*cos(self.measurements[1][k]) + self.pose[0]
@@ -193,7 +193,7 @@ class Particle:
     def update_occupancy_grid(self):
         '''update the map based on measurement data'''
 
-        lo = np.log(0.4/.0,6)
+        lo = np.log(0.4/0.6)
 
         n_row=np.shape(self.map)[0]
         n_col=np.shape(self.map)[1]
