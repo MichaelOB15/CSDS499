@@ -167,44 +167,38 @@ class Particle:
     #lmao this is already written as perceptual_field
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
-        
-        rmax= self.config.rmax
-        num_sensors= self.config.num_sensors
-        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
-        spread = beam_width*pi/180
-        dr = self.config.dr
-        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
-        r_steps=int(rmax/dr)
-        theta_steps=int(spread/dtheta)
 
         q = 1
+
         zmax = self.config.zmax
         zhit = self.config.zhit
         zrandom = self.config.zrandom
         sigma_hit = self.config.sigma_hit #get these into a config and tune them :(   
-
-        rout=np.zeros(num_sensors)+rmax
         
-        for s in range(num_sensors):
+        rout=np.zeros(self.config.num_sensors)+self.config.rmax
 
-            for i in range(theta_steps):
-                for j in range(r_steps):
+        for s in range(self.config.num_sensors):
 
-                    temp_angle=self.pose[2]+self.measurements[1][s]-spread/2+i*dtheta
-                    temp_r=j*dr
+            #efficient code to get exactly the perceptual field of a sensor
+            perceptual_field = self.perceptual_field(s) 
 
-                    x=int(self.pose[1]+temp_r*cos(temp_angle))
-                    y=int(self.pose[0]+temp_r*sin(temp_angle))
+            #go through every cell of the perceptual field
+            index=len(perceptual_field)
+            for i in range(index):
+                row=perceptual_field[i,0]
+                col=perceptual_field[i,1]
 
-                    #go through every possible r, theta position in this wedge and find the smallest possible r
-                    if (self.map[y][x]==1):
-                        if (temp_r<rout[s]):
-                            rout[s]=temp_r
-                        break
+                #find the corresponding closest radius for the sensor
+                if self.map[row,col]==1:
+                    r=sqrt((self.pose[0]-row).pow(2)+(self.pose[1]-col).pow(2))
 
-                    ###here is where the code is actually different
+                    #the smallest value is the closest radius
+                    if r<rout[s]:
+                        rout[s]=r
 
             difference=self.measurements[0][s]-rout[s]
+
+            #error between the recieved sensor value and the expected one placed on normal distribution 
             q=q*(zhit*np.random.normal(difference,sigma_hit)+zrandom/zmax)
 
         self.weight = q
@@ -215,15 +209,21 @@ class Particle:
 
         lo = self.config.l_o
 
-        n_row=np.shape(self.map)[0]
-        n_col=np.shape(self.map)[1]
+        init_row=self.pose[0]
+        init_col=self.pose[1]
 
-        for sensor in range(len(self.measurements[0])):
-            perceptual_field = self.perceptual_field(sensor) #I don't like the way this is done. the "sensor" naming confuses me...
+        #check all values within the cushion #no bad fix this I have a list of my pairs why do this 
+        cushion=self.config.cushion
+        init_row=init_row-cushion
+        init_col=init_col-cushion
+        index=2*cushion
+
+        for s in range(self.config.num_sensors):
+            perceptual_field = self.perceptual_field(s) 
                 
-            for row in range(n_row):
-                for col in range(n_col):
-                    if [row,col] in perceptual_field:
+            for row in range(index):
+                for col in range(index):
+                    if [init_row+row,init_col+col] in perceptual_field:
                         self.occupancy_weight_map[row,col] = self.occupancy_weight_map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
                         if self.occupancy_weight_map[row,col] > 0.5: #order of x,y got mixed up here; method could use some cleaning
                             self.map[row,col] = 1
@@ -234,15 +234,15 @@ class Particle:
 
         self.resize()
 
-    def perceptual_field(self, sensor):
+    def perceptual_field(self, s):
+        num_sensors = self.config.num_sensors
+        theta = s*2*pi/num_sensors
+        dtheta=self.config.dtheta
+        beam_width = self.config.beam_width
+        spread = beam_width*pi/180
+
         rmax= self.config.rmax
         dr= self.config.dr
-        dtheta=self.config.dtheta
-        num_sensors = self.config.num_sensors
-        beam_width = self.config.beam_width
-
-        spread = beam_width*pi/180
-        theta = sensor*2*pi/num_sensors #I don't understand this line?
 
         r_steps=int(rmax/dr)
         theta_steps=int(spread/dtheta)
