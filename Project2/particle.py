@@ -149,7 +149,7 @@ class Particle:
             perceptual_field = self.perceptual_field(s)
 
             # go through every cell of the perceptual field
-            index=len(perceptual_field[0])
+            index=len(perceptual_field)
             for i in range(index):
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
@@ -184,7 +184,7 @@ class Particle:
             perceptual_field = self.perceptual_field(s) 
 
             #go through every cell of the perceptual field
-            index=len(perceptual_field[0])
+            index=len(perceptual_field)
             for i in range(index):
                 row=perceptual_field[i][1]
                 col=perceptual_field[i][0]
