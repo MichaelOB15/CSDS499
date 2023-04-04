@@ -113,7 +113,6 @@ def recieve_motion_command(u,particle_samples):
 vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 
 runcounter=0 #delete this it's for testing
-
 '''
 while config.initial_weight in particle_samples[0].get_map() and runcounter <5:
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())

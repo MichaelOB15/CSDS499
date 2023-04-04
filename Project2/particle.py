@@ -163,12 +163,13 @@ class Particle:
         return q
     '''
 
-    ##########################GET THIS DONE WELL ONCE IN PARTICLE AND GET IT OUT OUF MEASUREMENT WIZARD
+    ##########################GET THIS DONE WELL ONCE IN PARTICLE AND GET IT OUT OUF MEASUREMENT WIZARD (once everything else works though)
+    #lmao this is already written as perceptual_field
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
         
-        rmax= self.config.rmax #use config
-        num_sensors= len(self.measurements[0])
+        rmax= self.config.rmax
+        num_sensors= self.config.num_sensors
         beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
         dr = self.config.dr
@@ -218,16 +219,16 @@ class Particle:
         n_col=np.shape(self.map)[1]
 
         for sensor in range(len(self.measurements[0])):
-            perceptual_field = self.perceptual_field(sensor)
+            perceptual_field = self.perceptual_field(sensor) #I don't like the way this is done. the "sensor" naming confuses me...
                 
-            for x in range(n_col):
-                for y in range(n_row):
-                    if [x,y] in perceptual_field:
-                        self.occupancy_weight_map[y,x] = self.occupancy_weight_map[y,x] + self.inverse_range_sensor_model([x,y]) - lo
-                        if self.occupancy_weight_map[y,x] > 0.5: #order of x,y got mixed up here; method could use some cleaning
-                            self.map[y,x] = 1
+            for row in range(n_row):
+                for col in range(n_col):
+                    if [row,col] in perceptual_field:
+                        self.occupancy_weight_map[row,col] = self.occupancy_weight_map[row,col] + self.inverse_range_sensor_model([row,col]) - lo
+                        if self.occupancy_weight_map[row,col] > 0.5: #order of x,y got mixed up here; method could use some cleaning
+                            self.map[row,col] = 1
                         else:
-                            self.map[y,x] = 0
+                            self.map[row,col] = 0
                     else:
                         pass
 
@@ -236,14 +237,12 @@ class Particle:
     def perceptual_field(self, sensor):
         rmax= self.config.rmax
         dr= self.config.dr
-        dtheta=2*pi/360 #every degree -> I think the robot is set up for 15 degrees
+        dtheta=self.config.dtheta
+        num_sensors = self.config.num_sensors
+        beam_width = self.config.beam_width
 
-        num_sensors = len(self.measurements[0])
-
-        beam_width = self.config.beam_width #15 degree beam width, this should probably go in the config file
         spread = beam_width*pi/180
-
-        theta = sensor*2*pi/num_sensors
+        theta = sensor*2*pi/num_sensors #I don't understand this line?
 
         r_steps=int(rmax/dr)
         theta_steps=int(spread/dtheta)
