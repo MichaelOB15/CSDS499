@@ -143,7 +143,7 @@ class Particle:
 
         q = 1
 
-        zmax = self.config.zmax  # TODO tune these values!
+        zmax = self.config.zmax 
         zhit = self.config.zhit
         zrandom = self.config.zrandom
         sigma_hit = self.config.sigma_hit
@@ -173,12 +173,8 @@ class Particle:
 
             # error between the recieved sensor value and the expected one placed on normal distribution
             norm = np.random.normal(difference, sigma_hit)
-            # print(norm)
             q = q*(zhit*norm + zrandom/zmax)
 
-        # print(f'difference = {difference}, sigma_hit = {sigma_hit}')
-        # print(f'zhit = {zhit}, norm = {norm}, zrand = {zrandom}, zmax = {zmax}')
-        # print(q)
         assert q > 0
         self.weight = q
 

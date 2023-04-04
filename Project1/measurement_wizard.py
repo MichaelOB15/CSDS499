@@ -70,9 +70,6 @@ class MeasurementWizard:
                             rout[s]=temp_r
                         break
 
-                    #Im using this for testing-- delete later!! this will seriously mess things up but it makes the map boxes grey
-                    #map[y,x]=-1
-
         self.z = [rout, theta+pose[2]]
 
     def navigate_maze(self,u,stepsize):
