@@ -12,6 +12,8 @@ class Visualization:
         plt.ion()
         self.m = (m-1)*-1
         self.real_m = (real_m-1)*-1
+        self.real_pose = [len(real_m)/2, len(real_m[0])/2, 0]
+
         self.pos = starting_pos
         self.path: List[List[int]] = [starting_pos]
         assert len(starting_pos) >= 2
@@ -28,9 +30,20 @@ class Visualization:
 
         if change_in_x > 0 or change_in_y > 0:
             self.path = []
-            self.ax1.clear()
+
+        self.ax1.clear()
+        self.ax2.clear()
 
         self.m = (m-1)*-1
+
+        y_diff = self.pos[0] - new_pos[0]
+        x_diff = self.pos[1] - new_pos[1]
+        theta_diff = self.pos[2] - new_pos[2]
+
+        self.real_pose[0] = self.real_pose[0] - y_diff
+        self.real_pose[1] = self.real_pose[1] - x_diff
+        self.real_pose[2] = self.real_pose[2] - theta_diff
+
         self.path.append(new_pos)
         self.pos = new_pos
         if draw:
@@ -43,7 +56,7 @@ class Visualization:
         self.ax2.imshow(self.real_m, cmap='gray', vmin=0, vmax=1)
 
         circle1 = patches.Circle((self.pos[1], self.pos[0]), self.r, color='blue')
-        circle2 = patches.Circle((self.pos[1], self.pos[0]), self.r, color='blue')
+        circle2 = patches.Circle((self.real_pose[1], self.real_pose[0]), self.r, color='blue')
 
         self.ax1.add_patch(circle1)
         self.ax2.add_patch(circle2)

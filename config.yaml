@@ -1,5 +1,5 @@
 maze_n: [3, 3]
-maze_scaling: 60
+maze_scaling: 40
 maze_i: [0, 0]
 
 cell_size: 1
@@ -19,7 +19,7 @@ initial_weight: .5
 rmin: 5 #only necessary to stay away from the wall, this has no bearing on the data from the robot
 rmax: 30
 beam_width: 15
-sensor_penetration: 5
+sensor_penetration: 15
 dr: 0.3
 dtheta: 0.017453292519943295 #(2*pi/360) every degree
 num_sensors: 6
