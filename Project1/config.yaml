@@ -18,10 +18,11 @@ initial_weight: .5
 
 rmax: 30
 beam_width: 15
+sensor_penetration: 5
 dr: 0.3
 dtheta: 0.017453292519943295 #(2*pi/360) every degree
 num_sensors: 6
-num_particle: 1
+num_particle: 20
 
 zmax: .3
 zhit: .6

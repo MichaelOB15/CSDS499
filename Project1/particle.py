@@ -188,10 +188,14 @@ class Particle:
         beam_width = self.config.beam_width
         spread = beam_width*pi/180
 
-        # rmax= self.config.rmax
         dr= self.config.dr
+        sensor_penetration=self.config.sensor_penetration
 
-        r_steps=int((self.measurements[0][s]+2)/dr)
+        r_steps=self.measurements[0][s]+sensor_penetration
+        if r_steps > self.config.rmax: #check to make sure sensor isn't longer than the max range
+            r_steps=self.config.rmax
+        r_steps=int(r_steps/dr)
+
         theta_steps=int(spread/dtheta)
 
         distinct_pairs = []
