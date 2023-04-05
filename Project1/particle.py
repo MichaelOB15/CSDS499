@@ -25,7 +25,7 @@ class Particle:
             self.map = occupancy_map
             # self.occupancy_weight_map = occupancy_weight_map
 
-        if len(pose) == 0:
+        if pose == []:
             self.pose=np.array([row/2, col/2, 0])  # y,x,theta
         else:
             self.pose = pose

@@ -154,7 +154,7 @@ while config.initial_weight in particle_samples[0].get_map():
             particle_samples = recieve_motion_command(motions[1], particle_samples)
             #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
 
-        if random.random()*10<.3:
+        if True:
             #this doubles up on the visualization code but I cant see the progress
             img=particle_samples[0].get_map().copy()
             img=(img-1)*-255

@@ -25,19 +25,19 @@ class Node:
         y = self.pos[0]
         x = self.pos[1]
 
-        magicrad = self.magicval
+        magicrad = 3
 
-        for j in range(y -magicrad, y + magicrad ):
-            for i in range( x - magicrad, x + magicrad):
+        for j in range(y - magicrad, y + magicrad ):
+            for i in range(x - magicrad, x + magicrad):
 
                 if j >= len(m):
-                    continue
+                    return False
                 if j < 0:
-                    continue
+                    return False
                 if i >= len(m[0]):
-                    continue
+                    return False
                 if i < 0:
-                    continue
+                    return False
 
                 if m[j][i] > 0.5:
                     return False
