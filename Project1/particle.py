@@ -40,6 +40,15 @@ class Particle:
     def set_measurement(self, measurement):
         self.measurements = measurement
 
+    def deepcopy(self):
+        if self.map is None:
+            p = Particle(self.config, self.pose.copy())
+        else:
+            p = Particle(self.config, self.pose.copy(), self.map.copy())
+        p.weight = self.weight
+        p.measurements = self.measurements.copy()
+        return p
+
     # def set_pose(self, pose):
         # self.pose = pose
 
@@ -242,14 +251,14 @@ class Particle:
         for a in range(n_row):
             #row overflow (x axis)
             if (not self.map[a,n_col-cushion]==initial_weight):
-                print("overflow")
+                # print("overflow")
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=1)
                 n_col=np.shape(self.map)[1]
 
             #row underflow
             if (not self.map[a,cushion]==initial_weight):
-                print("underflow")
+                # print("underflow")
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
                 self.map=np.concatenate([newmap,self.map],axis=1)
                 n_col=np.shape(self.map)[1]
@@ -259,14 +268,14 @@ class Particle:
         for a in range(n_col):
             #column overflow (y axis)
             if (not self.map[n_row-cushion,a]==initial_weight):
-                print("overflow")
+                # print("overflow")
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=0)
                 n_row=np.shape(self.map)[0]
 
             #column underflow
             if (not self.map[cushion,a]==initial_weight):
-                print("underflow")
+                # print("underflow")
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
                 self.map=np.concatenate([newmap,self.map],axis=0)
                 n_row=np.shape(self.map)[0]

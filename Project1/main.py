@@ -55,17 +55,25 @@ for n in range(num_particles):
     particle_samples[n] = Particle(config)
 
 
-def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
+def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> List[Particle]:
     # move measurement wizard according to command
     z = measure.navigate_maze(u, stepsize)
 
     # move particles according to command
     for i in range(num_particles):
-        print(i)
+        # print(i)
+        
+
         particle_samples[i].sample_motion_model_velocity(u, stepsize)  # should probably put stepsize in config
         #print(particle_samples[i].get_pose())
         particle_samples[i].set_measurement(z)  # recieves measurement
         particle_samples[i].likelihood_field_range_finder_model()  # measurement model
+
+        # if i < num_particles - 1:
+        #     for j in range(3):
+        #         if (particle_samples[i - 1].get_pose()[j] == particle_samples[i].get_pose()[[j]]):
+        #             print(f' {particle_samples[i - 1].get_pose()},  {particle_samples[i].get_pose()}')
+                    # assert not (particle_samples[i - 1].get_pose()[j] == particle_samples[i].get_pose()[[j]])
         #print("banana")
         
         #print(particle_samples[i].get_pose())
@@ -87,7 +95,7 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
             b = random.random()*maxweight*1.1  # scaled up so the weight guess is solidly above the largest weight
             if b <= a:
                 j = 1
-                new_samples[i] = particle_samples[samplenumber]  # I want to pass the address in memory not split the object
+                new_samples[i] = particle_samples[samplenumber].deepcopy()  # I want to pass the address in memory not split the object
 
     for i in range(num_particles):
         new_samples[i].update_occupancy_grid()  # apparently update occupancy grid updates the map of the particle? make sure it copies. this is slower
@@ -115,10 +123,6 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
 while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
-    # pose = particle_samples[0].get_pose()
-    # print(f'y = {pose[0]}, x = {pose[1]}, theta = {pose[2]}')
-    # assert pose[0] > 0 or pose[1] > 0
-
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
         #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
@@ -129,6 +133,12 @@ while config.initial_weight in particle_samples[0].get_map():
         if type(motions[0]) == float:
             particle_samples = recieve_motion_command(motions, particle_samples)
             #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+
+            # for p in particle_samples:
+            #     pose = p.get_pose()
+            #     print(f'y = {pose[0]}, x = {pose[1]}, theta = {pose[2]}')
+            # assert False
+
             print("completed one motion")
             # vis.pause()
         else:
