@@ -53,7 +53,31 @@ for n in range(num_particles):
     particle_samples[n] = Particle(config)
 
 
+
+
+
+
 def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> List[Particle]:
+    measure2=MeasurementWizard(maze, np.copy(measure.getpose), config) #necessary to keep robot away from wall
+    z2 = measure2(u, stepsize)
+    minr=config.rmax
+    phi=0
+    for i in config.num_sensors:
+        if z2[i][0]<minr:
+            minr=z2[i][0]
+            phi=z2[i][1]
+
+    w=-300
+    if minr<config.rmin:
+        w=measure2.get.ideal().getpose()[2]+phi
+        if w>0:
+            w=w-pi
+        else:
+            w=w+pi
+    
+    if w>-3*pi:
+        u=np.array([1,w])
+
     # move measurement wizard according to command
     z = measure.navigate_maze(u, stepsize)
 
@@ -139,23 +163,7 @@ while config.initial_weight in particle_samples[0].get_map():
             img.show()
             img.save("newmaze.png")
 
-def escapewall(config,particle):
-    minr=config.rmax
-    phi=0
-    for i in config.num_sensors:
-        if particle.measurements[i][0]<minr:
-            minr=particle.measurements[i][0]
-            phi=particle.measurements[i][1]
 
-    w=-1
-    if minr<config.rmin:
-        w=particle.getpose()+phi
-        if w>0:
-            w=w-pi
-        else:
-            w=w+pi
-
-    return w
 
 
 
