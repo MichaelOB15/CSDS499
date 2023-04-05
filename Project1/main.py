@@ -43,7 +43,7 @@ maze = maze.out()
 # I cant use the visualize class as I go cuz it's really slow :(
 
 stepsize = config.movement_stepsize
-real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0])  # the initial position of the robot is set here
+real_pose = np.array([maze.shape[0]/2, maze.shape[1]/2, 0.2])  # the initial position of the robot is set here
 measure = MeasurementWizard(maze, real_pose, config)
 
 # initialize an array of particles
@@ -103,20 +103,20 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> 
     #overwrite the old set of samples
 
 
-vis = Visualization(maze, particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
+#vis = Visualization(maze, particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
-        vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
+        #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
 
     for i in range(len(l) - 1):
         motions = l[i].get_motion(l[i + 1], stepsize)
 
         if type(motions[0]) == float:
             particle_samples = recieve_motion_command(motions, particle_samples)
-            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
 
             # for p in particle_samples:
             #     pose = p.get_pose()
@@ -128,15 +128,16 @@ while config.initial_weight in particle_samples[0].get_map():
         else:
             particle_samples = recieve_motion_command(motions[0], particle_samples)
             particle_samples = recieve_motion_command(motions[1], particle_samples)
-            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
 
-    #this doubles up on the visualization code but I cant see the progress
-    # img=particle_samples[0].get_map().copy()
-    # print(particle_samples[0].get_pose())
-    # img=(img-1)*-255
-    # img = Image.fromarray(img.astype('uint8'))
+        if random.random()*10<.3:
+            #this doubles up on the visualization code but I cant see the progress
+            img=particle_samples[0].get_map().copy()
+            img=(img-1)*-255
+            img = Image.fromarray(img.astype('uint8'))
 
-    # img.show()
+            img.show()
+            img.save("newmaze.png")
 
 def escapewall(config,particle):
     minr=config.rmax

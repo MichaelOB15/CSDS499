@@ -51,7 +51,7 @@ class MeasurementWizard:
         r_steps=int(rmax/dr)
         theta_steps=int(spread/dtheta)
 
-        rout=np.zeros(num_sensors)+rmax ###############THIS CODE SHOULD JUST BE ITS OWN PARTICLE METHOD
+        rout=np.zeros(num_sensors)+rmax 
 
         for s in range(num_sensors):
 
@@ -65,16 +65,17 @@ class MeasurementWizard:
                     y=int(pose[0]+temp_r*sin(temp_angle))
 
                     #go through every possible r, theta position in this wedge and find the smallest possible r
-                    if (map[y,x]==1):
-                        if (temp_r<rout[s]):
-                            rout[s]=temp_r
-                        break
+                    if (x<map.shape[1]) and (y<map.shape[0]): #necessary because the robot likes to run off the map
+                        if (map[y,x]==1):
+                            if (temp_r<rout[s]):
+                                rout[s]=temp_r
+                            break
 
         self.z = [rout, theta+pose[2]]
 
     def navigate_maze(self,u,stepsize):
         """When passed a trajectory u vector this method will return a set of measurements z"""
-
+        
         #move particle along trajectory
         self.ideal.sample_motion_model_velocity(u,stepsize)
         
