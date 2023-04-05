@@ -26,14 +26,11 @@ class Visualization:
     def update(self, m: List[List[int]], new_pos: List[int], draw: bool = True):
         """Takes an updated position and generates a plot with the updated path built upon previous positions"""
 
-        change_in_y = len(m) - len(self.m)
-        change_in_x = len(m[0]) - len(self.m[0])
+        change_in_y = abs(len(m) - len(self.m))
+        change_in_x = abs(len(m[0]) - len(self.m[0]))
 
         if change_in_x > 0 or change_in_y > 0:
-            self.ax.clear()
-
-        for i in range(len(self.path)):
-            self.path[i] = [self.path[i][0], self.path[i][1], self.path[i][2]]
+            self.path = []
 
         self.m = (m-1)*-1
         self.path.append(new_pos)
