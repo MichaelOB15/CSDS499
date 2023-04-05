@@ -11,7 +11,7 @@ movement_stepsize: 1
 alpha: [0,0,0,0,0,0]
 
 initial_occupancy_map_size: [150, 150]
-cushion: 50 #must be greater than the maximum range of the sensor
+cushion: 5 #must be greater than the maximum range of the sensor
 resize_magnitude: 200
 initial_weight: .5
 

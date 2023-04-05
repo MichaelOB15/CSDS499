@@ -7,18 +7,15 @@ import numpy as np
 class Visualization:
     """Visualization used for visualizing known map and unknown map"""
 
-    def __init__(self, m: List[List[int]], starting_pos: List[int], r, pause=5):
+    def __init__(self, real_m: List[List[float]], m: List[List[float]], starting_pos: List[float], r, pause=5):
         """Constructor for the Visualization Object and Draws Initial State"""
         plt.ion()
         self.m = (m-1)*-1
-
-        # self.y_size = len(m)
-        # self.x_size = len(m[0])
-
+        self.real_m = (real_m-1)*-1
         self.pos = starting_pos
         self.path: List[List[int]] = [starting_pos]
         assert len(starting_pos) >= 2
-        self.fig, self.ax = plt.subplots(1)
+        self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2)
         self.r = r
         self.pause_val = pause
         self.visualize()
@@ -31,7 +28,7 @@ class Visualization:
 
         if change_in_x > 0 or change_in_y > 0:
             self.path = []
-            self.ax.clear()
+            self.ax1.clear()
 
         self.m = (m-1)*-1
         self.path.append(new_pos)
@@ -42,9 +39,15 @@ class Visualization:
 
     def visualize(self):
         """Helper method to plot Maze and Robot within Maze"""
-        self.ax.imshow(self.m, cmap='gray', vmin=0, vmax=1)
+        self.ax1.imshow(self.m, cmap='gray', vmin=0, vmax=1)
+        self.ax2.imshow(self.real_m, cmap='gray', vmin=0, vmax=1)
+
         circle1 = patches.Circle((self.pos[1], self.pos[0]), self.r, color='blue')
-        self.ax.add_patch(circle1)
+        circle2 = patches.Circle((self.pos[1], self.pos[0]), self.r, color='blue')
+
+        self.ax1.add_patch(circle1)
+        self.ax2.add_patch(circle2)
+
         self.draw_direction()
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
@@ -55,7 +58,8 @@ class Visualization:
         y_0 = self.pos[0]
         x_1 = x_0 + cos(self.pos[2])*self.r
         y_1 = y_0 + sin(self.pos[2])*self.r
-        self.ax.plot([x_0, x_1], [y_0, y_1], color="red")
+        self.ax1.plot([x_0, x_1], [y_0, y_1], color="red")
+        # self.ax2.plot([x_0, x_1], [y_0, y_1], color="red")
 
     def draw_movement(self):
         """Helper method to plot path between starting pos and current pos"""
@@ -64,7 +68,7 @@ class Visualization:
         for pos in self.path:
             x.append(pos[1])
             y.append(pos[0])
-        self.ax.plot(x, y, color='blue')
+        self.ax1.plot(x, y, color='blue')
 
     def pause(self):
         plt.pause(self.pause_val)
