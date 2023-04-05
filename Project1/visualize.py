@@ -31,6 +31,7 @@ class Visualization:
 
         if change_in_x > 0 or change_in_y > 0:
             self.path = []
+            self.ax.clear()
 
         self.m = (m-1)*-1
         self.path.append(new_pos)
