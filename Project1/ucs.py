@@ -19,7 +19,9 @@ class Node:
         self.square_size = square_size
         self.magicval = 16
 
-    def in_neigbhorhood(self, m) -> bool: 
+    def in_neigbhorhood(self, m) -> bool:
+
+        # return True
         y = self.pos[0]
         x = self.pos[1]
 
@@ -168,17 +170,14 @@ class UCS:
             # print(len(m[0]))
             # print(node)
 
-            magic_val = 2
+            # magic_val = 2
 
             y = node.pos[0]
             x = node.pos[1]
-            solved = True
-            for i in range(y - magic_val, y + magic_val):
-                for j in range(x - magic_val, x + magic_val):
-                    if m[i][j] != UNEXPLORED:
-                        solved = False
-
-            if solved:
+            # solved = True
+            # for i in range(y - magic_val, y + magic_val):
+            #     for j in range(x - magic_val, x + magic_val):
+            if m[y][x] != UNEXPLORED:
                 return node
             else:
                 children: List[Node] = node.get_children(m, explored)
