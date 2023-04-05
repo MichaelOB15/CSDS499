@@ -91,7 +91,7 @@ class Particle:
         # apply motion
         x_update=-v/w*sin(theta)+v/w*sin(theta+w*stepsize)
         y_update=v/w*cos(theta)-v/w*cos(theta+w*stepsize)
-        theta_update=(w+epsilon[2])*stepsize
+        theta_update= ((w+epsilon[2])*stepsize) % (2*pi)
 
         self.pose = self.pose+np.array([y_update, x_update, theta_update])
         # TODO might need to add wall collision
@@ -239,12 +239,14 @@ class Particle:
         for a in range(n_row):
             #row overflow (x axis)
             if (not self.map[a,n_col-cushion]==initial_weight):
+                print("overflow")
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=1)
                 n_col=np.shape(self.map)[1]
 
             #row underflow
             if (not self.map[a,cushion]==initial_weight):
+                print("underflow")
                 newmap=np.zeros((n_row,resize_magnitude))+initial_weight
                 self.map=np.concatenate([newmap,self.map],axis=1)
                 n_col=np.shape(self.map)[1]
@@ -254,12 +256,14 @@ class Particle:
         for a in range(n_col):
             #column overflow (y axis)
             if (not self.map[n_row-cushion,a]==initial_weight):
+                print("overflow")
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
                 self.map=np.concatenate([self.map,newmap],axis=0)
                 n_row=np.shape(self.map)[0]
 
             #column underflow
             if (not self.map[cushion,a]==initial_weight):
+                print("underflow")
                 newmap=np.zeros((resize_magnitude,n_col))+initial_weight
                 self.map=np.concatenate([newmap,self.map],axis=0)
                 n_row=np.shape(self.map)[0]

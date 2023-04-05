@@ -110,6 +110,10 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
 while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
+    # pose = particle_samples[0].get_pose()
+    # print(f'y = {pose[0]}, x = {pose[1]}, theta = {pose[2]}')
+    # assert pose[0] > 0 or pose[1] > 0
+
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
         #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())

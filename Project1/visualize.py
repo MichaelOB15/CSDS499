@@ -10,7 +10,11 @@ class Visualization:
     def __init__(self, m: List[List[int]], starting_pos: List[int], r, pause=5):
         """Constructor for the Visualization Object and Draws Initial State"""
         plt.ion()
-        self.m = np.abs(m-1)
+        self.m = (m-1)*-1
+
+        # self.y_size = len(m)
+        # self.x_size = len(m[0])
+
         self.pos = starting_pos
         self.path: List[List[int]] = [starting_pos]
         assert len(starting_pos) >= 2
@@ -21,7 +25,17 @@ class Visualization:
 
     def update(self, m: List[List[int]], new_pos: List[int], draw: bool = True):
         """Takes an updated position and generates a plot with the updated path built upon previous positions"""
-        self.m = np.abs(m-1)
+
+        change_in_y = len(m) - len(self.m)
+        change_in_x = len(m[0]) - len(self.m[0])
+
+        if change_in_x > 0 or change_in_y > 0:
+            self.ax.clear()
+
+        for i in range(len(self.path)):
+            self.path[i] = [self.path[i][0], self.path[i][1], self.path[i][2]]
+
+        self.m = (m-1)*-1
         self.path.append(new_pos)
         self.pos = new_pos
         if draw:
