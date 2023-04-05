@@ -103,7 +103,7 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> 
     #overwrite the old set of samples
 
 
-vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
+vis = Visualization(maze, particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
