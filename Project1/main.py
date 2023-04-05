@@ -59,22 +59,9 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> 
 
     # move particles according to command
     for i in range(num_particles):
-        # print(i)
-        
-
         particle_samples[i].sample_motion_model_velocity(u, stepsize)  # should probably put stepsize in config
-        #print(particle_samples[i].get_pose())
         particle_samples[i].set_measurement(z)  # recieves measurement
         particle_samples[i].likelihood_field_range_finder_model()  # measurement model
-
-        # if i < num_particles - 1:
-        #     for j in range(3):
-        #         if (particle_samples[i - 1].get_pose()[j] == particle_samples[i].get_pose()[[j]]):
-        #             print(f' {particle_samples[i - 1].get_pose()},  {particle_samples[i].get_pose()}')
-                    # assert not (particle_samples[i - 1].get_pose()[j] == particle_samples[i].get_pose()[[j]])
-        #print("banana")
-        
-        #print(particle_samples[i].get_pose())
 
     # rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight = 0
@@ -93,11 +80,10 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> 
             b = random.random()*maxweight*1.1  # scaled up so the weight guess is solidly above the largest weight
             if b <= a:
                 j = 1
-                new_samples[i] = particle_samples[samplenumber].deepcopy()  # I want to pass the address in memory not split the object
+                new_samples[i] = particle_samples[samplenumber].deepcopy()
 
     for i in range(num_particles):
-        new_samples[i].update_occupancy_grid()  # apparently update occupancy grid updates the map of the particle? make sure it copies. this is slower
-        #new_samples[i].set_map(new_samples[i].get_map().copy()) didn't fix...
+        new_samples[i].update_occupancy_grid()
 
     return new_samples
 
@@ -151,6 +137,29 @@ while config.initial_weight in particle_samples[0].get_map():
     # img = Image.fromarray(img.astype('uint8'))
 
     # img.show()
+
+def escapewall(config,particle):
+    minr=config.rmax
+    phi=0
+    for i in config.num_sensors:
+        if particle.measurements[i][0]<minr:
+            minr=particle.measurements[i][0]
+            phi=particle.measurements[i][1]
+
+    w=-1
+    if minr<config.rmin:
+        w=particle.getpose()+phi
+        if w>0:
+            w=w-pi
+        else:
+            w=w+pi
+
+    return w
+
+
+
+
+
 
 
 #testparticle=Particle(config)
