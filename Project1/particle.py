@@ -168,14 +168,21 @@ class Particle:
                     if r<rout[s]:
                         rout[s]=r
 
-            difference = abs(self.measurements[0][s]-rout[s])
+            difference = rout[s] - self.measurements[0][s]
 
             # error between the recieved sensor value and the expected one placed on normal distribution
-            norm = np.random.normal(difference, sigma_hit)
+            norm = self.normpdf(0, difference, sigma_hit)
             q = q*(zhit*norm + zrandom/zmax)
 
+        print(q)
         assert q > 0
         self.weight = q
+
+    def normpdf(self, x, mean, sd):
+        var = float(sd)**2
+        denom = (2*math.pi*var)**.5
+        num = math.exp(-(float(x)-float(mean))**2/(2*var))
+        return num/denom
 
     def update_occupancy_grid(self):
         '''update the map based on measurement data, see pg 301'''
