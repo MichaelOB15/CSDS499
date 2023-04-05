@@ -194,7 +194,7 @@ class Particle:
         r=self.measurements[0][s]+sensor_penetration
         if r > self.config.rmax: #check to make sure sensor isn't longer than the max range
             r=self.config.rmax
-        r_steps=int(r_steps/dr)
+        r_steps=int(r/dr)
 
         theta_steps=int(spread/dtheta)
 
