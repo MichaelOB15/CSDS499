@@ -92,7 +92,7 @@ class Particle:
 
         self.pose = self.pose+np.array([y_update, x_update, theta_update])
         # TODO might need to add wall collision
-        self.resize()
+        
 
     def inverse_range_sensor_model(self, coordinate, sensor):
         """Implements the inverse measurement model seen on pg 288"""
@@ -178,6 +178,8 @@ class Particle:
                 #this is heavily improvised...
                 if self.map[row,col]<1e10: #prevents overflow
                     self.map[row,col] = self.map[row,col] * self.inverse_range_sensor_model([row,col], s)# - lo
+
+        self.resize()
 
 
     def perceptual_field(self, s):
