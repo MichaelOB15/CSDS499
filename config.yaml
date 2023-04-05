@@ -26,8 +26,7 @@ num_particle: 20
 zmax: .3
 zhit: .6
 zrandom: .1
-#sigma_hit: .04
-sigma_hit: 0
+sigma_hit: .04
 
 # l_occ = np.log(0.65/0.35)
 #l_occ: 0.2688453123
