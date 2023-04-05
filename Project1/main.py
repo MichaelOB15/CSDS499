@@ -61,9 +61,14 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
 
     # move particles according to command
     for i in range(num_particles):
+        print(i)
         particle_samples[i].sample_motion_model_velocity(u, stepsize)  # should probably put stepsize in config
+        #print(particle_samples[i].get_pose())
         particle_samples[i].set_measurement(z)  # recieves measurement
         particle_samples[i].likelihood_field_range_finder_model()  # measurement model
+        #print("banana")
+        
+        #print(particle_samples[i].get_pose())
 
     # rejection sampling to see which robots survive -> this converges faster if I narrow down the range of my guesses
     maxweight = 0

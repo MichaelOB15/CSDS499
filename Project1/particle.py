@@ -93,7 +93,10 @@ class Particle:
         y_update=v/w*cos(theta)-v/w*cos(theta+w*stepsize)
         theta_update= ((w+epsilon[2])*stepsize) % (2*pi)
 
+        print("Before:", self.pose)
         self.pose = self.pose+np.array([y_update, x_update, theta_update])
+        print("After:", self.pose)
+        self.pose[2]=self.pose[2]%(2*pi) #to keep this low
         # TODO might need to add wall collision
         
 
