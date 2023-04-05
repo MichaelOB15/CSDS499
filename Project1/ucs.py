@@ -54,7 +54,7 @@ class Node:
         y_hat = p2[0] - p1[0]
         theta_hat = p2[2] - p1[2]
 
-        w = theta_hat/delta_t
+        w = theta_hat/delta_t % 2 * pi
 
         if w == 0:
             v = sqrt(x_hat**2 + y_hat**2)
