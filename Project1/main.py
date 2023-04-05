@@ -119,32 +119,32 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> 
     #overwrite the old set of samples
 
 
-#vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
+# vis = Visualization(particle_samples[0].get_map(), particle_samples[0].get_pose(), config.RADIUS)
 while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
         particle_samples = recieve_motion_command([0, 0], particle_samples)
-        #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
+        # vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
 
     for i in range(len(l) - 1):
         motions = l[i].get_motion(l[i + 1], delta_t)
 
         if type(motions[0]) == float:
             particle_samples = recieve_motion_command(motions, particle_samples)
-            #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            # vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
 
             # for p in particle_samples:
             #     pose = p.get_pose()
             #     print(f'y = {pose[0]}, x = {pose[1]}, theta = {pose[2]}')
             # assert False
 
-            print("completed one motion")
+            # print("completed one motion")
             # vis.pause()
         else:
             particle_samples = recieve_motion_command(motions[0], particle_samples)
             particle_samples = recieve_motion_command(motions[1], particle_samples)
-            #vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            # vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
 
     #this doubles up on the visualization code but I cant see the progress
     img=particle_samples[0].get_map().copy()
