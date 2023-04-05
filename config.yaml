@@ -5,14 +5,14 @@ maze_i: [0, 0]
 cell_size: 1
 RADIUS: 3
 
-movement_stepsize: 5
+movement_stepsize: 1
 delta_t: 1
 
 alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 #alpha: [0,0,0,0,0,0]
 
 initial_occupancy_map_size: [150, 150]
-cushion: 40 #must be greater than the maximum range of the sensor
+cushion: 100 #must be greater than the maximum range of the sensor
 resize_magnitude: 200
 initial_weight: .5
 
