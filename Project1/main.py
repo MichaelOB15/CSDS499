@@ -83,6 +83,7 @@ def recieve_motion_command(u: List[float], particle_samples: List[Particle]):
             if b <= a:
                 j = 1
                 new_samples[i] = particle_samples[samplenumber]  # I want to pass the address in memory not split the object
+        break
 
     for i in range(num_particles):
         new_samples[i].update_occupancy_grid()  # apparently update occupancy grid updates the map of the particle? make sure it copies. this is slower
