@@ -287,3 +287,23 @@ class Particle:
                 n_row=np.shape(self.map)[0]
                 #underflows need to update pose
                 self.pose[0]=self.pose[0]+resize_magnitude
+
+'''
+    def escapewall(config,self):
+        minr=config.rmax
+        phi=0
+        for i in config.num_sensors:
+            if self.measurements[i][0]<minr:
+                minr=self.measurements[i][0]
+                phi=self.measurements[i][1]
+
+        w=-1
+        if minr<config.rmin:
+            w=self.getpose()+phi
+            if w>0:
+                w=w-pi
+            else:
+                w=w+pi
+
+        return w
+'''
