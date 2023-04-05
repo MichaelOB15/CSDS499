@@ -174,7 +174,6 @@ class Particle:
             norm = self.normpdf(0, difference, sigma_hit)
             q = q*(zhit*norm + zrandom/zmax)
 
-        print(q)
         assert q > 0
         self.weight = q
 
