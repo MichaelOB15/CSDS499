@@ -141,7 +141,7 @@ class Particle:
 
             for i in range(index):
                 # print(i)
-                row=perceptual_field[i][1]-1
+                row=perceptual_field[i][1]-1 #not sure if this is the best way to do this?
                 col=perceptual_field[i][0]-1
 
                 # find the corresponding closest radius for the sensor
@@ -176,7 +176,7 @@ class Particle:
                 col=perceptual_field[i][0]
 
                 #this is heavily improvised...
-                if self.map[row,col]<1e10:
+                if self.map[row,col]<1e10: #prevents overflow
                     self.map[row,col] = self.map[row,col] * self.inverse_range_sensor_model([row,col], s)# - lo
 
 
