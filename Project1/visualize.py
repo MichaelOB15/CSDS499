@@ -40,8 +40,8 @@ class Visualization:
         x_diff = self.pos[1] - new_pos[1]
         theta_diff = self.pos[2] - new_pos[2]
 
-        self.real_pose[0] = self.real_pose[0] - y_diff
-        self.real_pose[1] = self.real_pose[1] - x_diff
+        self.real_pose[0] = self.real_pose[0] - y_diff - change_in_y
+        self.real_pose[1] = self.real_pose[1] - x_diff - change_in_x
         self.real_pose[2] = self.real_pose[2] - theta_diff
 
         self.path.append(new_pos)
