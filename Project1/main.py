@@ -108,7 +108,7 @@ while config.initial_weight in particle_samples[0].get_map():
     l: List[Node] = UCS(config.RADIUS, config.cell_size).nearest_list(particle_samples[0].get_map(),particle_samples[0].get_pose())
 
     if len(l) == 1:
-        particle_samples = recieve_motion_command([0, 0], particle_samples)
+        particle_samples = recieve_motion_command([0, pi/7], particle_samples)
         vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose())
 
     for i in range(len(l) - 1):
@@ -116,7 +116,7 @@ while config.initial_weight in particle_samples[0].get_map():
 
         if type(motions[0]) == float:
             particle_samples = recieve_motion_command(motions, particle_samples)
-            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 5 == 0)
 
             # for p in particle_samples:
             #     pose = p.get_pose()
@@ -128,7 +128,7 @@ while config.initial_weight in particle_samples[0].get_map():
         else:
             particle_samples = recieve_motion_command(motions[0], particle_samples)
             particle_samples = recieve_motion_command(motions[1], particle_samples)
-            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 1 == 0)
+            vis.update(particle_samples[0].get_map(), particle_samples[0].get_pose(), i % 5 == 0)
 
     #this doubles up on the visualization code but I cant see the progress
     # img=particle_samples[0].get_map().copy()

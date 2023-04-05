@@ -17,26 +17,44 @@ class Node:
         self.cost: int = cost
         self.r = r
         self.square_size = square_size
+        self.magicval = 16
+
+    def in_neigbhorhood(self, m) -> bool: 
+        y = self.pos[0]
+        x = self.pos[1]
+
+        magicrad = self.magicval
+
+        for j in range(y -magicrad, y + magicrad ):
+            for i in range( x - magicrad, x + magicrad):
+                if m[j][i] > 0.5:
+                    return False
+ 
+        return True
 
     def get_children(self, m, explored: Dict) -> List[Any]:
         children: List[Node] = []
         y = self.pos[0]
         x = self.pos[1]
 
-        if y - 1 >= 0:
-            if not self.in_wall(m, (x, y - 1)):
+        # val = m[y][x]
+
+        if self.in_neigbhorhood(m):
+            if y - 1 >= 0:
                 children.append(Node(self, (y - 1, x, pi/2), self.cost + 1, self.r, self.square_size))
 
-        if y + 1 < len(m):
-            if not self.in_wall(m, (x, y + 1)):
+            if y + 1 < len(m):
+                # if self.in_neigbhorhood(y + 1, x):
                 children.append(Node(self, (y + 1, x, -pi/2), self.cost + 1, self.r, self.square_size))
 
-        if x - 1 >= 0:
-            if not self.in_wall(m, (x - 1, y)):
+            if x - 1 >= 0:
+                # if not self.in_wall(m, (x - 1, y)):
+                # if self.in_neigbhorhood(y, x - 1):
                 children.append(Node(self, (y, x - 1, -pi), self.cost + 1, self.r, self.square_size))
 
-        if x + 1 < len(m[0]):
-            if not self.in_wall(m, (x + 1, y)):
+            if x + 1 < len(m[0]):
+                # if not self.in_wall(m, (x + 1, y)):
+                # if self.in_neigbhorhood(y, x + 1):
                 children.append(Node(self, (y, x + 1, 0), self.cost + 1, self.r, self.square_size))
 
         remove_explored: List[Node] = []
@@ -84,6 +102,8 @@ class Node:
         y_in_m = floor(pos[1])
 
         lambdaval = self.r/self.square_size
+
+        lambdaval = 18
 
         assert lambdaval >= 1
 
@@ -147,7 +167,18 @@ class UCS:
             # print(len(m))
             # print(len(m[0]))
             # print(node)
-            if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
+
+            magic_val = 2
+
+            y = node.pos[0]
+            x = node.pos[1]
+            solved = True
+            for i in range(y - magic_val, y + magic_val):
+                for j in range(x - magic_val, x + magic_val):
+                    if m[i][j] != UNEXPLORED:
+                        solved = False
+
+            if solved:
                 return node
             else:
                 children: List[Node] = node.get_children(m, explored)
@@ -156,7 +187,9 @@ class UCS:
                     explored.update({child.pos: child})
 
         # TODO add check -1 remains
-        raise ValueError("No unexplored space found")
+
+        return n
+        # raise ValueError("No unexplored space found")
 
 # magic math http
 
