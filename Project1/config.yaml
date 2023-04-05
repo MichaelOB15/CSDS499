@@ -6,6 +6,7 @@ cell_size: 1
 RADIUS: 3
 
 movement_stepsize: 1
+delta_t: 1
 
 #alpha: [0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001]
 alpha: [0,0,0,0,0,0]
@@ -15,8 +16,6 @@ cushion: 50 #must be greater than the maximum range of the sensor
 resize_magnitude: 200
 initial_weight: .5
 
-
-rmin: 5 #only necessary to stay away from the wall, this has no bearing on the data from the robot
 rmax: 30
 beam_width: 15
 sensor_penetration: 5
@@ -29,6 +28,7 @@ zmax: .3
 zhit: .6
 zrandom: .1
 sigma_hit: .04
+#sigma_hit: 0
 
 # l_occ = np.log(0.65/0.35)
 #l_occ: 0.2688453123
