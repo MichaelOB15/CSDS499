@@ -189,11 +189,11 @@ class Particle:
         spread = beam_width*pi/180
 
         dr= self.config.dr
-        sensor_penetration=self.config.sensor_penetration
+        sensor_penetration=self.config.sensor_penetration #depth of field when an object is encountered
 
-        r_steps=self.measurements[0][s]+sensor_penetration
-        if r_steps > self.config.rmax: #check to make sure sensor isn't longer than the max range
-            r_steps=self.config.rmax
+        r=self.measurements[0][s]+sensor_penetration
+        if r > self.config.rmax: #check to make sure sensor isn't longer than the max range
+            r=self.config.rmax
         r_steps=int(r_steps/dr)
 
         theta_steps=int(spread/dtheta)
