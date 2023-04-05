@@ -16,6 +16,8 @@ cushion: 50 #must be greater than the maximum range of the sensor
 resize_magnitude: 200
 initial_weight: .5
 
+
+rmin: 5 #only necessary to stay away from the wall, this has no bearing on the data from the robot
 rmax: 30
 beam_width: 15
 sensor_penetration: 5
