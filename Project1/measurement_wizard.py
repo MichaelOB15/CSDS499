@@ -19,6 +19,9 @@ class MeasurementWizard:
     def getpose(self):
         return self.ideal.get_pose()
     
+    def getideal(self):
+        return self.ideal
+    
     def getZ(self):
         return self.z.copy()
         
