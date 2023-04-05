@@ -128,8 +128,8 @@ class UCS:
 
     # Returns index of nearest UNEXPLORED
     def _nearest_unexplored(self, m: List[List[int]], pos: List[int]) -> Node:
-        robot_x_in_m = floor(pos[0])
-        robot_y_in_m = floor(pos[1])
+        robot_y_in_m = floor(pos[0])
+        robot_x_in_m = floor(pos[1])
         robot_theta = pos[2]
         pos = (robot_y_in_m, robot_x_in_m, robot_theta)
 
@@ -144,6 +144,9 @@ class UCS:
         while queue:
 
             node = queue.popleft()
+            # print(len(m))
+            # print(len(m[0]))
+            # print(node)
             if m[node.pos[0]][node.pos[1]] == UNEXPLORED:
                 return node
             else:
