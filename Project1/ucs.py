@@ -29,6 +29,16 @@ class Node:
 
         for j in range(y -magicrad, y + magicrad ):
             for i in range( x - magicrad, x + magicrad):
+
+                if j >= len(m):
+                    continue
+                if j < 0:
+                    continue
+                if i >= len(m[0]):
+                    continue
+                if i < 0:
+                    continue
+
                 if m[j][i] > 0.5:
                     return False
  
