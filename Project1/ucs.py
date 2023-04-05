@@ -35,7 +35,7 @@ class Node:
             if not self.in_wall(m, (x - 1, y)):
                 children.append(Node(self, (y, x - 1, -pi), self.cost + 1, self.r, self.square_size))
 
-        if x + 1 < len(m[x]):
+        if x + 1 < len(m[0]):
             if not self.in_wall(m, (x + 1, y)):
                 children.append(Node(self, (y, x + 1, 0), self.cost + 1, self.r, self.square_size))
 
