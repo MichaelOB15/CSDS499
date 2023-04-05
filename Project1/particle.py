@@ -5,7 +5,7 @@ import math
 
 
 class Particle:
-    def __init__(self, config, pose = [], occupancy_map = None, occupancy_weight_map = None):  # get rid of occupancy weight map once this compiles
+    def __init__(self, config, pose = [], occupancy_map = None):  # get rid of occupancy weight map once this compiles
         """Initialize the particle at the center of its internal map. Use pg 478 as a reference for an overview of the full algorithm"""
 
         self.config = config
@@ -48,6 +48,9 @@ class Particle:
 
     def get_map(self):
         return self.map
+    
+    def set_map(self, map):
+        self.map = map
 
     def get_weight(self):
         return self.weight
@@ -121,6 +124,7 @@ class Particle:
 
     def likelihood_field_range_finder_model(self):
         """This method is heavily modified but implements the algorithm seen on pg 172"""
+        self.resize()
 
         q = 1
 
@@ -164,6 +168,8 @@ class Particle:
     def update_occupancy_grid(self):
         '''update the map based on measurement data, see pg 301'''
 
+        self.resize()
+
         lo = self.config.l_o
 
         for s in range(self.config.num_sensors):
@@ -179,7 +185,7 @@ class Particle:
                 if self.map[row,col]<1e10: #prevents overflow
                     self.map[row,col] = self.map[row,col] * self.inverse_range_sensor_model([row,col], s)# - lo
 
-        self.resize()
+        
 
 
     def perceptual_field(self, s):
