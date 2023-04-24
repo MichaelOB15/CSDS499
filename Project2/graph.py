@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
 from point import Point
 import matplotlib.pyplot as plt
+from queue import PriorityQueue
 
 
 class Graph():
@@ -55,6 +56,25 @@ class Graph():
         plt.scatter(x, y)
         plt.show()
 
+    def a_star(self, start: Point, goal: Point):
+        explore: Dict[Point, bool] = {}
+        q = PriorityQueue()
+        q.put(start)
+        explore[start] = True
+
+        while not q.empty():
+            front = q.get()
+            if front == goal:
+                return "Path"
+            else:
+                children = self.get_neighbors(front)
+                for child in children:
+                    if not explore.get(child, False):
+                        q.put(child)
+                        explore[child] = True
+
+        raise KeyError(f"No goal point = {goal} found")
+
 
 g = Graph()
 g.add_node(0, 0)
@@ -66,4 +86,7 @@ g.add_node(0, 1)
 g.add_vertex(Point(1, 0), Point(0, 1))
 g.add_vertices(Point(1, 1), [Point(0, 0), Point(0, 1), Point(1, 0)])
 
+print(g)
+
+g.a_star(Point(1, 0), Point(0, 1))
 g.graph_vis()
