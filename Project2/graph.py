@@ -88,5 +88,5 @@ g.add_vertices(Point(1, 1), [Point(0, 0), Point(0, 1), Point(1, 0)])
 
 print(g)
 
-g.a_star(Point(1, 0), Point(0, 1))
+# g.a_star(Point(1, 0), Point(0, 1))
 g.graph_vis()
