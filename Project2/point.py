@@ -26,11 +26,11 @@ class Point():
         return round(hypot(dx, dy), 4)
 
     def get_path(self) -> str:
-        path_str = ""
-        node = self
-        while node is not None:
-            path_str = node.__str__()
-            node = node.parent
+        path_str = self.__str__()
+        self = self.parent
+        while self is not None:
+            path_str = f'{path_str}, {self}'
+            self = self.parent
         return path_str
 
     # def midpoint(self, other):
