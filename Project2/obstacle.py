@@ -33,18 +33,14 @@ def fillBoundary(xArray, yArray):
 class Obstacle():
     '''An obstacle out of a set of points x and y.'''
 
-    # Two parallel arrays that are the set of points x,y that make up the boundary.
-    xArray = None
-    yArray = None
-
-    pts = None  # max index of the x and y parallel arrays
-
     def __init__(self, xArray, yArray):
         '''Defines x and y variables'''
+
+        # Two parallel arrays that are the set of points x,y that make up the boundary.
         tup = fillBoundary(xArray, yArray)
         self.xArray = tup[0]
         self.yArray = tup[1]
-        self.pts = np.length(xArray)
+        self.pts = np.length(xArray)  # max index of the x and y parallel arrays
 
     def pointInPolygon(self, point):
         '''implementation of ray casting algorithm. Returns boolean.'''
