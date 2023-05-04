@@ -72,6 +72,10 @@ class Obstacle():
         self.vertices=vertices
         self.xArray = tup[0]
         self.yArray = tup[1]
+        self.xmax=xmax
+        self.xmin=xmin
+        self.ymax=ymax
+        self.ymin=ymin
 
     def pointInPolygon(self, point):
         '''implementation of ray casting algorithm. Returns boolean.'''
@@ -90,6 +94,9 @@ class Obstacle():
 
         #determine which dimension hits the boundary first
         ##This is not optimal but still should do the trick
+
+        #a better way would just be to plot the line and if its out of any of the four bounds stop plotting
+        #rewrite this better lol
         if(angle>(3*pi/4) | angle<(-3*pi/4)):
             numIterations=int((x1-self.xmin)/resolution)
         elif(angle>pi/4):
@@ -99,10 +106,22 @@ class Obstacle():
         else:
             numIterations=int((y1-self.ymin)/resolution)
 
+        #throw exception if starting point is in the boundary
+        # actually maybe just say its in the object if you're close to the boundary on iteration 1    
+
         for i in range(numIterations):
-            break
-            #xUpdate.append(x1+j*cos(angle)*resolution)
-            #yUpdate.append(y1+j*sin(angle)*resolution)
+            #get point x,y from angle, iteration number, and original point #x (x1+j*cos(angle)*resolution)
+
+            #go through array for every point and calculate distance from that point to x,y
+            #if distance low, count as crossing and latch
+            #if distance high again unlatch
+
+            
+
+            break #so code compiles
+
+
+        #if even number of crossings return false else return true
 
 
         return False
