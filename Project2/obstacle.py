@@ -100,9 +100,9 @@ class Obstacle():
             numIterations=int((y1-self.ymin)/resolution)
 
         for i in range(numIterations):
-            
-            xUpdate.append(x1+j*cos(angle)*resolution)
-            yUpdate.append(y1+j*sin(angle)*resolution)
+            break
+            #xUpdate.append(x1+j*cos(angle)*resolution)
+            #yUpdate.append(y1+j*sin(angle)*resolution)
 
 
         return False
