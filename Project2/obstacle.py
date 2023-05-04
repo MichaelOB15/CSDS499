@@ -4,12 +4,12 @@ from math import sqrt,atan2,sin,cos,pi
 def fillBoundary(vertices):
     '''add points in a line between consecutive "too distant" boundary vertices on the obstacle polygon'''
 
-    resolution=0.1
+    resolution = 0.1
 
     l=np.length(vertices) #assume the arrays are the same length, this method has no error handling
 
-    xUpdate=np.array() #blank arrays that will fill with data
-    yUpdate=np.array()
+    xUpdate = np.array()  # blank arrays that will fill with data
+    yUpdate = np.array()
 
     for i in range(l-1):
         
@@ -18,16 +18,17 @@ def fillBoundary(vertices):
         y1=vertices[i][1]
         y2=vertices[i+1][1]
 
-        dist=sqrt((x2-x1)^2+(y2-y1)^2) #euclidean distance between vertices
-        angle=atan2((y2-y1),(x2-x1)) #angle from point to next point
+        dist = sqrt((x2-x1)^2 + (y2-y1)^2)  # euclidean distance between vertices
+        angle = atan2((y2-y1), (x2-x1))  # angle from point to next point
 
-        numAdditions=int(dist/resolution)+1 #run loop for zero case to add original vertex + as many more times as necessary
+        numAdditions = int(dist/resolution)+1  # run loop for zero case to add original vertex + as many more times as necessary
 
         for j in range(numAdditions):
             xUpdate.append(x1+j*cos(angle)*resolution)
             yUpdate.append(y1+j*sin(angle)*resolution)
 
-    return (xUpdate,yUpdate) #return as a tuple
+    return (xUpdate, yUpdate)  # return as a tuple
+
 
 class Obstacle():
     '''An obstacle out of a set of points x and y.'''
@@ -72,7 +73,7 @@ class Obstacle():
         self.xArray = tup[0]
         self.yArray = tup[1]
 
-    def pointInPolygon(self,point):
+    def pointInPolygon(self, point):
         '''implementation of ray casting algorithm. Returns boolean.'''
 
         #code needs to "latch" so successive boundary hits don't count as a bunch of boundary walls
@@ -105,12 +106,3 @@ class Obstacle():
 
 
         return False
-    
-
-
-    
-
-
-
-
-
