@@ -31,17 +31,19 @@ plt.gca().set_aspect("equal")
 plt.xlim([-10,10])
 plt.ylim([-10,10])
 
-polygon = random_convex_polygon(num_points=7)
-
-polygon2=random_star_shaped_polygon(num_points=12)
+polygon = random_convex_polygon(num_points=7) #outer boundary
+polygon2=random_star_shaped_polygon(num_points=12) #inner obstacles
 polygon3=random_star_shaped_polygon(num_points=12)
 polygon4=random_star_shaped_polygon(num_points=12)
 
+scaling=[20,5,5,5] #I did these by hand these are just values that look nice
+xshift=[-10,0,-8,2]
+yshift=[-10,0,0,-8]
+pg=[polygon,polygon2,polygon3,polygon4]
 
-plot_polygon(polygon,20,-10,-10)
-plot_polygon(polygon2,5,0,0)
-plot_polygon(polygon3,5,-8,0)
-plot_polygon(polygon4,5,2,-8)
+for i in range(len(scaling)):
+    plot_polygon(pg[i],scaling[i],xshift[i],yshift[i])
+
 plt.show()
 
 
