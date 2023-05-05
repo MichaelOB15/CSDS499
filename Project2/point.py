@@ -21,7 +21,7 @@ class Point():
     def __str__(self) -> str:
         return f'({self.x}, {self.y}), weight = {self.weight}'
 
-    def distance(self, other) -> float:
+    def distance(self, other: 'Point') -> float:
         dx = self.x - other.x
         dy = self.y - other.y
         return round(hypot(dx, dy), 4)
