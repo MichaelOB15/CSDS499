@@ -7,7 +7,7 @@ EUCLIDEAN = 0
 class Point():
     '''Creates a point on a coordinate plane with values x and y.'''
 
-    heuristic_type: int = -1
+    heuristic_type: int
     goal = None
 
     def __init__(self, x: float, y: float, weight: float = 0):
