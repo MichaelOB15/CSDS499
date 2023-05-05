@@ -59,7 +59,7 @@ for n in range(num_particles):
 
 def recieve_motion_command(u: List[float], particle_samples: List[Particle]) -> List[Particle]:
     measure2=MeasurementWizard(maze, np.copy(measure.getpose), config) #necessary to keep robot away from wall
-    z2 = measure2(u, stepsize)
+    z2 = measure2.navigate_maze(u, stepsize)
     minr=config.rmax
     phi=0
     for i in config.num_sensors:
