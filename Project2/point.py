@@ -8,7 +8,7 @@ class Point():
     '''Creates a point on a coordinate plane with values x and y.'''
 
     heuristic_type: int
-    goal = None
+    goal: 'Point'
 
     def __init__(self, x: float, y: float, weight: float = 0):
         '''Defines x and y variables'''
