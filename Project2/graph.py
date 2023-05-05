@@ -62,7 +62,7 @@ class Graph():
         Point.goal = goal
 
         explore: Dict[Point, bool] = {}
-        q = PriorityQueue()
+        q: PriorityQueue[Point] = PriorityQueue()
         q.put(start)
         explore[start] = True
 

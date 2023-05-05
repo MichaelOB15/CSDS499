@@ -1,4 +1,5 @@
 from math import hypot
+from typing import Optional
 
 
 EUCLIDEAN = 0
@@ -15,7 +16,7 @@ class Point():
         self.x = x
         self.y = y
         self.weight = weight
-        self.parent = None
+        self.parent: Optional['Point'] = None
 
     def __str__(self) -> str:
         return f'({self.x}, {self.y}), weight = {self.weight}'
