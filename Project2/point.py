@@ -9,7 +9,7 @@ class Point():
     '''Creates a point on a coordinate plane with values x and y.'''
 
     heuristic_type: int
-    goal: 'Point'
+    goal: Optional['Point'] = None
 
     def __init__(self, x: float, y: float, weight: float = 0):
         '''Defines x and y variables'''
@@ -41,7 +41,7 @@ class Point():
             raise ValueError("No heuristic match found")
 
     def euclidean(self):
-        if self.goal is None:
+        if Point.goal is None:
             raise ValueError("Goal not set")
         return self.distance(Point.goal)
 
