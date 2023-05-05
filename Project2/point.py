@@ -33,11 +33,6 @@ class Point():
             self = self.parent
         return path_str
 
-    # def midpoint(self, other):
-    #     midx = self.x - other.x/2
-    #     midy = self.y - other.y/2
-    #     return Point(midx, midy)
-
     def __hash__(self):
         return hash((self.x, self.y))
 
