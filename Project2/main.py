@@ -14,6 +14,26 @@ def main(config):
 
     # analysis of all of the function
 
+    ''' code for plotting the workspace, I stripped this from the method but wanted to keep because visuals/aspects were nice
+
+        #set up plot
+        plt.figure()
+        plt.gca().set_aspect("equal")
+        plt.xlim([-10,10])
+        plt.ylim([-10,10])
+
+        for i in range(len(scaling)):
+            self.plot_polygon(output[i])
+
+
+        plt.show() #plt.savefig(out_file_name, dpi=300)
+        #print(polygon[0][1])
+    '''
+
+
+
+
+
     pass
 
 def load_config():
