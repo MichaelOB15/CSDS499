@@ -33,12 +33,6 @@ class Point():
             self = self.parent
         return path_str
 
-    def __hash__(self):
-        return hash((self.x, self.y))
-
-    def __eq__(self, other):
-        return (self.x, self.y) == (other.x, other.y)
-
     def heuristic(self) -> float:
         if self.heuristic_type == EUCLIDEAN:
             return self.euclidean()
@@ -50,7 +44,13 @@ class Point():
             raise ValueError("Goal not set")
         return self.distance(Point.goal)
 
-    def __lt__(self, other):
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __eq__(self, other: 'Point'):
+        return (self.x, self.y) == (other.x, other.y)
+
+    def __lt__(self, other: 'Point'):
         f1 = self.weight + self.heuristic()
         f2 = other.weight + other.heuristic()
         return f1 < f2
