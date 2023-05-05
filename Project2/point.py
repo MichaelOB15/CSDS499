@@ -9,7 +9,7 @@ class Point():
     '''Creates a point on a coordinate plane with values x and y.'''
 
     heuristic_type: int
-    goal: 'Point'
+    goal: Optional['Point'] = None
 
     def __init__(self, x: float, y: float, weight: float = 0):
         '''Defines x and y variables'''
@@ -21,7 +21,7 @@ class Point():
     def __str__(self) -> str:
         return f'({self.x}, {self.y}), weight = {self.weight}'
 
-    def distance(self, other) -> float:
+    def distance(self, other: 'Point') -> float:
         dx = self.x - other.x
         dy = self.y - other.y
         return round(hypot(dx, dy), 4)
@@ -41,7 +41,7 @@ class Point():
             raise ValueError("No heuristic match found")
 
     def euclidean(self):
-        if self.goal is None:
+        if Point.goal is None:
             raise ValueError("Goal not set")
         return self.distance(Point.goal)
 
