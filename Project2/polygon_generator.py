@@ -6,29 +6,43 @@ import matplotlib.pyplot as plt
 import random
 
 
-def plot_polygon(polygon, out_file_name):
-    plt.figure()
-    plt.gca().set_aspect("equal")
-
-    for i, (x, y) in enumerate(polygon):
-        plt.text(x, y, str(i), horizontalalignment="center", verticalalignment="center")
-
-    # just so that it is plotted as closed polygon
+def plot_polygon(polygon, scaling, xshift, yshift):
+    
+    # so it is plotted as closed polygon
     polygon.append(polygon[0])
 
     xs, ys = zip(*polygon)
-    plt.plot(xs, ys, "r-", linewidth=0.4)
+    x=[]
+    y=[]
 
-    plt.savefig(out_file_name, dpi=300)
-    plt.close()
+    for i in range(len(xs)):
+        x.append(xs[i]*scaling+xshift)
+    for i in range(len(ys)):
+        y.append(ys[i]*scaling+yshift)
+
+    plt.plot(x, y, "k-", linewidth=1)
 
 
 # this is just so that you can reproduce the same results
-random.seed(5)
+random.seed(3)
 
-polygon = random_convex_polygon(num_points=10)
+plt.figure()  #plt.savefig(out_file_name, dpi=300)
+plt.gca().set_aspect("equal")
+plt.xlim([-10,10])
+plt.ylim([-10,10])
 
-print(polygon)
-# [(0.752691110661913, 0.948158571633034), (0.7790276993942304, 0.05437135270534656), ..., (0.633385213909564, 0.7365967958574935)]
+polygon = random_convex_polygon(num_points=7)
 
-plot_polygon(polygon, "random_polygon.png")
+polygon2=random_star_shaped_polygon(num_points=12)
+polygon3=random_star_shaped_polygon(num_points=12)
+polygon4=random_star_shaped_polygon(num_points=12)
+
+
+plot_polygon(polygon,20,-10,-10)
+plot_polygon(polygon2,5,0,0)
+plot_polygon(polygon3,5,-8,0)
+plot_polygon(polygon4,5,2,-8)
+plt.show()
+
+
+#print(polygon[0][1])
