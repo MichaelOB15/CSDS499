@@ -1,0 +1,4 @@
+num_poly: 5
+
+min_poly_edges: 4
+max_poly_edges: 8
