@@ -2,7 +2,11 @@
 class TD():
 
     def __init__(self, boundary, verticies, start, end):
+        
+        # boundary = [[x1,y1],[x2, y2],...,[xn,yn]]
         self.boundary = boundary
+
+        # 
         self.verticies = verticies
         self.start = start
         self.end = end
@@ -31,11 +35,9 @@ class TD():
         vert_boundaries = []
 
         for CP in all_criticle_points:
-            small_increase = # need to add small amount of increase to test if a valid point is there
-            valid_increase = True # Run gabes code here to test for a valid point
-
-            small_decrease = # need to subtract small amount of increase to test if a valid point is there
-            valid_decrease = True # Run gabes code here to test for a valid point
+            offset = .001
+            valid_increase = self.valid_points([CP[0], CP[1]+offset], all_rays)
+            valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = 99999999999
@@ -55,18 +57,18 @@ class TD():
                     if CP[0] > xmin and CP[0] < xmax:
                         if valid_increase:
                             point_on_ray = self.intersecting_point(ray, CP)
-                            if (point_on_ray[1] - CP[1]) < closest_top_y
+                            if (point_on_ray[1] - CP[1]) < closest_top_y:
                                 closest_top_y = point_on_ray[1] - CP[1]
                                 closest_top_point = point_on_ray
                         if valid_decrease:
                             point_on_ray = self.intersecting_point(ray, CP)   
-                            if (CP[1] - point_on_ray[1]) < closest_bottom_y
+                            if (CP[1] - point_on_ray[1]) < closest_bottom_y:
                                 closest_bottom_y = CP[1] - point_on_ray[1]
                                 closest_bottom_point = point_on_ray 
 
-                if closest_top_point not [0,0]:
+                if closest_top_point != [0,0]:
                     vert_boundaries.append([CP, closest_top_point])
-                if closest_top_point not [0,0]:
+                if closest_top_point != [0,0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
         return vert_boundaries
@@ -81,3 +83,32 @@ class TD():
         new_y = ray[0][1] + (point[0] - ray[0,0]) * slope 
 
         return [point[0], new_y]
+
+    def valid_point(self, point, rays):
+        num_intersections = 0
+        for ray in all_rays:
+            if ray[0][0] < ray[1][0]:
+                xmin = ray[0][0]
+                xmax = ray[1][0]
+            else:
+                xmin = ray[1][0]
+                xmax = ray[0][0]
+
+            point_on_ray = self.intersecting_point(ray, point)
+
+            # in the boundary and above
+            if point[0] < xmax and point[0] > xmin and point_on_ray[1] > point[1]:
+                num_intersections += 1
+
+        # if even num of interactions
+        if num_intersections % 2:
+            return False
+        else:
+            return True
+
+def test():
+    start = []
+    end = []
+    boundary = []
+    vertecies = []
+    decom = TD()

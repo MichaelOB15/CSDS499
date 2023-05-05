@@ -7,7 +7,7 @@ import random
 
 class Workspace():
         
-    def plot_polygon(polygon):
+    def plot_polygon(self, polygon):
         
         # so it is plotted as closed polygon
         polygon.append(polygon[0])
@@ -16,7 +16,7 @@ class Workspace():
 
         plt.plot(xs, ys, "k-", linewidth=1)
 
-    def reformat(polygon, scaling, xshift, yshift):
+    def reformat(self, polygon, scaling, xshift, yshift):
         xs, ys = zip(*polygon)
         x=[]
         y=[]

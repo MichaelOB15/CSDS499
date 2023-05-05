@@ -1,5 +1,14 @@
+from generate_workspace import Workspace
+
+from pathlib import Path
+import yaml
+import argparse
 
 def main(config):
+
+    map = Workspace()
+    obj = map.gen()
+    print(obj)
 
     # polygon generator pass in the config
         # spit out polygons with verticies and the dimmensions of the space
