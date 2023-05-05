@@ -8,6 +8,6 @@ class TD():
 
         # calculate the middle points between the boundaries and the edges of the verticies
 
-        # filter the important criticle points 
+        # filter the important criticle points
 
         pass
