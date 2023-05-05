@@ -1,18 +1,19 @@
 import numpy as np
-from math import sqrt,atan2,sin,cos,pi
+from math import sqrt, atan2, sin, cos, pi
+
 
 def fillBoundary(vertices):
     '''add points in a line between consecutive "too distant" boundary vertices on the obstacle polygon'''
 
     resolution = 0.1
 
-    l=np.length(vertices) #assume the arrays are the same length, this method has no error handling
+    l=np.length(vertices)  # assume the arrays are the same length, this method has no error handling
 
     xUpdate = np.array()  # blank arrays that will fill with data
     yUpdate = np.array()
 
     for i in range(l-1):
-        
+
         x1=vertices[i][0]
         x2=vertices[i+1][0]
         y1=vertices[i][1]
@@ -36,7 +37,7 @@ class Obstacle():
     # Original data passed to the Obstacle class
     vertices=None
 
-    # Two parallel arrays that are the set of points x,y that make up the boundary. 
+    # Two parallel arrays that are the set of points x,y that make up the boundary.
     xArray=None
     yArray=None
 
@@ -49,7 +50,7 @@ class Obstacle():
     def __init__(self, vertices):
         '''Defines x and y variables'''
 
-        tup=fillBoundary(vertices) #adds in extra points
+        tup=fillBoundary(vertices)  # adds in extra points
 
         xmax=float('-inf')
         xmin=float('inf')
@@ -58,8 +59,8 @@ class Obstacle():
 
         l=np.length(self.vertices)
 
-        #finds the bounds of the obstacle
-        for i in range(l): 
+        # finds the bounds of the obstacle
+        for i in range(l):
             if self.vertices[l][0]<xmin:
                 xmin=self.vertices[l][0]
             if self.vertices[l][0]>xmax:
@@ -80,7 +81,7 @@ class Obstacle():
     def pointInPolygon(self, point):
         '''implementation of ray casting algorithm. Returns boolean.'''
 
-        #code needs to "latch" so successive boundary hits don't count as a bunch of boundary walls
+        # code needs to "latch" so successive boundary hits don't count as a bunch of boundary walls
         latch=False
 
         resolution=0.1
@@ -92,11 +93,11 @@ class Obstacle():
 
         angle=atan2((y2-y1),(x2-x1))
 
-        #determine which dimension hits the boundary first
-        ##This is not optimal but still should do the trick
+        # determine which dimension hits the boundary first
+        # This is not optimal but still should do the trick
 
-        #a better way would just be to plot the line and if its out of any of the four bounds stop plotting
-        #rewrite this better lol
+        # a better way would just be to plot the line and if its out of any of the four bounds stop plotting
+        # rewrite this better lol
         if(angle>(3*pi/4) | angle<(-3*pi/4)):
             numIterations=int((x1-self.xmin)/resolution)
         elif(angle>pi/4):
@@ -106,22 +107,18 @@ class Obstacle():
         else:
             numIterations=int((y1-self.ymin)/resolution)
 
-        #throw exception if starting point is in the boundary
-        # actually maybe just say its in the object if you're close to the boundary on iteration 1    
+        # throw exception if starting point is in the boundary
+        # actually maybe just say its in the object if you're close to the boundary on iteration 1
 
         for i in range(numIterations):
-            #get point x,y from angle, iteration number, and original point #x (x1+j*cos(angle)*resolution)
+            # get point x,y from angle, iteration number, and original point #x (x1+j*cos(angle)*resolution)
 
-            #go through array for every point and calculate distance from that point to x,y
-            #if distance low, count as crossing and latch
-            #if distance high again unlatch
+            # go through array for every point and calculate distance from that point to x,y
+            # if distance low, count as crossing and latch
+            # if distance high again unlatch
 
-            
+            break  # so code compiles
 
-            break #so code compiles
-
-
-        #if even number of crossings return false else return true
-
+        # if even number of crossings return false else return true
 
         return False
