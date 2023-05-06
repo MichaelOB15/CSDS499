@@ -2,11 +2,9 @@
 class TD():
 
     def __init__(self, boundary, verticies, start, end):
-        
+
         # boundary = [[x1,y1],[x2, y2],...,[xn,yn]]
         self.boundary = boundary
-
-        # 
         self.verticies = verticies
         self.start = start
         self.end = end
@@ -41,9 +39,9 @@ class TD():
 
             if valid_decrease or valid_increase:
                 closest_top_y = 99999999999
-                closest_top_point = [0,0]
+                closest_top_point = [0, 0]
                 closest_bottom_y = 99999999999
-                closest_bottom_point = [0,0]
+                closest_bottom_point = [0, 0]
 
                 for ray in all_rays:
                     if ray[0][0] < ray[1][0]:
@@ -52,7 +50,7 @@ class TD():
                     else:
                         xmin = ray[1][0]
                         xmax = ray[0][0]
-                    
+
                     # if point falls within the ray
                     if CP[0] > xmin and CP[0] < xmax:
                         if valid_increase:
@@ -66,9 +64,9 @@ class TD():
                                 closest_bottom_y = CP[1] - point_on_ray[1]
                                 closest_bottom_point = point_on_ray 
 
-                if closest_top_point != [0,0]:
+                if closest_top_point != [0, 0]:
                     vert_boundaries.append([CP, closest_top_point])
-                if closest_top_point != [0,0]:
+                if closest_top_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
         return vert_boundaries
@@ -80,8 +78,7 @@ class TD():
 
         slope = (ray[1][1]-ray[0][1]) / (ray[1][0]-ray[0][0])
 
-        new_y = ray[0][1] + (point[0] - ray[0,0]) * slope 
-
+        new_y = ray[0][1] + (point[0] - ray[0, 0]) * slope
         return [point[0], new_y]
 
     def valid_point(self, point, rays):
@@ -105,6 +102,7 @@ class TD():
             return False
         else:
             return True
+
 
 def test():
     start = []
