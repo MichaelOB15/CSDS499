@@ -28,18 +28,6 @@ class Brushfire():
 
         self.map: List[List[int]] = self.generate_map() #updates max/min as well
 
-    '''
-    def generate_map(self) -> List[List[int]]:
-        # make a 2d numpy array that's a map of the space
-        # put a 1 where the object is and a zero everywhere else
-
-        return [[0, 0, 0, 0, 0],
-                [1, 1, 1, 1, 0],
-                [0, 0, 0, 0, 0],
-                [0, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0]]
-    '''
-
     def generate_map(self):
         #make a 2d list that will fit the whole space
         numPts=len(self.boundary)
