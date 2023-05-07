@@ -103,7 +103,6 @@ class TD():
 
                     if valid_point:
                         g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                
 
         return g
 
