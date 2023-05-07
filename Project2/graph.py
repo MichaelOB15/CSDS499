@@ -48,12 +48,12 @@ class Graph():
         for p in self.get_nodes():
 
             for neighbors in self.get_neighbors(p):
-                plt.plot([p.x, neighbors.x], [p.y, neighbors.y])
+                plt.plot([p.x, neighbors.x], [p.y, neighbors.y], color="cornflowerblue")
 
             x.append(p.x)
             y.append(p.y)
 
-        plt.scatter(x, y)
+        plt.scatter(x, y, color="cornflowerblue")
         plt.show()
 
     def a_star(self, start: Point, goal: Point, heuristic_type: int) -> Point:

@@ -65,7 +65,7 @@ class TD():
                                     closest_top_y = point_on_ray[1] - CP[1]
                                     closest_top_point = point_on_ray
                             if valid_decrease:
-                                point_on_ray = self.intersecting_point(ray, CP)   
+                                point_on_ray = self.intersecting_point(ray, CP)
                                 if (CP[1] - point_on_ray[1]) < closest_bottom_y:
                                     closest_bottom_y = CP[1] - point_on_ray[1]
                                     closest_bottom_point = point_on_ray
@@ -85,9 +85,11 @@ class TD():
 
     def generate_graph(self, midpoints, all_rays):
         g = Graph()
-        for point1 in midpoints:
-            g.add_node(point1[0], point1[1])
 
+        for point in midpoints:
+            g.add_node(point[0], point[1])
+
+        for point1 in midpoints:
             for point2 in midpoints:
                 valid_point = True
                 if point1 != point2:
@@ -100,6 +102,7 @@ class TD():
                             valid_point = False
 
                     if valid_point:
+                        print("attempt")
                         g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
 
         return g
