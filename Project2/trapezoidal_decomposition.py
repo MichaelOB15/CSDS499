@@ -1,6 +1,7 @@
 from graph import Graph
 from point import Point
 
+
 class TD():
 
     def __init__(self, boundary, verticies, start, end):
@@ -65,7 +66,7 @@ class TD():
                                 point_on_ray = self.intersecting_point(ray, CP)   
                                 if (CP[1] - point_on_ray[1]) < closest_bottom_y:
                                     closest_bottom_y = CP[1] - point_on_ray[1]
-                                    closest_bottom_point = point_on_ray 
+                                    closest_bottom_point = point_on_ray
                         except:
                             pass
 
@@ -79,27 +80,25 @@ class TD():
 
         return graph
 
-
     def generate_graph(self, midpoints, all_rays):
         g = Graph()
-        
         for point1 in midpoints:
             g.add_node(point1[0], point1[1])
 
             for point2 in midpoints:
                 valid_point = True
                 if point1 != point2:
-                    for i in range(0,100):
+                    for i in range(0, 100):
                         percent = i / 100
                         rise = point2[1]-point1[1]
                         run = point2[0]-point1[0]
-                        point_to_test = [point1[0]+(run*percent) , point1[1]+(rise*percent)]
-                        if self.valid_points(point_to_test, all_rays) == False:
+                        point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
+                        if not self.valid_points(point_to_test, all_rays):
                             valid_point = False
-        
-                if valid_point == True:
+
+                if valid_point:
                     g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                
+
         return g
 
     def generate_midpoints(self, vert_boundaries):
@@ -111,7 +110,12 @@ class TD():
     def intersecting_point(self, ray, point):
 
         slope = (ray[1][1]-ray[0][1]) / (ray[1][0]-ray[0][0])
+<<<<<<< HEAD
         new_y = ray[0][1] + (point[0] - ray[0][0]) * slope 
+=======
+
+        new_y = ray[0][1] + (point[0] - ray[0][0]) * slope
+>>>>>>> f53ec1391969043bf8b2768ea5958f36dff0cb6f
 
         return [point[0], new_y]
 
