@@ -80,7 +80,7 @@ class Graph():
 
         raise KeyError(f"No goal point = {goal} found")
 
-
+'''
 def test():
     g = Graph()
     g.add_node(0, 0)
@@ -100,3 +100,4 @@ def test():
 
 
 test()
+'''

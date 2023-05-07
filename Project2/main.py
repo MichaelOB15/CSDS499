@@ -1,4 +1,5 @@
 from generate_workspace import Workspace
+from trapezoidal_decomposition import TD
 
 from pathlib import Path
 import yaml
@@ -8,7 +9,12 @@ def main(config):
 
     map = Workspace()
     obj = map.gen()
-    print(obj)
+
+    trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
+    graph = trap_decom.calculate_nodes()
+
+    print(graph)
+
 
     # polygon generator pass in the config
         # spit out polygons with verticies and the dimmensions of the space
