@@ -83,13 +83,15 @@ class Graph():
     def path_graph(self, start: Point, goal: Point, heuristic_type: int):
         end_point = self.a_star(start, goal, heuristic_type)
 
-        print(end_point)
         x = []
         y = []
 
+        counter = 0
         while end_point is not None:
+            counter += 1
+            print(counter)
             x.append(end_point.x)
-            y.append(end_point.x)
+            y.append(end_point.y)
             end_point = end_point.parent
 
         plt.plot(x, y, color="red")
