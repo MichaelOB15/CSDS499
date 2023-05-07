@@ -86,6 +86,9 @@ class TD():
     def generate_graph(self, midpoints, all_rays):
         g = Graph()
 
+        midpoints.append(self.start)
+        midpoints.append(self.end)
+
         for point in midpoints:
             g.add_node(point[0], point[1])
 
