@@ -86,10 +86,7 @@ class Graph():
         x = []
         y = []
 
-        counter = 0
         while end_point is not None:
-            counter += 1
-            print(counter)
             x.append(end_point.x)
             y.append(end_point.y)
             end_point = end_point.parent
