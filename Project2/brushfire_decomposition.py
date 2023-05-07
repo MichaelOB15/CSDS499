@@ -1,4 +1,4 @@
-class brushfire():
+class Brushfire():
 
     def __init__(self, boundary, vertices):
 
@@ -68,12 +68,12 @@ class brushfire():
         return map
 
     def wavefront(self):
-        #get the map from generate_map and label the goal as a 2
-        #do the same thing we did for the brushfire part where every region is updated in a shell
-        #find distance around obstacles to the goal pixel
+        # get the map from generate_map and label the goal as a 2
+        # do the same thing we did for the brushfire part where every region is updated in a shell
+        # find distance around obstacles to the goal pixel
         pass
 
     def run(self):
-        #sum the wavefront and brushfire
-        #find the steepest decline in numbers but stay away from 1s because those are obstacles
+        # sum the wavefront and brushfire
+        # find the steepest decline in numbers but stay away from 1s because those are obstacles
         pass
