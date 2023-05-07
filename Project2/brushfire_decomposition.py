@@ -8,19 +8,23 @@ RESOLUTION = 0.1
 
 
 class Brushfire():
+    boundary=None
+    obstacles=None
+    start=None
+    end=None
 
-    def __init__(self, boundary,obstacles,start,end):
+    # represent coordinates/map offset and will need to be calculated back into any output
+    xmax=float('-inf')
+    xmin=float('inf')
+    ymax=float('-inf')
+    ymin=float('inf')
+
+    def __init__(self,boundary,obstacles,start,end):
 
         self.boundary = boundary
         self.obstacles = obstacles
-        self.start=start
-        self.end=end
-
-        # represent coordinates/map offset and will need to be calculated back into any output 
-        self.xmax=-999999999999 
-        self.xmin=999999999999
-        self.ymax=-999999999999
-        self.ymin=999999999999
+        self.start = start
+        self.end = end
 
         self.map: List[List[int]] = self.generate_map() #updates max/min as well
 
@@ -50,8 +54,8 @@ class Brushfire():
             if (self.boundary[i][1]<self.ymin):
                 self.ymin=self.boundary[i][1]
 
-        xdim=int(self.xmax-self.xmin)/RESOLUTION
-        ydim=int(self.ymax-self.ymin)/RESOLUTION
+        xdim=int((self.xmax-self.xmin)/RESOLUTION)
+        ydim=int((self.ymax-self.ymin)/RESOLUTION)
 
         map=[]
         for x in range(xdim):
@@ -179,9 +183,11 @@ class Brushfire():
 
 
 def test():
+    pass
+'''
     bf = Brushfire(1, 2)
     bf.wavefront(Point(5, 0))
-
+'''
 
 if __name__ == '__main__':
     test()

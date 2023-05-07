@@ -1,4 +1,5 @@
 from generate_workspace import Workspace
+from brushfire_decomposition import Brushfire
 
 from pathlib import Path
 import yaml
@@ -9,9 +10,9 @@ def main(config):
 
     map = Workspace()
     obj = map.gen()
-    print(obj)
+    bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
 
-    
+
 
     # polygon generator pass in the config
     # spit out polygons with verticies and the dimmensions of the space
