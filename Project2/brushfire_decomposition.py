@@ -14,15 +14,58 @@ class brushfire():
 
     def brushfireAlg(self):
         #expand the map from generate_map so each pixel holds the distance to the nearest object
+        map=self.map()
 
+        #copy the map
+        copy=[]
+        for x in range(len(map[0])):
+            #adds a blank list
+            copy.append([])
 
+            #populates the new list
+            for y in range(len(map[1])):
+                copy[x].append(map[x][y])
 
+        map=copy
 
+        #number of times this process runs-- worst case runtime is the length of the map
+        iter=len(map)
+        if (len(map[0]>iter)):
+            iter=len(map[0])
 
+        while (iter>0):
 
-        #go in a circle around the objects and fill in neighbors with 2s
-        #fill in neighbor cells of the 2s with 3s etc
-        pass
+            #visit every pixel in the map
+            for x in range(len(map)):
+                for y in range(len(map[0])):
+
+                    #if the value is zero it hasn't been touched
+                    if(not map[x][y]==0):
+
+                        #update all eight adjacent squares
+                        for a in range(3):
+                            for b in range(3):
+                                xind=x-1+a
+                                yind=y-1+b
+
+                                #can't go out of bounds
+                                if (xind>len(map)):
+                                    continue
+                                if (yind>len(map[0])):
+                                    continue
+                                
+                                #can't let [x,y] query
+                                if (xind==x and yind==y):
+                                    continue
+
+                                #target is already filled with data
+                                if (not map[xind][yind]==0):
+                                    continue
+
+                                #update the target
+                                map[xind][yind]=map[x][y]+1
+            iter=iter-1
+        return map
 
     def wavefront(self):
         #get the map from generate_map and label the goal as a 2
