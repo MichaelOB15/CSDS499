@@ -1,5 +1,5 @@
 from typing import Dict, List, Union
-from point import Point, EUCLIDEAN
+from point import Point
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
 
@@ -54,7 +54,7 @@ class Graph():
             y.append(p.y)
 
         plt.scatter(x, y, color="cornflowerblue")
-        plt.show()
+        # plt.show()
 
     def a_star(self, start: Point, goal: Point, heuristic_type: int) -> Point:
 
@@ -79,3 +79,16 @@ class Graph():
                         explore[child] = True
 
         raise KeyError(f"No goal point = {goal} found")
+
+    def path_graph(self, start: Point, goal: Point, heuristic_type: int):
+        end_point = self.a_star(start, goal, heuristic_type)
+        x = []
+        y = []
+
+        while end_point is not None:
+            x.append(end_point.x)
+            y.append(end_point.x)
+            end_point = end_point.parent
+
+        plt.plot(x, y)
+        plt.show()

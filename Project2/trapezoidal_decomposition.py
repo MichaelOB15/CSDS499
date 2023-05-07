@@ -91,19 +91,20 @@ class TD():
 
         for point1 in midpoints:
             for point2 in midpoints:
-                valid_point = True
-                if point1 != point2:
-                    for i in range(0, 100):
-                        percent = i / 100
-                        rise = point2[1]-point1[1]
-                        run = point2[0]-point1[0]
-                        point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                        if not self.valid_points(point_to_test, all_rays):
-                            valid_point = False
+                try:
+                    if point1 != point2:
+                        for i in range(0, 100):
+                            percent = i / 100
+                            rise = point2[1]-point1[1]
+                            run = point2[0]-point1[0]
+                            point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
+                            if not self.valid_points(point_to_test, all_rays):
+                                raise
 
-                    if valid_point:
                         print("attempt")
                         g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                except:
+                    pass
 
         return g
 
