@@ -36,8 +36,8 @@ class Workspace():
         random.seed(3) # this is to reproduce the same results every time
 
         #set up shapes
-        polygon=random_convex_polygon(num_points=7) #outer boundary
-        polygon2=random_star_shaped_polygon(num_points=12) #inner obstacles
+        polygon=random_convex_polygon(num_points=7)  # outer boundary
+        polygon2=random_star_shaped_polygon(num_points=12)  # inner obstacles
         polygon3=random_star_shaped_polygon(num_points=12)
         polygon4=random_star_shaped_polygon(num_points=12)
 
@@ -49,14 +49,10 @@ class Workspace():
         output=[]
         for i in range(len(scaling)):
             output.append(self.reformat(pg[i],scaling[i],xshift[i],yshift[i]))
-        
+
         boundary=output[0] #this seems like bad practice but I want it in a format that fits well with the other code
         obstacles=[output[1],output[2],output[3]]
-        start=[5,5]
-        end=[-5,-5]
+        start=[5, 5]
+        end=[-5, -5]
 
-        return[boundary,obstacles,start,end]
-            
-
-
-        
+        return [boundary,obstacles,start,end]

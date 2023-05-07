@@ -13,6 +13,7 @@ def main(config):
     obj = map.gen()
 
     trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
+    trap_decom.vis()
     graph = trap_decom.calculate_nodes()
 
     graph.graph_vis()

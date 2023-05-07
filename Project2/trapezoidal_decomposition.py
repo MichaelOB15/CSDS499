@@ -1,5 +1,7 @@
 from graph import Graph
 from point import Point
+import matplotlib.pyplot as plt
+from typing import List
 
 
 class TD():
@@ -76,6 +78,7 @@ class TD():
                     vert_boundaries.append([closest_bottom_point, CP])
 
         midpoints = self.generate_midpoints(vert_boundaries)
+
         graph = self.generate_graph(midpoints, all_rays)
 
         return graph
@@ -108,14 +111,13 @@ class TD():
         return midpoints
 
     def intersecting_point(self, ray, point):
+        # pass to this function valid point and ray combinations
+        # ray = [[x1,y1],[x2,y2]]
+        # point = [x1,y1]
 
         slope = (ray[1][1]-ray[0][1]) / (ray[1][0]-ray[0][0])
-<<<<<<< HEAD
-        new_y = ray[0][1] + (point[0] - ray[0][0]) * slope 
-=======
 
         new_y = ray[0][1] + (point[0] - ray[0][0]) * slope
->>>>>>> f53ec1391969043bf8b2768ea5958f36dff0cb6f
 
         return [point[0], new_y]
 
@@ -143,3 +145,36 @@ class TD():
                 return True
         except:
             return False
+
+        # if even num of interactions
+        if num_intersections % 2:
+            return False
+        else:
+            return True
+
+    def vis(self):
+        print(self.boundary)
+        x: List[float] = []
+        y: List[float] = []
+        for point in self.boundary:
+            x.append(point[0])
+            y.append(point[1])
+
+        x.append(self.boundary[0][0])
+        y.append(self.boundary[0][1])
+        plt.plot(x, y, color="red")
+
+        xob: List[float] = []
+        yob: List[float] = []
+        for obstacle in self.verticies:
+
+            for point in obstacle:
+                xob.append(point[0])
+                yob.append(point[1])
+            xob.append(obstacle[0][0])
+            yob.append(obstacle[0][1])
+            plt.plot(xob, yob, color="black")
+            xob = []
+            yob = []
+
+        # plt.show()
