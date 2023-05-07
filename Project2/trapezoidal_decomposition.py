@@ -99,8 +99,8 @@ class TD():
                         if not self.valid_points(point_to_test, all_rays):
                             valid_point = False
 
-                if valid_point:
-                    g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                    if valid_point:
+                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
 
         return g
 
