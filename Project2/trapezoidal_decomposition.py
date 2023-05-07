@@ -102,7 +102,6 @@ class TD():
                             valid_point = False
 
                     if valid_point:
-                        print("attempt")
                         g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
 
         return g
@@ -141,11 +140,12 @@ class TD():
                 if point[0] < xmax and point[0] > xmin and point_on_ray[1] > point[1]:
                     num_intersections += 1
 
-            # if even num of interactions
+            # if odd num of interactions
             if num_intersections % 2:
-                return False
-            else:
                 return True
+                
+            else:
+                return False
         except:
             return False
 
