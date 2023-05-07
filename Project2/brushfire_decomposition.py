@@ -26,6 +26,19 @@ class Brushfire():
                 [0, 1, 1, 1, 1],
                 [0, 0, 0, 0, 0]]
 
+    def generate_map(self):
+        #make a 2d list that will fit the whole space
+        numPts=len(self.boundary)
+
+        xmax=xmin
+        for i in range(numPts):
+
+
+
+
+
+
+        #put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
         return None
 
     def brushfireAlg(self):
