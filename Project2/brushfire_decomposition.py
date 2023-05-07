@@ -9,13 +9,22 @@ RESOLUTION = 0.1
 
 class Brushfire():
 
-    def __init__(self, boundary, vertices):
+    def __init__(self, boundary,obstacles,start,end):
 
         self.boundary = boundary
-        self.vertices = vertices
+        self.obstacles = obstacles
+        self.start=start
+        self.end=end
 
-        self.map: List[List[int]] = self.generate_map()
+        # represent coordinates/map offset and will need to be calculated back into any output 
+        self.xmax=-999999999999 
+        self.xmin=999999999999
+        self.ymax=-999999999999
+        self.ymin=999999999999
 
+        self.map: List[List[int]] = self.generate_map() #updates max/min as well
+
+    '''
     def generate_map(self) -> List[List[int]]:
         # make a 2d numpy array that's a map of the space
         # put a 1 where the object is and a zero everywhere else
@@ -25,25 +34,24 @@ class Brushfire():
                 [0, 0, 0, 0, 0],
                 [0, 1, 1, 1, 1],
                 [0, 0, 0, 0, 0]]
+    '''
 
     def generate_map(self):
         #make a 2d list that will fit the whole space
         numPts=len(self.boundary)
 
-        xmax=ymax=-999999999999 #determine the size of the space
-        xmin=ymin=999999999999
         for i in range(numPts):
-            if (self.boundary[i][0]>xmax):
-                xmax=self.boundary[i][0]
-            if (self.boundary[i][1]>ymax):
-                ymax=self.boundary[i][1]
-            if (self.boundary[i][0]<xmin):
-                xmin=self.boundary[i][0]
-            if (self.boundary[i][1]<ymin):
-                ymin=self.boundary[i][1]
+            if (self.boundary[i][0]>self.xmax):
+                self.xmax=self.boundary[i][0]
+            if (self.boundary[i][1]>self.ymax):
+                self.ymax=self.boundary[i][1]
+            if (self.boundary[i][0]<self.xmin):
+                self.xmin=self.boundary[i][0]
+            if (self.boundary[i][1]<self.ymin):
+                self.ymin=self.boundary[i][1]
 
-        xdim=int(xmax-xmin)/RESOLUTION
-        ydim=int(ymax-ymin)/RESOLUTION
+        xdim=int(self.xmax-self.xmin)/RESOLUTION
+        ydim=int(self.ymax-self.ymin)/RESOLUTION
 
         map=[]
         for x in range(xdim):

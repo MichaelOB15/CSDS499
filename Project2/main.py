@@ -11,6 +11,8 @@ def main(config):
     obj = map.gen()
     print(obj)
 
+    
+
     # polygon generator pass in the config
     # spit out polygons with verticies and the dimmensions of the space
 
