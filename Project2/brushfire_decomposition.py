@@ -1,6 +1,6 @@
 from point import Point
 from math import floor
-from typing import List
+from typing import List, Tuple
 from collections import deque
 
 GOAL = 2
@@ -16,17 +16,8 @@ class Brushfire():
 
         self.map: List[List[int]] = self.generate_map()
 
-    def generate_map(self) -> List[List[int]]:
-        # make a 2d numpy array that's a map of the space
-        # put a 1 where the object is and a zero everywhere else
-
-        return [[0, 0, 0, 0, 0],
-                [1, 1, 1, 1, 0],
-                [0, 0, 0, 0, 0],
-                [0, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0]]
-
     def generate_map(self):
+        return
         #make a 2d list that will fit the whole space
         numPts=len(self.boundary)
 
@@ -52,10 +43,10 @@ class Brushfire():
                 map[x][y]=self.isObstacle()#put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
 
         return map
-    
+
     def isObstacle(self):
-        return None #put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
-    
+        return None # put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
+
     def brushfireAlg(self):
         # expand the map from generate_map so each pixel holds the distance to the nearest object
         map=self.map()
@@ -117,29 +108,52 @@ class Brushfire():
 
         self.map[y][x] = GOAL
 
-        frontier = 1
+        frontier = 3
 
-        zeroes_left = True
+        curr_q: deque[tuple[int, int]] = deque()
+        next_q: deque[tuple[int, int]] = deque()
+        curr_q.append((y, x))
 
-        while zeroes_left:
+        self.explored = {(y, x): True}
 
-            curr_q: deque[tuple[int, int]] = deque()
-            curr_q.append((y, x))
+        while len(curr_q) != 0:
+            while len(curr_q) != 0:
+                neighbors = self.get_and_update_neighbors(frontier, curr_q.popleft())
+
+                for neighbor in neighbors:
+                    self.explored[neighbor] = True
+                    next_q.append(neighbor)
+
+            curr_q = next_q.copy()
+            next_q = deque()
+
             frontier += 1
-
-            try:
-                for y_list in self.map:
-                    for val in y_list:
-                        if val == 0:
-                            raise KeyError
-                zeroes_left = False
-            except KeyError:
-                pass
 
         print(self.map)
 
-    def get_neighbors(self):
-        pass
+    def get_and_update_neighbors(self, frontier: int, point: Tuple[int, int]) -> List[Tuple[int, int]]:
+        neighbors = []
+        (y, x) = point
+
+        if (y - 1) >= 0 and self.map[y - 1][x] == 0:
+            if not self.explored.get((y - 1, x), False):
+                self.map[y - 1][x] = frontier
+                neighbors.append((y - 1, x))
+        if (y + 1) < len(self.map) and self.map[y + 1][x] == 0:
+            if not self.explored.get((y + 1, x), False):
+                self.map[y + 1][x] = frontier
+                neighbors.append((y + 1, x))
+
+        if (x - 1) >= 0 and self.map[y][x - 1] == 0:
+            if not self.explored.get((y, x - 1), False):
+                self.map[y][x - 1] = frontier
+                neighbors.append((y, x - 1))
+        if (x + 1) < len(self.map[0]) and self.map[y][x + 1] == 0:
+            if not self.explored.get((y, x + 1), False):
+                self.map[y][x + 1] = frontier
+                neighbors.append((y, x + 1))
+
+        return neighbors
 
     def run(self, start: Point):
         # sum the wavefront and brushfire
@@ -148,7 +162,13 @@ class Brushfire():
 
 
 def test():
-    Brushfire(1, 2).wavefront(Point(5, 0))
+    bf = Brushfire(1, 2)
+    bf.map = [[0, 0, 0, 0, 0],
+              [1, 1, 1, 1, 0],
+              [0, 0, 0, 0, 0],
+              [0, 1, 1, 1, 1],
+              [0, 0, 0, 0, 0]]
+    bf.wavefront(Point(5, 0))
 
 
 if __name__ == '__main__':
