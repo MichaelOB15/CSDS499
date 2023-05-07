@@ -17,7 +17,6 @@ def main(config):
     graph = trap_decom.calculate_nodes()
 
     graph.graph_vis()
-    print(graph)
     # bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
 
     # polygon generator pass in the config
