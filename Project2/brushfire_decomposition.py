@@ -19,14 +19,14 @@ class Brushfire():
     ymax=float('-inf')
     ymin=float('inf')
 
-    def __init__(self,boundary,obstacles,start,end):
+    def __init__(self, boundary, obstacles, start, end):
 
         self.boundary = boundary
         self.obstacles = obstacles
         self.start = start
         self.end = end
 
-        self.map: List[List[int]] = self.generate_map() #updates max/min as well
+        self.map: List[List[int]] = self.generate_map()  # updates max/min as well
 
     def generate_map(self):
         #make a 2d list that will fit the whole space
@@ -138,8 +138,6 @@ class Brushfire():
 
             frontier += 1
 
-        print(self.map)
-
     def get_and_update_neighbors(self, frontier: int, point: Tuple[int, int]) -> List[Tuple[int, int]]:
         neighbors = []
         (y, x) = point
@@ -165,10 +163,10 @@ class Brushfire():
         return neighbors
 
     def run(self, start: Point):
+
         # sum the wavefront and brushfire
         # find the steepest decline in numbers but stay away from 1s because those are obstacles
         pass
-
 
 def test():
     pass
