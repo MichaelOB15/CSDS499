@@ -4,6 +4,7 @@ from pathlib import Path
 import yaml
 import argparse
 
+
 def main(config):
 
     map = Workspace()
@@ -11,7 +12,7 @@ def main(config):
     print(obj)
 
     # polygon generator pass in the config
-        # spit out polygons with verticies and the dimmensions of the space
+    # spit out polygons with verticies and the dimmensions of the space
 
     # first make the obstacle
 
@@ -38,12 +39,8 @@ def main(config):
         plt.show() #plt.savefig(out_file_name, dpi=300)
         #print(polygon[0][1])
     '''
-
-
-
-
-
     pass
+
 
 def load_config():
     config_filepath = Path.cwd() / "config.yaml"
@@ -53,6 +50,7 @@ def load_config():
     for key, value in config_dict.items():
         setattr(config, key, value)
     return config
+
 
 if __name__ == "__main__":
     config = load_config()
