@@ -15,10 +15,9 @@ def main(config):
     trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
     graph = trap_decom.calculate_nodes()
 
+    graph.graph_vis()
     print(graph)
-    bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
-
-
+    # bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
 
     # polygon generator pass in the config
     # spit out polygons with verticies and the dimmensions of the space
