@@ -5,14 +5,14 @@ from polygenerator import random_polygon, random_star_shaped_polygon,random_conv
 import matplotlib.pyplot as plt
 import random
 
+
 class Workspace():
-        
+
     def plot_polygon(self, polygon):
-        
+
         # so it is plotted as closed polygon
         polygon.append(polygon[0])
         xs, ys = zip(*polygon)
-        
 
         plt.plot(xs, ys, "k-", linewidth=1)
 

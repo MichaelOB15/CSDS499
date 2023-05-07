@@ -2,6 +2,7 @@ from point import Point
 from math import floor
 from typing import List, Tuple
 from collections import deque
+import matplotlib.pyplot as plt
 
 GOAL = 2
 RESOLUTION = 0.1
@@ -163,6 +164,8 @@ class Brushfire():
         return neighbors
 
     def run(self, start: Point):
+
+
 
         # sum the wavefront and brushfire
         # find the steepest decline in numbers but stay away from 1s because those are obstacles
