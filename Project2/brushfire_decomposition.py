@@ -30,17 +30,32 @@ class Brushfire():
         #make a 2d list that will fit the whole space
         numPts=len(self.boundary)
 
-        xmax=xmin
+        xmax=ymax=-999999999999 #determine the size of the space
+        xmin=ymin=999999999999
         for i in range(numPts):
+            if (self.boundary[i][0]>xmax):
+                xmax=self.boundary[i][0]
+            if (self.boundary[i][1]>ymax):
+                ymax=self.boundary[i][1]
+            if (self.boundary[i][0]<xmin):
+                xmin=self.boundary[i][0]
+            if (self.boundary[i][1]<ymin):
+                ymin=self.boundary[i][1]
 
+        xdim=int(xmax-xmin)/RESOLUTION
+        ydim=int(ymax-ymin)/RESOLUTION
 
+        map=[]
+        for x in range(xdim):
+            map.append([])
+            for y in range(ydim):
+                map[x][y]=self.isObstacle()#put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
 
-
-
-
-        #put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
-        return None
-
+        return map
+    
+    def isObstacle(self):
+        return None #put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
+    
     def brushfireAlg(self):
         # expand the map from generate_map so each pixel holds the distance to the nearest object
         map=self.map()
