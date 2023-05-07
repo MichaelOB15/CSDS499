@@ -79,25 +79,3 @@ class Graph():
                         explore[child] = True
 
         raise KeyError(f"No goal point = {goal} found")
-
-'''
-def test():
-    g = Graph()
-    g.add_node(0, 0)
-    g.add_node(Point(1, 0))
-    g.add_node(1, 1)
-    g.add_node(0, 1)
-
-    g.add_vertex(Point(1, 0), Point(0, 1))
-    g.add_vertices(Point(1, 1), [Point(0, 0), Point(0, 1), Point(1, 0)])
-
-    print(g)
-
-    path_node = g.a_star(Point(1, 0), Point(0, 1), EUCLIDEAN)
-    print(path_node.get_path())
-
-    g.graph_vis()
-
-
-test()
-'''

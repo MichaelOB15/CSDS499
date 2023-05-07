@@ -146,14 +146,8 @@ class TD():
         except:
             return False
 
-        # if even num of interactions
-        if num_intersections % 2:
-            return False
-        else:
-            return True
-
     def vis(self):
-        print(self.boundary)
+        # For Boundary
         x: List[float] = []
         y: List[float] = []
         for point in self.boundary:
@@ -164,6 +158,7 @@ class TD():
         y.append(self.boundary[0][1])
         plt.plot(x, y, color="red")
 
+        # For Obstacles
         xob: List[float] = []
         yob: List[float] = []
         for obstacle in self.verticies:
@@ -177,4 +172,6 @@ class TD():
             xob = []
             yob = []
 
-        # plt.show()
+        # For Start / End Points
+        plt.scatter(self.start[0], self.start[1], color="magenta")
+        plt.scatter(self.end[0], self.end[1], color="green")
