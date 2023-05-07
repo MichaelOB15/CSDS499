@@ -82,6 +82,8 @@ class Graph():
 
     def path_graph(self, start: Point, goal: Point, heuristic_type: int):
         end_point = self.a_star(start, goal, heuristic_type)
+
+        print(end_point)
         x = []
         y = []
 
@@ -90,5 +92,8 @@ class Graph():
             y.append(end_point.x)
             end_point = end_point.parent
 
-        plt.plot(x, y)
+        plt.plot(x, y, color="red")
+        # For Start / End Points
+        plt.scatter(start.x, start.y, color="magenta")
+        plt.scatter(goal.x, goal.y, color="green")
         plt.show()

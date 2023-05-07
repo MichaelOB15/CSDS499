@@ -146,7 +146,6 @@ class TD():
             # if odd num of interactions
             if num_intersections % 2:
                 return True
-                
             else:
                 return False
         except:
@@ -177,7 +176,3 @@ class TD():
             plt.plot(xob, yob, color="black")
             xob = []
             yob = []
-
-        # For Start / End Points
-        plt.scatter(self.start[0], self.start[1], color="magenta")
-        plt.scatter(self.end[0], self.end[1], color="green")
