@@ -5,12 +5,12 @@ class brushfire():
         self.boundary = boundary
         self.vertices = vertices
 
-        self.map = map
+        self.map = self.generate_map()
 
     def generate_map(self):
         #make a 2d numpy array that's a map of the space
         #put a 1 where the object is and a zero everywhere else
-        pass
+        return None
 
     def brushfireAlg(self):
         #expand the map from generate_map so each pixel holds the distance to the nearest object
