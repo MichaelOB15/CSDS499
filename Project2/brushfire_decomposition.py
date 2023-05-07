@@ -17,7 +17,6 @@ class Brushfire():
         self.map: List[List[int]] = self.generate_map()
 
     def generate_map(self):
-        return
         #make a 2d list that will fit the whole space
         numPts=len(self.boundary)
 
@@ -163,11 +162,6 @@ class Brushfire():
 
 def test():
     bf = Brushfire(1, 2)
-    bf.map = [[0, 0, 0, 0, 0],
-              [1, 1, 1, 1, 0],
-              [0, 0, 0, 0, 0],
-              [0, 1, 1, 1, 1],
-              [0, 0, 0, 0, 0]]
     bf.wavefront(Point(5, 0))
 
 
