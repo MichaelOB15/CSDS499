@@ -73,7 +73,7 @@ class TD():
                         except:
                             pass
 
-                if closest_top_point != [0, 0]: 
+                if closest_top_point != [0, 0]:
                     vert_boundaries.append([CP, closest_top_point])
                 if closest_bottom_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
@@ -86,19 +86,60 @@ class TD():
 
         return graph
 
+    # def get_neighbors(self, mp, midpoints, vert_boundaries):
+    #     vert_boundaries = vert_boundaries.sort()
+    #     neighbors = []
+
+    #     nearest_up_x = float('inf')
+    #     nearest_down_x = float('-inf')
+    #     right_neighbor = []
+    #     left_neighbor = []
+
+    #     for mp2 in midpoints:
+
+    #         mp2_x = mp2[0]
+    #         if mp2_x == mp[0]:
+    #             continue
+
+    #         if mp2_x > mp[0]:
+    #             tmp = nearest_up_x
+    #             nearest_up_x = min(nearest_up_x, mp2_x)
+
+    #             if tmp == nearest_up_x:
+    #                 right_neighbor.append(mp2)
+                
+    #         elif mp2_x < mp[0]:
+    #             nearest_down_x = max(nearest_down_x, mp2_x)
+    #             if nearest_down_x == mp2_x:
+    #                 left_neighbor.append(mp2)
+
+    #     for neighbor in right_neighbor:
+    #         neighbors.append(neighbor)
+
+    #     for neighbor in left_neighbor:
+    #         neighbors.append(neighbor)
+
+    #     return neighbors
+
     def generate_graph(self, midpoints, vert_boundaries, all_rays):
         g = Graph()
 
-        midpoints.append(self.start)
-        midpoints.append(self.end)
+        # midpoints.append(self.start)
+        # midpoints.append(self.end)
 
         for point in midpoints:
             g.add_node(point[0], point[1])
 
         for point1 in midpoints:
+            # counter = 0
+            # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
             for point2 in midpoints:
                 valid_point = True
-                if point1 != point2:
+
+                # if counter > 4:
+                #     continue
+
+                if point1[0] != point2[0]:
                     for i in range(0, 100):
                         percent = i / 100
                         rise = point2[1]-point1[1]
@@ -108,8 +149,9 @@ class TD():
                             valid_point = False
 
                     if valid_point:
+                    #     counter += 1
                         g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-
+            # raise KeyError()
         return g
 
     def generate_midpoints(self, vert_boundaries):
@@ -132,7 +174,7 @@ class TD():
 
         m = (second[1]-first[1]) / (second[0]-first[0])
 
-        b = first[1] - (m * first[0]) 
+        b = first[1] - (m * first[0])
 
         new_y = (m * point[0]) + b
 
