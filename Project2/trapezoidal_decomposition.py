@@ -84,55 +84,17 @@ class TD():
 
         midpoints = self.generate_midpoints(vert_boundaries)
 
-        graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
+        graph = self.generate_graph(midpoints, all_rays)
 
         return graph
 
-    # def get_neighbors(self, mp, midpoints, vert_boundaries):
-    #     vert_boundaries = vert_boundaries.sort()
-    #     neighbors = []
-
-    #     nearest_up_x = float('inf')
-    #     nearest_down_x = float('-inf')
-    #     right_neighbor = []
-    #     left_neighbor = []
-
-    #     for mp2 in midpoints:
-
-    #         mp2_x = mp2[0]
-    #         if mp2_x == mp[0]:
-    #             continue
-
-    #         if mp2_x > mp[0]:
-    #             tmp = nearest_up_x
-    #             nearest_up_x = min(nearest_up_x, mp2_x)
-
-    #             if tmp == nearest_up_x:
-    #                 right_neighbor.append(mp2)
-
-    #         elif mp2_x < mp[0]:
-    #             nearest_down_x = max(nearest_down_x, mp2_x)
-    #             if nearest_down_x == mp2_x:
-    #                 left_neighbor.append(mp2)
-
-    #     for neighbor in right_neighbor:
-    #         neighbors.append(neighbor)
-
-    #     for neighbor in left_neighbor:
-    #         neighbors.append(neighbor)
-
-    #     return neighbors
-
-    def generate_graph(self, midpoints, vert_boundaries, all_rays):
+    def generate_graph(self, midpoints, all_rays):
         g = Graph()
 
         midpoints.append(self.start)
         midpoints.append(self.end)
-        # for line in vert_boundaries:
-        #     print(line[0][0])
 
-        # for mp in midpoints:
-        #     print(mp)
+        midpoints.sort()
 
         for point in midpoints:
             g.add_node(point[0], point[1])
@@ -145,7 +107,6 @@ class TD():
             # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
             while (not left_found and not right_found) and not (counter > len(midpoints)):
                 valid_point = True
-                # print(counter)
 
                 if j + counter < len(midpoints) and not right_found:
                     point2 = midpoints[j + counter]
@@ -182,7 +143,6 @@ class TD():
                             g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
                 counter += 1
             # raise KeyError()
-
 
         return g
 
