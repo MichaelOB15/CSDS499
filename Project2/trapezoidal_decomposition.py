@@ -39,8 +39,8 @@ class TD():
 
         for CP in all_critical_points:
             offset = .001
-            valid_increase = self.valid_points([CP[0], CP[1]+offset], all_rays)
-            valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
+            valid_increase = self.valid_point([CP[0], CP[1]+offset], all_rays)
+            valid_decrease = self.valid_point([CP[0], CP[1]-offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
@@ -72,9 +72,9 @@ class TD():
                         except:
                             pass
 
-                if closest_top_point != [0, 0]:
+                if closest_top_point != [0, 0]: #and self.valid_point(closest_top_point,all_rays):
                     vert_boundaries.append([CP, closest_top_point])
-                if closest_top_point != [0, 0]:
+                if closest_bottom_point != [0, 0]: #and self.valid_point(closest_bottom_point,all_rays):
                     vert_boundaries.append([closest_bottom_point, CP])
 
         self.vert_boundaries = vert_boundaries
@@ -103,7 +103,7 @@ class TD():
                         rise = point2[1]-point1[1]
                         run = point2[0]-point1[0]
                         point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                        if not self.valid_points(point_to_test, all_rays):
+                        if not self.valid_point(point_to_test, all_rays):
                             valid_point = False
 
                     if valid_point:
@@ -128,7 +128,8 @@ class TD():
 
         return [point[0], new_y]
 
-    def valid_points(self, point, rays):
+    def valid_point(self, point, rays):
+        '''determine whether a point is in an obstacle'''
         try:
             num_intersections = 0
             for ray in rays:
