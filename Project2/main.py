@@ -1,11 +1,14 @@
 from generate_workspace import Workspace
 from trapezoidal_decomposition import TD
-# from brushfire_decomposition import Brushfire
+from brushfire_decomposition import Brushfire
 from point import Point, EUCLIDEAN
 
 from pathlib import Path
 import yaml
 import argparse
+
+from PIL import Image
+import numpy as np
 
 
 def main(config):
@@ -13,15 +16,44 @@ def main(config):
     map = Workspace()
     obj = map.gen()
 
+    '''
+
     trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
     graph = trap_decom.calculate_nodes()
     trap_decom.vis()
 
+<<<<<<< HEAD
     #graph.graph_vis()
     #start = Point(obj[2][0], obj[2][1])
     #end = Point(obj[3][0], obj[3][1])
     #graph.path_graph(start, end, EUCLIDEAN)
     # bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
+=======
+    graph.graph_vis()
+    start = Point(obj[2][0], obj[2][1])
+    end = Point(obj[3][0], obj[3][1])
+    graph.path_graph(start, end, EUCLIDEAN)
+    '''
+
+    bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
+    val=bf.brushfireAlg()
+
+    
+    [ind1,ind2]=np.size(val)
+
+    img=np.zeros((ind1,ind2))
+    for x in range(ind1):
+        for y in range(ind2):
+            if (img[x,y]==1):
+                img[x,y]=255
+            else: img[x,y]=val[x,y]*10
+    
+    
+    img = Image.fromarray(img.astype('uint8'))
+    img.show()
+    img.save("brushfire.png")
+    
+>>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
 
     # polygon generator pass in the config
     # spit out polygons with vertices and the dimmensions of the space

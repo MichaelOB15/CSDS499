@@ -44,8 +44,15 @@ class TD():
         vert_boundaries = []
 
         for CP in all_critical_points:
+<<<<<<< HEAD
             valid_increase = self.valid_points([CP[0], CP[1]+self.offset], all_rays)
             valid_decrease = self.valid_points([CP[0], CP[1]-self.offset], all_rays)
+=======
+            offset = .000001
+
+            valid_increase = self.valid_point([CP[0], CP[1]+offset], all_rays)
+            valid_decrease = self.valid_point([CP[0], CP[1]-offset], all_rays)
+>>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
@@ -83,37 +90,74 @@ class TD():
                 if closest_bottom_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
+        vert_boundaries.sort()
+
         self.vert_boundaries = vert_boundaries
 
         #midpoints = self.generate_midpoints(vert_boundaries)
 
+<<<<<<< HEAD
         #graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
+=======
+        graph = self.generate_graph(midpoints, all_rays)
+>>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
 
         #return graph
 
-    def generate_graph(self, midpoints, vert_boundaries, all_rays):
+    def intersect_any_obstacle(self, A, B,):
+        for obstacle in self.obstacles:
+            for i in range(len(obstacle) - 2):
+                p3 = Point(obstacle[i][0], obstacle[i][1])
+                p4 = Point(obstacle[i + 1][0], obstacle[i + 1][1])
+                if intersect(A, B, p3, p4):
+                    return True
+
+            p3 = Point(obstacle[-1][0], obstacle[-1][1])
+            p4 = Point(obstacle[0][0], obstacle[0][1])
+            if intersect(A, B, p3, p4):
+                return True
+
+        return False
+
+    def generate_graph(self, midpoints, all_rays):
         g = Graph()
 
         midpoints.append(self.start)
         midpoints.append(self.end)
 
+        midpoints.sort()
+
         for point in midpoints:
             g.add_node(point[0], point[1])
 
-        for point1 in midpoints:
-            for point2 in midpoints:
-                valid_point = True
-                if point1 != point2:
-                    for i in range(0, 100):
-                        percent = i / 100
-                        rise = point2[1]-point1[1]
-                        run = point2[0]-point1[0]
-                        point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                        if not self.valid_points(point_to_test, all_rays):
-                            valid_point = False
+        for j in range(len(midpoints)):
+            point1 = midpoints[j]
+            counter = 1
+            left_found = False
+            right_found = False
+            # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
+            while (not left_found and not right_found) and not (counter > len(midpoints)):
+                # valid_point = True
 
-                    if valid_point:
-                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                if j + counter < len(midpoints) and not right_found:
+                    point2 = midpoints[j + counter]
+
+                    if point1[0] != point2[0]:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
+                            right_found = True
+                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                # valid_point = True
+
+                if j - counter >= 0 and not left_found:
+                    # print(i - counter)
+                    point2 = midpoints[j - counter]
+
+                    if point1[0] != point2[0]:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
+                            left_found = True
+                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                counter += 1
+            # raise KeyError()
 
         return g
 
@@ -137,7 +181,7 @@ class TD():
 
         m = (second[1]-first[1]) / (second[0]-first[0])
 
-        b = first[1] - (m * first[0]) 
+        b = first[1] - (m * first[0])
 
         new_y = (m * point[0]) + b
 
@@ -145,7 +189,8 @@ class TD():
 
         return new_point
 
-    def valid_points(self, point, rays):
+    def valid_point(self, point, rays):
+        '''determine whether a point is in an obstacle'''
         try:
             num_intersections = 0
 
@@ -209,6 +254,7 @@ class TD():
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
 
+<<<<<<< HEAD
         '''
         for ray in self.all_rays:
             x = [ray[0][0], ray[1][0]]
@@ -219,3 +265,13 @@ class TD():
             plt.scatter(CP[0], CP[1], color="red")'''
 
         plt.show()
+=======
+
+def ccw(A, B, C):
+    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
+
+
+# Return true if line segments AB and CD intersect
+def intersect(A, B, C, D):
+    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
+>>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
