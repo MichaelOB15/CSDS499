@@ -38,7 +38,7 @@ class TD():
         vert_boundaries = []
 
         for CP in all_critical_points:
-            offset = .001
+            offset = .0001
             valid_increase = self.valid_points([CP[0], CP[1]+offset], all_rays)
             valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
 
@@ -122,15 +122,29 @@ class TD():
         # ray = [[x1,y1],[x2,y2]]
         # point = [x1,y1]
 
-        slope = (ray[1][1]-ray[0][1]) / (ray[1][0]-ray[0][0])
+        if ray[0][0] < ray[1][0]:
+            first = ray[0]
+            second = ray[1]
+        else:
+            first = ray[1]
+            second = ray[0]
 
-        new_y = ray[0][1] + (point[0] - ray[0][0]) * slope
+        m = (second[1]-first[1]) / (second[0]-first[0])
 
-        return [point[0], new_y]
+        b = first[1] - (m * first[0]) 
+
+        new_y = (m * point[0]) + b
+
+        new_point = [point[0], new_y]
+
+        #print("old point: ", point," new point: ", new_point, "ray:", ray)
+
+        return new_point
 
     def valid_points(self, point, rays):
         try:
             num_intersections = 0
+
             for ray in rays:
                 if ray[0][0] < ray[1][0]:
                     xmin = ray[0][0]
