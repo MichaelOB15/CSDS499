@@ -18,6 +18,22 @@ class Graph():
     def get_nodes(self):
         return self.g.keys()
 
+    def remove_node(self, point_or_x: Union[Point, float], y: float = -1):
+        if isinstance(point_or_x, Point):
+            pass
+        else:
+            point_or_x = Point(point_or_x, y)
+
+        self.g.pop(point_or_x)
+
+        for key in self.g.keys():
+            value = self.g[key].copy()
+            try:
+                value.remove(point_or_x)
+                self.g[key] = value
+            except:
+                pass
+
     def get_neighbors(self, point_or_x: Union[Point, float], y: float = -1) -> List[Point]:
         if isinstance(point_or_x, Point):
             return self.g[point_or_x]
@@ -54,7 +70,7 @@ class Graph():
             y.append(p.y)
 
         plt.scatter(x, y, color="cornflowerblue")
-        #plt.show()
+        # plt.show()
 
     def a_star(self, start: Point, goal: Point, heuristic_type: int) -> Point:
 
