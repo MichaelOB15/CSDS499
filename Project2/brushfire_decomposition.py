@@ -176,17 +176,17 @@ class Brushfire():
     def wavefront(self):
         goal = Point(self.end[0], self.end[1])
         x = (floor((goal.x-self.xmin)/RESOLUTION))
-        y = (floor((goal.y-self.ymin)/RESOLUTION))*-1 + len(self.map)
-        print([x,y])
-        self.map[y][x] = GOAL
+        y = (floor((goal.y-self.ymin)/RESOLUTION)) #*-1 + len(self.map)
+        self.map[x][y] = GOAL
+        print(self.map[x-1][y-1])
 
         frontier = 3
 
         curr_q: deque[tuple[int, int]] = deque()
         next_q: deque[tuple[int, int]] = deque()
-        curr_q.append((y, x))
+        curr_q.append((x,y))
 
-        self.explored = {(y, x): True}
+        self.explored = {(x,y): True}
 
         while len(curr_q) != 0:
             while len(curr_q) != 0:
