@@ -16,12 +16,12 @@ class TD():
 
     def calculate_nodes(self):
 
-        all_criticle_points = []
+        all_critical_points = []
         all_rays = []
 
         last_point = self.boundary[-1]
         for point in self.boundary:
-            all_criticle_points.append(point)
+            all_critical_points.append(point)
 
             all_rays.append([last_point, point])
             last_point = point
@@ -30,14 +30,14 @@ class TD():
 
             last_point = objects[-1]
             for point in objects:
-                all_criticle_points.append(point)
+                all_critical_points.append(point)
 
                 all_rays.append([last_point, point])
                 last_point = point
 
         vert_boundaries = []
 
-        for CP in all_criticle_points:
+        for CP in all_critical_points:
             offset = .001
             valid_increase = self.valid_points([CP[0], CP[1]+offset], all_rays)
             valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
