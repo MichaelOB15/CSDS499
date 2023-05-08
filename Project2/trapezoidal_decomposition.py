@@ -43,9 +43,9 @@ class TD():
             valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
 
             if valid_decrease or valid_increase:
-                closest_top_y = 99999999999
+                closest_top_y = float('inf')
                 closest_top_point = [0, 0]
-                closest_bottom_y = 99999999999
+                closest_bottom_y = float('inf')
                 closest_bottom_point = [0, 0]
 
                 for ray in all_rays:
