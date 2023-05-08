@@ -98,21 +98,6 @@ class TD():
 
         return graph
 
-    def intersect_any_obstacle(self, A, B,):
-        for obstacle in self.obstacles:
-            for i in range(len(obstacle) - 2):
-                p3 = Point(obstacle[i][0], obstacle[i][1])
-                p4 = Point(obstacle[i + 1][0], obstacle[i + 1][1])
-                if intersect(A, B, p3, p4):
-                    return True
-
-            p3 = Point(obstacle[-1][0], obstacle[-1][1])
-            p4 = Point(obstacle[0][0], obstacle[0][1])
-            if intersect(A, B, p3, p4):
-                return True
-
-        return False
-
     def generate_graph(self, midpoints):
         g = Graph()
 
