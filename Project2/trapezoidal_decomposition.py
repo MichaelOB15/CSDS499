@@ -154,6 +154,8 @@ class TD():
             return False
 
     def vis(self):
+        plt.title("Trapezoidal Decomposition")
+
         # For Boundary
         x: List[float] = []
         y: List[float] = []
