@@ -76,7 +76,7 @@ class TD():
                         except:
                             pass
 
-                if closest_top_point != [0, 0]: 
+                if closest_top_point != [0, 0]:
                     vert_boundaries.append([CP, closest_top_point])
                 if closest_bottom_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
