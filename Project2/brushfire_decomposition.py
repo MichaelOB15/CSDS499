@@ -213,12 +213,22 @@ class Brushfire():
                     #populate new map with surrounding nodes
                     for a in range(3):
                         for b in range(3):
-                            if(oldmap[a,b]==0):
-                                if(newmap[a,b]<oldmap[x1,y1]+1):
-                                    newmap[a,b]=oldmap[x1,y1]+1
+                            x2=x1-1+a
+                            y2=y1-1+b
+
+                            # can't go out of bounds
+                            if (x2>=len(self.map) or x2<0):
+                                continue
+                            if (y2>=len(self.map[0]) or y2 <0):
+                                continue
+
+                            if(oldmap[x2,y2]==0):
+                                if(newmap[x2,y2]<oldmap[x1,y1]+1):
+                                    newmap[x2,y2]=oldmap[x1,y1]+1
                             
             
-            oldmap=newmap.copy()
+            oldmap=np.copy(newmap)
+        return newmap
             
 
 

@@ -31,16 +31,16 @@ def main(config):
     bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
     val=bf.brushfireAlg()
 
-    ind1=len(val)
-    ind2=len(val[0])
+    
+    [ind1,ind2]=np.size(val)
 
     img=np.zeros((ind1,ind2))
     for x in range(ind1):
         for y in range(ind2):
-            img[x,y]=int(val[y][ind1-x-1])
             if (img[x,y]==1):
                 img[x,y]=255
-
+            else: img[x,y]=val[x,y]*10
+    
     
     img = Image.fromarray(img.astype('uint8'))
     img.show()
