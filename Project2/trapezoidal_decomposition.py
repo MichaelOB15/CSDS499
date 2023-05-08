@@ -13,6 +13,9 @@ class TD():
         self.obstacles = obstacles
         self.start = start
         self.end = end
+        self.all_rays = []
+        self.all_critical_points = []
+        self.offset = .0001
 
     def calculate_nodes(self):
 
@@ -35,12 +38,14 @@ class TD():
                 all_rays.append([last_point, point])
                 last_point = point
 
+        self.all_rays = all_rays
+        self.all_critical_points = all_critical_points
+
         vert_boundaries = []
 
         for CP in all_critical_points:
-            offset = .0001
-            valid_increase = self.valid_points([CP[0], CP[1]+offset], all_rays)
-            valid_decrease = self.valid_points([CP[0], CP[1]-offset], all_rays)
+            valid_increase = self.valid_points([CP[0], CP[1]+self.offset], all_rays)
+            valid_decrease = self.valid_points([CP[0], CP[1]-self.offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
@@ -58,15 +63,16 @@ class TD():
 
                     # if point falls within the ray
                     if CP[0] > xmin and CP[0] < xmax:
+                        #print("cp:", CP,"in ray:", ray)
                         try:
                             if valid_increase:
                                 point_on_ray = self.intersecting_point(ray, CP)
-                                if (point_on_ray[1] - CP[1]) < closest_top_y:
+                                if (point_on_ray[1] > CP[1]) and ((point_on_ray[1] - CP[1]) < closest_top_y):
                                     closest_top_y = point_on_ray[1] - CP[1]
                                     closest_top_point = point_on_ray
                             if valid_decrease:
                                 point_on_ray = self.intersecting_point(ray, CP)
-                                if (CP[1] - point_on_ray[1]) < closest_bottom_y:
+                                if (point_on_ray[1] < CP[1]) and ((CP[1] - point_on_ray[1]) < closest_bottom_y):
                                     closest_bottom_y = CP[1] - point_on_ray[1]
                                     closest_bottom_point = point_on_ray
                         except:
@@ -74,16 +80,16 @@ class TD():
 
                 if closest_top_point != [0, 0]:
                     vert_boundaries.append([CP, closest_top_point])
-                if closest_top_point != [0, 0]:
+                if closest_bottom_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
         self.vert_boundaries = vert_boundaries
 
-        midpoints = self.generate_midpoints(vert_boundaries)
+        #midpoints = self.generate_midpoints(vert_boundaries)
 
-        graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
+        #graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
 
-        return graph
+        #return graph
 
     def generate_graph(self, midpoints, vert_boundaries, all_rays):
         g = Graph()
@@ -137,13 +143,13 @@ class TD():
 
         new_point = [point[0], new_y]
 
-        #print("old point: ", point," new point: ", new_point, "ray:", ray)
-
         return new_point
 
     def valid_points(self, point, rays):
         try:
             num_intersections = 0
+
+            rays_intersected = []
 
             for ray in rays:
                 if ray[0][0] < ray[1][0]:
@@ -156,13 +162,16 @@ class TD():
                 point_on_ray = self.intersecting_point(ray, point)
 
                 # in the boundary and above
-                if point[0] < xmax and point[0] > xmin and point_on_ray[1] > point[1]:
+                if point[0] < xmax and point[0] >= xmin and point_on_ray[1] > point[1]:
+                    rays_intersected.append(ray)
                     num_intersections += 1
 
             # if odd num of interactions
-            if num_intersections % 2:
+            if num_intersections % 2 == 1:
+                #print("Return: True,  num intersections: ",num_intersections," point: ", point, "rays intersected: ", rays_intersected)
                 return True
             else:
+                #print("Return: False,  num intersections: ",num_intersections," point: ", point, "rays intersected: ", rays_intersected)
                 return False
         except:
             return False
@@ -199,3 +208,14 @@ class TD():
             x = [line[0][0], line[1][0]]
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
+
+        '''
+        for ray in self.all_rays:
+            x = [ray[0][0], ray[1][0]]
+            y = [ray[0][1], ray[1][1]]
+            plt.plot(x, y, color="blue")
+
+        for CP in self.all_critical_points:
+            plt.scatter(CP[0], CP[1], color="red")'''
+
+        plt.show()

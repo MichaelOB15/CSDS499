@@ -17,10 +17,10 @@ def main(config):
     graph = trap_decom.calculate_nodes()
     trap_decom.vis()
 
-    graph.graph_vis()
-    start = Point(obj[2][0], obj[2][1])
-    end = Point(obj[3][0], obj[3][1])
-    graph.path_graph(start, end, EUCLIDEAN)
+    #graph.graph_vis()
+    #start = Point(obj[2][0], obj[2][1])
+    #end = Point(obj[3][0], obj[3][1])
+    #graph.path_graph(start, end, EUCLIDEAN)
     # bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
 
     # polygon generator pass in the config
