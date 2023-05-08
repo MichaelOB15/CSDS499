@@ -28,7 +28,7 @@ class TD():
 
         for obstacle in self.obstacles:
 
-            last_point = obstacle[-1] #first ray of obstacle is from point to itself
+            last_point = obstacle[-1]
             for point in obstacle:
                 all_critical_points.append(point)
 
