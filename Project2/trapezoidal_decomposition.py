@@ -161,7 +161,7 @@ class TD():
 
         x.append(self.boundary[0][0])
         y.append(self.boundary[0][1])
-        plt.plot(x, y, color="red")
+        plt.plot(x, y, color="grey")
 
         # For Obstacles
         xob: List[float] = []
