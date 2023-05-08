@@ -71,16 +71,14 @@ def main(config):
 
 
     # plt.show() #plt.savefig(out_file_name, dpi=300)
-        #print(polygon[0][1])
-   
+    # print(polygon[0][1])
+
     #img = Image.fromarray(img.astype('uint8')*5)
     #img.show()
     #img.save("brushfire.png")
     # img = Image.fromarray(img.astype('uint8'))
     # img.show()
     # img.save("brushfire.png")
-    
-
     # polygon generator pass in the config
     # spit out polygons with vertices and the dimmensions of the space
 
