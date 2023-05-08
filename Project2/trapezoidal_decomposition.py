@@ -16,6 +16,7 @@ class TD():
         self.all_rays = []
         self.all_critical_points = []
         self.offset = .0001
+        self.midpoints = []
 
     def calculate_nodes(self):
 
@@ -87,11 +88,15 @@ class TD():
 
         self.vert_boundaries = vert_boundaries
 
-        #midpoints = self.generate_midpoints(vert_boundaries)
+        midpoints = self.generate_midpoints(vert_boundaries)
 
-        #graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
+        self.midpoints = midpoints
 
-        #return graph
+        midpoints.sort()
+
+        graph = self.generate_graph(midpoints)
+
+        return graph
 
     def intersect_any_obstacle(self, A, B,):
         for obstacle in self.obstacles:
@@ -108,7 +113,7 @@ class TD():
 
         return False
 
-    def generate_graph(self, midpoints, all_rays):
+    def generate_graph(self, midpoints):
         g = Graph()
 
         midpoints.append(self.start)
@@ -119,36 +124,41 @@ class TD():
         for point in midpoints:
             g.add_node(point[0], point[1])
 
-        for j in range(len(midpoints)):
-            point1 = midpoints[j]
-            counter = 1
-            left_found = False
-            right_found = False
-            # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
-            while (not left_found and not right_found) and not (counter > len(midpoints)):
-                # valid_point = True
+        for point1 in midpoints:
+            connection = True
+            point_check_x = float('inf')
 
-                if j + counter < len(midpoints) and not right_found:
-                    point2 = midpoints[j + counter]
+            for point2 in midpoints:
+                if point2[0] > point1[0] and connection == True:
+                    if self.valid_path(point1, point2):
+                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                        point_check_x = point2[0]
+                        connection = False
 
-                    if point1[0] != point2[0]:
-                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
-                            right_found = True
-                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                # valid_point = True
-
-                if j - counter >= 0 and not left_found:
-                    # print(i - counter)
-                    point2 = midpoints[j - counter]
-
-                    if point1[0] != point2[0]:
-                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
-                            left_found = True
-                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                counter += 1
-            # raise KeyError()
+                if point2[0] == point_check_x:
+                    if self.valid_path(point1, point2):
+                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
 
         return g
+
+    def valid_path(self, point1, point2):
+
+        rise = point2[1] - point1[1]
+        run = point2[0] - point1[0]
+
+        valid_point = True
+
+        for i in range(0,100):
+            new_point = [point1[0] + run*(i/100), point1[1] + rise*(i/100)] 
+            if self.valid_point(new_point, self.all_rays) == False:
+                valid_point = False
+                break
+
+        if valid_point:
+            return True
+        else:
+            return False
+
 
     def generate_midpoints(self, vert_boundaries):
         midpoints = []
@@ -243,6 +253,9 @@ class TD():
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
 
+        for CP in self.midpoints:
+            plt.scatter(CP[0], CP[1], color="blue")
+
         '''
         for ray in self.all_rays:
             x = [ray[0][0], ray[1][0]]
@@ -252,4 +265,4 @@ class TD():
         for CP in self.all_critical_points:
             plt.scatter(CP[0], CP[1], color="red")'''
 
-        plt.show()
+        #plt.show()

@@ -54,7 +54,7 @@ class Graph():
             y.append(p.y)
 
         plt.scatter(x, y, color="cornflowerblue")
-        plt.show()
+        #plt.show()
 
     def a_star(self, start: Point, goal: Point, heuristic_type: int) -> Point:
 
