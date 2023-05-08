@@ -88,6 +88,21 @@ class TD():
 
         return graph
 
+    def intersect_any_obstacle(self, A, B,):
+        for obstacle in self.obstacles:
+            for i in range(len(obstacle) - 2):
+                p3 = Point(obstacle[i][0], obstacle[i][1])
+                p4 = Point(obstacle[i + 1][0], obstacle[i + 1][1])
+                if intersect(A, B, p3, p4):
+                    return True
+
+            p3 = Point(obstacle[-1][0], obstacle[-1][1])
+            p4 = Point(obstacle[0][0], obstacle[0][1])
+            if intersect(A, B, p3, p4):
+                return True
+
+        return False
+
     def generate_graph(self, midpoints, all_rays):
         g = Graph()
 
@@ -106,39 +121,23 @@ class TD():
             right_found = False
             # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
             while (not left_found and not right_found) and not (counter > len(midpoints)):
-                valid_point = True
+                # valid_point = True
 
                 if j + counter < len(midpoints) and not right_found:
                     point2 = midpoints[j + counter]
 
                     if point1[0] != point2[0]:
-                        for i in range(0, 100):
-                            percent = i / 100
-                            rise = point2[1]-point1[1]
-                            run = point2[0]-point1[0]
-                            point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                            if not self.valid_point(point_to_test, all_rays):
-                                valid_point = False
-
-                        if valid_point:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
                             right_found = True
                             g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                valid_point = True
+                # valid_point = True
 
                 if j - counter >= 0 and not left_found:
                     # print(i - counter)
                     point2 = midpoints[j - counter]
 
                     if point1[0] != point2[0]:
-                        for i in range(0, 100):
-                            percent = i / 100
-                            rise = point2[1]-point1[1]
-                            run = point2[0]-point1[0]
-                            point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                            if not self.valid_point(point_to_test, all_rays):
-                                valid_point = False
-
-                        if valid_point:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
                             left_found = True
                             g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
                 counter += 1
@@ -235,3 +234,12 @@ class TD():
             x = [line[0][0], line[1][0]]
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
+
+
+def ccw(A, B, C):
+    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
+
+
+# Return true if line segments AB and CD intersect
+def intersect(A, B, C, D):
+    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
