@@ -78,80 +78,71 @@ class TD():
                 if closest_bottom_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
+        vert_boundaries.sort()
+
         self.vert_boundaries = vert_boundaries
 
         midpoints = self.generate_midpoints(vert_boundaries)
 
-        graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
+        graph = self.generate_graph(midpoints, all_rays)
 
         return graph
 
-    # def get_neighbors(self, mp, midpoints, vert_boundaries):
-    #     vert_boundaries = vert_boundaries.sort()
-    #     neighbors = []
+    def intersect_any_obstacle(self, A, B,):
+        for obstacle in self.obstacles:
+            for i in range(len(obstacle) - 2):
+                p3 = Point(obstacle[i][0], obstacle[i][1])
+                p4 = Point(obstacle[i + 1][0], obstacle[i + 1][1])
+                if intersect(A, B, p3, p4):
+                    return True
 
-    #     nearest_up_x = float('inf')
-    #     nearest_down_x = float('-inf')
-    #     right_neighbor = []
-    #     left_neighbor = []
+            p3 = Point(obstacle[-1][0], obstacle[-1][1])
+            p4 = Point(obstacle[0][0], obstacle[0][1])
+            if intersect(A, B, p3, p4):
+                return True
 
-    #     for mp2 in midpoints:
+        return False
 
-    #         mp2_x = mp2[0]
-    #         if mp2_x == mp[0]:
-    #             continue
-
-    #         if mp2_x > mp[0]:
-    #             tmp = nearest_up_x
-    #             nearest_up_x = min(nearest_up_x, mp2_x)
-
-    #             if tmp == nearest_up_x:
-    #                 right_neighbor.append(mp2)
-                
-    #         elif mp2_x < mp[0]:
-    #             nearest_down_x = max(nearest_down_x, mp2_x)
-    #             if nearest_down_x == mp2_x:
-    #                 left_neighbor.append(mp2)
-
-    #     for neighbor in right_neighbor:
-    #         neighbors.append(neighbor)
-
-    #     for neighbor in left_neighbor:
-    #         neighbors.append(neighbor)
-
-    #     return neighbors
-
-    def generate_graph(self, midpoints, vert_boundaries, all_rays):
+    def generate_graph(self, midpoints, all_rays):
         g = Graph()
 
-        # midpoints.append(self.start)
-        # midpoints.append(self.end)
+        midpoints.append(self.start)
+        midpoints.append(self.end)
+
+        midpoints.sort()
 
         for point in midpoints:
             g.add_node(point[0], point[1])
 
-        for point1 in midpoints:
-            # counter = 0
+        for j in range(len(midpoints)):
+            point1 = midpoints[j]
+            counter = 1
+            left_found = False
+            right_found = False
             # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
-            for point2 in midpoints:
-                valid_point = True
+            while (not left_found and not right_found) and not (counter > len(midpoints)):
+                # valid_point = True
 
-                # if counter > 4:
-                #     continue
+                if j + counter < len(midpoints) and not right_found:
+                    point2 = midpoints[j + counter]
 
-                if point1[0] != point2[0]:
-                    for i in range(0, 100):
-                        percent = i / 100
-                        rise = point2[1]-point1[1]
-                        run = point2[0]-point1[0]
-                        point_to_test = [point1[0]+(run*percent), point1[1]+(rise*percent)]
-                        if not self.valid_point(point_to_test, all_rays):
-                            valid_point = False
+                    if point1[0] != point2[0]:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
+                            right_found = True
+                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                # valid_point = True
 
-                    if valid_point:
-                    #     counter += 1
-                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                if j - counter >= 0 and not left_found:
+                    # print(i - counter)
+                    point2 = midpoints[j - counter]
+
+                    if point1[0] != point2[0]:
+                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
+                            left_found = True
+                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                counter += 1
             # raise KeyError()
+
         return g
 
     def generate_midpoints(self, vert_boundaries):
@@ -243,3 +234,12 @@ class TD():
             x = [line[0][0], line[1][0]]
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
+
+
+def ccw(A, B, C):
+    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
+
+
+# Return true if line segments AB and CD intersect
+def intersect(A, B, C, D):
+    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)

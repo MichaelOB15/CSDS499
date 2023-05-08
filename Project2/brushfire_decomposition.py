@@ -223,10 +223,10 @@ class Brushfire():
 
 
 
-    def wavefront(self, goal: Point):
-        x = floor(goal.x) - 1
-        y = len(self.map) - floor(goal.y) - 1
-
+    def wavefront(self):
+        goal = Point(self.end[0], self.end[1])
+        x = (floor(goal.x/RESOLUTION) - 1)
+        y = (len(self.map) + floor(goal.y/RESOLUTION) - 1)
         self.map[y][x] = GOAL
 
         frontier = 3
