@@ -44,15 +44,8 @@ class TD():
         vert_boundaries = []
 
         for CP in all_critical_points:
-<<<<<<< HEAD
-            valid_increase = self.valid_points([CP[0], CP[1]+self.offset], all_rays)
-            valid_decrease = self.valid_points([CP[0], CP[1]-self.offset], all_rays)
-=======
-            offset = .000001
-
-            valid_increase = self.valid_point([CP[0], CP[1]+offset], all_rays)
-            valid_decrease = self.valid_point([CP[0], CP[1]-offset], all_rays)
->>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
+            valid_increase = self.valid_point([CP[0], CP[1]+self.offset], all_rays)
+            valid_decrease = self.valid_point([CP[0], CP[1]-self.offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
@@ -96,11 +89,7 @@ class TD():
 
         #midpoints = self.generate_midpoints(vert_boundaries)
 
-<<<<<<< HEAD
         #graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
-=======
-        graph = self.generate_graph(midpoints, all_rays)
->>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
 
         #return graph
 
@@ -254,7 +243,6 @@ class TD():
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
 
-<<<<<<< HEAD
         '''
         for ray in self.all_rays:
             x = [ray[0][0], ray[1][0]]
@@ -265,13 +253,3 @@ class TD():
             plt.scatter(CP[0], CP[1], color="red")'''
 
         plt.show()
-=======
-
-def ccw(A, B, C):
-    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
-
-
-# Return true if line segments AB and CD intersect
-def intersect(A, B, C, D):
-    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
->>>>>>> 8651ba4275627fb08a594736f11a0a343bf6c6fa
