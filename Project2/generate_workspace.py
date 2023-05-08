@@ -42,8 +42,8 @@ class Workspace():
         polygon4=random_star_shaped_polygon(num_points=12)
 
         scaling=[20,5,5,5] #I did these by hand these are just values that look nice
-        xshift=[-10,0,-8,2]
-        yshift=[-10,0,0,-8]
+        xshift=[-10,-1,-8,2]
+        yshift=[-10,-1,0,-8]
         pg=[polygon,polygon2,polygon3,polygon4]
 
         output=[]
@@ -52,7 +52,7 @@ class Workspace():
 
         boundary=output[0] #this seems like bad practice but I want it in a format that fits well with the other code
         obstacles=[output[1],output[2],output[3]]
-        start=[5, 5]
-        end=[-5, -5]
+        start=[-7, 4]
+        end=[8, -8]
 
         return [boundary,obstacles,start,end]
