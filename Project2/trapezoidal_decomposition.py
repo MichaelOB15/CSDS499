@@ -40,11 +40,11 @@ class TD():
         for CP in all_critical_points:
             offset = .0001
             #both need to be run to determine which side of the obstacle we are on
-            valid_increase = self.valid_point([CP[0], CP[1]+offset], all_rays)
-            valid_increase = valid_increase and not self.valid_point([CP[0], CP[1]-offset], all_rays)
+            valid_increase = not self.valid_point([CP[0], CP[1]-offset], all_rays)
+            #valid_increase = valid_increase and not self.valid_point([CP[0], CP[1]-offset], all_rays)
 
-            valid_decrease = self.valid_point([CP[0], CP[1]-offset], all_rays)
-            valid_decrease = valid_decrease and not self.valid_point([CP[0], CP[1]+offset], all_rays)
+            valid_decrease = not self.valid_point([CP[0], CP[1]+offset], all_rays)
+            #valid_decrease = valid_decrease and not self.valid_point([CP[0], CP[1]+offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
