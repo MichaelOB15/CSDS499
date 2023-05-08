@@ -20,6 +20,9 @@ class Brushfire():
     ymax=float('-inf')
     ymin=float('inf')
 
+    rays=None
+    critical_points=None
+
     def __init__(self, boundary, obstacles, start, end):
 
         self.boundary = boundary
@@ -27,7 +30,31 @@ class Brushfire():
         self.start = start
         self.end = end
 
+        #set up critical points and rays
+        critical_points = []
+        rays = []
+
+        last_point = self.boundary[-1]
+        for point in self.boundary:
+            critical_points.append(point)
+
+            rays.append([last_point, point])
+            last_point = point
+
+        for obstacle in self.obstacles:
+
+            last_point = obstacle[-1]
+            for point in obstacle:
+                critical_points.append(point)
+
+                rays.append([last_point, point])
+                last_point = point
+
+        self.critical_points=critical_points
+        self.rays=rays
+
         self.map: List[List[int]] = self.generate_map()  # updates max/min as well
+                
 
     def generate_map(self):
         #make a 2d list that will fit the whole space
@@ -50,16 +77,58 @@ class Brushfire():
         for x in range(xdim):
             map.append([])
             for y in range(ydim):
-                map[x][y]=self.isObstacle()#put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
+                #put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
+                map[x].append(self.isObstacle([x*RESOLUTION+self.xmin,y*RESOLUTION+self.ymin]))
 
         return map
 
-    def isObstacle(self):
-        return None # put a 1 where the object is and a zero everywhere else -> needs mike's "detect object" code
+
+    def isObstacle(self,point):
+        '''tell whether a point is in an obstacle'''
+        rays=self.rays
+
+        try:
+            num_intersections = 0
+
+            for ray in rays:
+                if ray[0][0] < ray[1][0]:
+                    xmin = ray[0][0]
+                    xmax = ray[1][0]
+                else:
+                    xmin = ray[1][0]
+                    xmax = ray[0][0]
+
+                if ray[0][0] < ray[1][0]:
+                    first = ray[0]
+                    second = ray[1]
+                else:
+                    first = ray[1]
+                    second = ray[0]
+
+                m = (second[1]-first[1]) / (second[0]-first[0])
+
+                b = first[1] - (m * first[0]) 
+
+                new_y = (m * point[0]) + b
+
+                point_on_ray = [point[0], new_y]
+
+                # in the boundary and above
+                if point[0] < xmax and point[0] > xmin and point_on_ray[1] > point[1]:
+                    num_intersections += 1
+
+            # if odd num of interactions
+            if num_intersections % 2:
+                return 0
+            else:
+                return 1
+        except:
+            return 1
+        
 
     def brushfireAlg(self):
         # expand the map from generate_map so each pixel holds the distance to the nearest object
-        map=self.map()
+        map=self.map
 
         # copy the map
         copy=[]
@@ -75,10 +144,11 @@ class Brushfire():
 
         #number of times this process runs-- worst case runtime is the length of the map
         iter=len(map)
-        if (len(map[0]>iter)):
+        if (len(map[0])>iter):
             iter=len(map[0])
 
         while (iter>0):
+            print(iter)
 
             # visit every pixel in the map
             for x in range(len(map)):
@@ -94,9 +164,9 @@ class Brushfire():
                                 yind=y-1+b
 
                                 # can't go out of bounds
-                                if (xind>len(map)):
+                                if (xind>=len(map)):
                                     continue
-                                if (yind>len(map[0])):
+                                if (yind>=len(map[0])):
                                     continue
 
                                 #can't let [x,y] query
