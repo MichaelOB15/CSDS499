@@ -10,7 +10,7 @@ class TD():
 
         # boundary = [[x1,y1],[x2, y2],...,[xn,yn]]
         self.boundary = boundary
-        self.verticies = verticies
+        self.vertices = verticies
         self.start = start
         self.end = end
 
@@ -26,7 +26,7 @@ class TD():
             all_rays.append([last_point, point])
             last_point = point
 
-        for objects in self.verticies:
+        for objects in self.vertices:
 
             last_point = objects[-1]
             for point in objects:
@@ -166,7 +166,7 @@ class TD():
         # For Obstacles
         xob: List[float] = []
         yob: List[float] = []
-        for obstacle in self.verticies:
+        for obstacle in self.vertices:
 
             for point in obstacle:
                 xob.append(point[0])
