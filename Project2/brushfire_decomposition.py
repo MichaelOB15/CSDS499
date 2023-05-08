@@ -3,6 +3,7 @@ from math import floor
 from typing import List, Tuple
 from collections import deque
 import matplotlib.pyplot as plt
+import numpy as np
 
 GOAL = 2
 RESOLUTION = 0.1
@@ -58,17 +59,16 @@ class Brushfire():
 
     def generate_map(self):
         #make a 2d list that will fit the whole space
-        numPts=len(self.boundary)
 
-        for i in range(numPts):
-            if (self.boundary[i][0]>self.xmax):
-                self.xmax=self.boundary[i][0]
-            if (self.boundary[i][1]>self.ymax):
-                self.ymax=self.boundary[i][1]
-            if (self.boundary[i][0]<self.xmin):
-                self.xmin=self.boundary[i][0]
-            if (self.boundary[i][1]<self.ymin):
-                self.ymin=self.boundary[i][1]
+        for point in self.boundary:
+            if (point[0]>self.xmax):
+                self.xmax=point[0]
+            if (point[1]>self.ymax):
+                self.ymax=point[1]
+            if (point[0]<self.xmin):
+                self.xmin=point[0]
+            if (point[1]<self.ymin):
+                self.ymin=point[1]
 
         xdim=int((self.xmax-self.xmin)/RESOLUTION)
         ydim=int((self.ymax-self.ymin)/RESOLUTION)
@@ -127,35 +127,32 @@ class Brushfire():
         
 
     def brushfireAlg(self):
-        # expand the map from generate_map so each pixel holds the distance to the nearest object
+        '''
         map=self.map
 
         # copy the map
-        copy=[]
-        for x in range(len(map[0])):
-            #adds a blank list
-            copy.append([])
-
-            #populates the new list
-            for y in range(len(map[1])):
-                copy[x].append(map[x][y])
-
-        map=copy
+        copy=np.zeros((len(self.map),len(self.map[0])))
+        for x in range(len(self.map[0])):
+            for y in range(len(self.map[1])):
+                #goes from List to numpy array
+                copy[x,y]=self.map[x][y]
 
         #number of times this process runs-- worst case runtime is the length of the map
-        iter=len(map)
-        if (len(map[0])>iter):
-            iter=len(map[0])
+        iter=len(self.map)
+        if (len(self.map[0])>iter):
+            iter=len(self.map[0])
+
+        map=copy
 
         while (iter>0):
             print(iter)
 
             # visit every pixel in the map
-            for x in range(len(map)):
-                for y in range(len(map[0])):
+            for x in range(len(self.map)):
+                for y in range(len(self.map[0])):
 
                     # if the value is zero it hasn't been touched
-                    if(not map[x][y]==0):
+                    if(not map[x,y]==0):
 
                         # update all eight adjacent squares
                         for a in range(3):
@@ -164,23 +161,67 @@ class Brushfire():
                                 yind=y-1+b
 
                                 # can't go out of bounds
-                                if (xind>=len(map)):
+                                if (xind>=len(self.map)):
                                     continue
-                                if (yind>=len(map[0])):
+                                if (yind>=len(self.map[0])):
                                     continue
 
                                 #can't let [x,y] query
                                 if (xind==x and yind==y):
+                                    copy[x,y]=map[x,y]
                                     continue
 
                                 #target is already filled with data
-                                if (not map[xind][yind]==0):
+                                if (not map[xind,yind]==0):
+                                    #target data is from the map
+                                    if (not map[xind,yind]==0):
+                                        copy[xind,yind]=map[xind,yind]
+                                        continue
+                                    #target holds a higher number
+                                    if (copy[xind,yind]>map[x,y]+1):
+                                        copy[xind,yind]=map[x,y]+1
                                     continue
 
                                 #update the target
-                                map[xind][yind]=map[x][y]+1
+                                copy[xind,yind]=map[x,y]+1
+                                
+
+            map=copy
+            copy=np.zeros((len(self.map),len(self.map[0])))
+            #np.savetxt("foo.csv", map, delimiter=",")
             iter=iter-1
         return map
+        '''
+        oldmap=np.zeros((len(self.map),len(self.map[0])))
+        newmap=np.zeros((len(self.map),len(self.map[0])))
+        nodes=[]
+        for x in range(len(self.map)):
+                for y in range(len(self.map[0])):
+                    nodes.append([x,y])
+                    oldmap[x,y]=self.map[x][y]
+
+        while(len(nodes)>0):
+            print(len(nodes))
+            iter=len(nodes)
+            for i in reversed(range(iter)):
+                x1=nodes[i][0]
+                y1=nodes[i][1]
+
+                if(not oldmap[x1,y1]==0):
+                    nodes.remove([x1,y1])
+                    
+                    #populate new map with surrounding nodes
+                    for a in range(3):
+                        for b in range(3):
+                            if(oldmap[a,b]==0):
+                                if(newmap[a,b]<oldmap[x1,y1]+1):
+                                    newmap[a,b]=oldmap[x1,y1]+1
+                            
+            
+            oldmap=newmap.copy()
+            
+
+
 
     def wavefront(self, goal: Point):
         x = floor(goal.x) - 1

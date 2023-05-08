@@ -29,13 +29,7 @@ def main(config):
     '''
 
     bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
-    print(bf.brushfireAlg)
-
-    
-
     val=bf.brushfireAlg()
-
-    #val=[[1,2,3],[1,2,3],[1,2,3]]
 
     ind1=len(val)
     ind2=len(val[0])
