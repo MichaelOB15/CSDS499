@@ -24,7 +24,7 @@ def main(config):
     # bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
 
     # polygon generator pass in the config
-    # spit out polygons with verticies and the dimmensions of the space
+    # spit out polygons with vertices and the dimmensions of the space
 
     # first make the obstacle
 

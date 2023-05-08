@@ -6,11 +6,11 @@ from typing import List
 
 class TD():
 
-    def __init__(self, boundary, verticies, start, end):
+    def __init__(self, boundary, obstacles, start, end):
 
         # boundary = [[x1,y1],[x2, y2],...,[xn,yn]]
         self.boundary = boundary
-        self.vertices = verticies
+        self.obstacles = obstacles
         self.start = start
         self.end = end
 
@@ -26,10 +26,10 @@ class TD():
             all_rays.append([last_point, point])
             last_point = point
 
-        for objects in self.vertices:
+        for obstacle in self.obstacles:
 
-            last_point = objects[-1]
-            for point in objects:
+            last_point = obstacle[-1] #first ray of obstacle is from point to itself
+            for point in obstacle:
                 all_critical_points.append(point)
 
                 all_rays.append([last_point, point])
@@ -166,7 +166,7 @@ class TD():
         # For Obstacles
         xob: List[float] = []
         yob: List[float] = []
-        for obstacle in self.vertices:
+        for obstacle in self.obstacles:
 
             for point in obstacle:
                 xob.append(point[0])
