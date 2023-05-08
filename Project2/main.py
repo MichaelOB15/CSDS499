@@ -14,8 +14,8 @@ def main(config):
     obj = map.gen()
 
     trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
-    trap_decom.vis()
     graph = trap_decom.calculate_nodes()
+    trap_decom.vis()
 
     graph.graph_vis()
     start = Point(obj[2][0], obj[2][1])

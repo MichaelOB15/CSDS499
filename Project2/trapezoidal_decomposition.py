@@ -77,13 +77,15 @@ class TD():
                 if closest_top_point != [0, 0]:
                     vert_boundaries.append([closest_bottom_point, CP])
 
+        self.vert_boundaries = vert_boundaries
+
         midpoints = self.generate_midpoints(vert_boundaries)
 
-        graph = self.generate_graph(midpoints, all_rays)
+        graph = self.generate_graph(midpoints, vert_boundaries, all_rays)
 
         return graph
 
-    def generate_graph(self, midpoints, all_rays):
+    def generate_graph(self, midpoints, vert_boundaries, all_rays):
         g = Graph()
 
         midpoints.append(self.start)
@@ -176,3 +178,8 @@ class TD():
             plt.plot(xob, yob, color="black")
             xob = []
             yob = []
+
+        for line in self.vert_boundaries:
+            x = [line[0][0], line[1][0]]
+            y = [line[0][1], line[1][1]]
+            plt.plot(x, y, color="orange")
