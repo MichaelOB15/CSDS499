@@ -16,8 +16,6 @@ def main(config):
     map = Workspace()
     obj = map.gen()
 
-    '''
-
     trap_decom = TD(obj[0], obj[1], obj[2], obj[3])
     graph = trap_decom.calculate_nodes()
     trap_decom.vis()
@@ -26,7 +24,7 @@ def main(config):
     start = Point(obj[2][0], obj[2][1])
     end = Point(obj[3][0], obj[3][1])
     graph.path_graph(start, end, EUCLIDEAN)
-    '''
+    
 
     bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
     img=bf.brushfireAlg()
@@ -39,10 +37,20 @@ def main(config):
         for y in range(ind2):
             img[x,y]=val[x][y]*100
     
+    # img=np.zeros((ind1,ind2))
+    # for x in range(ind1):
+    #     for y in range(ind2):
+    #         img[x,y]=int(val[y][ind1-x-1])
+    #         if (img[x,y]==1):
+    #             img[x,y]=255
+
     
     img = Image.fromarray(img.astype('uint8')*5)
     img.show()
     img.save("brushfire.png")
+    # img = Image.fromarray(img.astype('uint8'))
+    # img.show()
+    # img.save("brushfire.png")
     
 
     # polygon generator pass in the config

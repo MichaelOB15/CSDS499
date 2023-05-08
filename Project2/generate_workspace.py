@@ -51,7 +51,7 @@ class Workspace():
             output.append(self.reformat(pg[i],scaling[i],xshift[i],yshift[i]))
 
         boundary=output[0] #this seems like bad practice but I want it in a format that fits well with the other code
-        obstacles=[output[1],output[2],output[3]]
+        obstacles=[output[1], output[2], output[3]]
         start=[-7, 4]
         end=[8, -8]
 

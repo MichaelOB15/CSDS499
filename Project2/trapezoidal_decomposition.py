@@ -13,6 +13,10 @@ class TD():
         self.obstacles = obstacles
         self.start = start
         self.end = end
+        self.all_rays = []
+        self.all_critical_points = []
+        self.offset = .0001
+        self.midpoints = []
 
     def calculate_nodes(self):
 
@@ -35,13 +39,14 @@ class TD():
                 all_rays.append([last_point, point])
                 last_point = point
 
+        self.all_rays = all_rays
+        self.all_critical_points = all_critical_points
+
         vert_boundaries = []
 
         for CP in all_critical_points:
-            offset = .000001
-
-            valid_increase = self.valid_point([CP[0], CP[1]+offset], all_rays)
-            valid_decrease = self.valid_point([CP[0], CP[1]-offset], all_rays)
+            valid_increase = self.valid_point([CP[0], CP[1]+self.offset], all_rays)
+            valid_decrease = self.valid_point([CP[0], CP[1]-self.offset], all_rays)
 
             if valid_decrease or valid_increase:
                 closest_top_y = float('inf')
@@ -59,15 +64,16 @@ class TD():
 
                     # if point falls within the ray
                     if CP[0] > xmin and CP[0] < xmax:
+                        #print("cp:", CP,"in ray:", ray)
                         try:
                             if valid_increase:
                                 point_on_ray = self.intersecting_point(ray, CP)
-                                if (point_on_ray[1] - CP[1]) < closest_top_y:
+                                if (point_on_ray[1] > CP[1]) and ((point_on_ray[1] - CP[1]) < closest_top_y):
                                     closest_top_y = point_on_ray[1] - CP[1]
                                     closest_top_point = point_on_ray
                             if valid_decrease:
                                 point_on_ray = self.intersecting_point(ray, CP)
-                                if (CP[1] - point_on_ray[1]) < closest_bottom_y:
+                                if (point_on_ray[1] < CP[1]) and ((CP[1] - point_on_ray[1]) < closest_bottom_y):
                                     closest_bottom_y = CP[1] - point_on_ray[1]
                                     closest_bottom_point = point_on_ray
                         except:
@@ -84,7 +90,11 @@ class TD():
 
         midpoints = self.generate_midpoints(vert_boundaries)
 
-        graph = self.generate_graph(midpoints, all_rays)
+        self.midpoints = midpoints
+
+        midpoints.sort()
+
+        graph = self.generate_graph(midpoints)
 
         return graph
 
@@ -103,7 +113,7 @@ class TD():
 
         return False
 
-    def generate_graph(self, midpoints, all_rays):
+    def generate_graph(self, midpoints):
         g = Graph()
 
         midpoints.append(self.start)
@@ -114,36 +124,41 @@ class TD():
         for point in midpoints:
             g.add_node(point[0], point[1])
 
-        for j in range(len(midpoints)):
-            point1 = midpoints[j]
-            counter = 1
-            left_found = False
-            right_found = False
-            # neigbors = self.get_neighbors(point1, midpoints, vert_boundaries)
-            while (not left_found and not right_found) and not (counter > len(midpoints)):
-                # valid_point = True
+        for point1 in midpoints:
+            connection = True
+            point_check_x = float('inf')
 
-                if j + counter < len(midpoints) and not right_found:
-                    point2 = midpoints[j + counter]
+            for point2 in midpoints:
+                if point2[0] > point1[0] and connection == True:
+                    if self.valid_path(point1, point2):
+                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
+                        point_check_x = point2[0]
+                        connection = False
 
-                    if point1[0] != point2[0]:
-                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
-                            right_found = True
-                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                # valid_point = True
-
-                if j - counter >= 0 and not left_found:
-                    # print(i - counter)
-                    point2 = midpoints[j - counter]
-
-                    if point1[0] != point2[0]:
-                        if not self.intersect_any_obstacle(Point(point1[0], point1[1]), Point(point2[0], point2[1])):
-                            left_found = True
-                            g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
-                counter += 1
-            # raise KeyError()
+                if point2[0] == point_check_x:
+                    if self.valid_path(point1, point2):
+                        g.add_vertex(Point(point1[0], point1[1]), Point(point2[0], point2[1]))
 
         return g
+
+    def valid_path(self, point1, point2):
+
+        rise = point2[1] - point1[1]
+        run = point2[0] - point1[0]
+
+        valid_point = True
+
+        for i in range(0,100):
+            new_point = [point1[0] + run*(i/100), point1[1] + rise*(i/100)] 
+            if self.valid_point(new_point, self.all_rays) == False:
+                valid_point = False
+                break
+
+        if valid_point:
+            return True
+        else:
+            return False
+
 
     def generate_midpoints(self, vert_boundaries):
         midpoints = []
@@ -171,14 +186,14 @@ class TD():
 
         new_point = [point[0], new_y]
 
-        #print("old point: ", point," new point: ", new_point, "ray:", ray)
-
         return new_point
 
     def valid_point(self, point, rays):
         '''determine whether a point is in an obstacle'''
         try:
             num_intersections = 0
+
+            rays_intersected = []
 
             for ray in rays:
                 if ray[0][0] < ray[1][0]:
@@ -191,13 +206,16 @@ class TD():
                 point_on_ray = self.intersecting_point(ray, point)
 
                 # in the boundary and above
-                if point[0] < xmax and point[0] > xmin and point_on_ray[1] > point[1]:
+                if point[0] < xmax and point[0] >= xmin and point_on_ray[1] > point[1]:
+                    rays_intersected.append(ray)
                     num_intersections += 1
 
             # if odd num of interactions
-            if num_intersections % 2:
+            if num_intersections % 2 == 1:
+                #print("Return: True,  num intersections: ",num_intersections," point: ", point, "rays intersected: ", rays_intersected)
                 return True
             else:
+                #print("Return: False,  num intersections: ",num_intersections," point: ", point, "rays intersected: ", rays_intersected)
                 return False
         except:
             return False
@@ -235,11 +253,16 @@ class TD():
             y = [line[0][1], line[1][1]]
             plt.plot(x, y, color="orange")
 
+        for CP in self.midpoints:
+            plt.scatter(CP[0], CP[1], color="blue")
 
-def ccw(A, B, C):
-    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
+        '''
+        for ray in self.all_rays:
+            x = [ray[0][0], ray[1][0]]
+            y = [ray[0][1], ray[1][1]]
+            plt.plot(x, y, color="blue")
 
+        for CP in self.all_critical_points:
+            plt.scatter(CP[0], CP[1], color="red")'''
 
-# Return true if line segments AB and CD intersect
-def intersect(A, B, C, D):
-    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
+        #plt.show()
