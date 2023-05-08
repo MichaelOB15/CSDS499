@@ -27,16 +27,16 @@ def main(config):
     
 
     bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
-    #img=bf.brushfireAlg()
+    img=bf.brushfireAlg()
     
     bf.wavefront()
     val=bf.get_map()
 
     [ind1,ind2]=[len(val),len(val[0])]
-    img=np.zeros([ind1,ind2])
+    #img=np.zeros([ind1,ind2])
     for x in range(ind1):
         for y in range(ind2):
-            img[x,y]=val[x][y]
+            img[x,y]=img[x,y]+val[x][y]/8
 
     
     img = Image.fromarray(img.astype('uint8')*5)
