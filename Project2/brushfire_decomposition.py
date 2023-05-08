@@ -55,6 +55,9 @@ class Brushfire():
         self.rays=rays
 
         self.map: List[List[int]] = self.generate_map()  # updates max/min as well
+
+    def get_map(self):
+        return self.map
                 
 
     def generate_map(self):
@@ -127,71 +130,7 @@ class Brushfire():
         
 
     def brushfireAlg(self):
-        '''
-        map=self.map
-
-        # copy the map
-        copy=np.zeros((len(self.map),len(self.map[0])))
-        for x in range(len(self.map[0])):
-            for y in range(len(self.map[1])):
-                #goes from List to numpy array
-                copy[x,y]=self.map[x][y]
-
-        #number of times this process runs-- worst case runtime is the length of the map
-        iter=len(self.map)
-        if (len(self.map[0])>iter):
-            iter=len(self.map[0])
-
-        map=copy
-
-        while (iter>0):
-            print(iter)
-
-            # visit every pixel in the map
-            for x in range(len(self.map)):
-                for y in range(len(self.map[0])):
-
-                    # if the value is zero it hasn't been touched
-                    if(not map[x,y]==0):
-
-                        # update all eight adjacent squares
-                        for a in range(3):
-                            for b in range(3):
-                                xind=x-1+a
-                                yind=y-1+b
-
-                                # can't go out of bounds
-                                if (xind>=len(self.map)):
-                                    continue
-                                if (yind>=len(self.map[0])):
-                                    continue
-
-                                #can't let [x,y] query
-                                if (xind==x and yind==y):
-                                    copy[x,y]=map[x,y]
-                                    continue
-
-                                #target is already filled with data
-                                if (not map[xind,yind]==0):
-                                    #target data is from the map
-                                    if (not map[xind,yind]==0):
-                                        copy[xind,yind]=map[xind,yind]
-                                        continue
-                                    #target holds a higher number
-                                    if (copy[xind,yind]>map[x,y]+1):
-                                        copy[xind,yind]=map[x,y]+1
-                                    continue
-
-                                #update the target
-                                copy[xind,yind]=map[x,y]+1
-                                
-
-            map=copy
-            copy=np.zeros((len(self.map),len(self.map[0])))
-            #np.savetxt("foo.csv", map, delimiter=",")
-            iter=iter-1
-        return map
-        '''
+        
         oldmap=np.zeros((len(self.map),len(self.map[0])))
         newmap=np.zeros((len(self.map),len(self.map[0])))
         nodes=[]
@@ -228,6 +167,7 @@ class Brushfire():
                             
             
             oldmap=np.copy(newmap)
+        #np.savetxt("foo.csv", newmap, delimiter=",")
         return newmap
             
 
@@ -235,8 +175,9 @@ class Brushfire():
 
     def wavefront(self):
         goal = Point(self.end[0], self.end[1])
-        x = (floor(goal.x/RESOLUTION) - 1)
-        y = (len(self.map) + floor(goal.y/RESOLUTION) - 1)
+        x = (floor((goal.x-self.xmin)/RESOLUTION))
+        y = (floor((goal.y-self.ymin)/RESOLUTION))*-1 + len(self.map)
+        print([x,y])
         self.map[y][x] = GOAL
 
         frontier = 3
@@ -284,13 +225,6 @@ class Brushfire():
 
         return neighbors
 
-    def run(self, start: Point):
-
-
-
-        # sum the wavefront and brushfire
-        # find the steepest decline in numbers but stay away from 1s because those are obstacles
-        pass
 
 def test():
     pass

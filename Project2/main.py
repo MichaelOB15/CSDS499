@@ -29,20 +29,18 @@ def main(config):
     '''
 
     bf = Brushfire(obj[0],obj[1],obj[2],obj[3])
-    val=bf.brushfireAlg()
+    img=bf.brushfireAlg()
+    bf.wavefront()
+    val=bf.get_map()
 
-    
-    [ind1,ind2]=np.size(val)
+    [ind1,ind2]=[len(val),len(val[0])]
 
-    img=np.zeros((ind1,ind2))
     for x in range(ind1):
         for y in range(ind2):
-            if (img[x,y]==1):
-                img[x,y]=255
-            else: img[x,y]=val[x,y]*10
+            img[x,y]=val[x][y]*100
     
     
-    img = Image.fromarray(img.astype('uint8'))
+    img = Image.fromarray(img.astype('uint8')*5)
     img.show()
     img.save("brushfire.png")
     
